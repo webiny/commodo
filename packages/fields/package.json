@@ -24,5 +24,8 @@
     "composeable",
     "models",
     "fields"
-  ]
+  ],
+  "scripts": {
+    "build": "babel src --ignore src/__tests__ --out-dir dist --source-maps"
+  }
 }

@@ -10,7 +10,7 @@ const User = compose(
     withName("User")
 )(Model);
 
-describe("multiple delete / save prevention test", async () => {
+describe("multiple delete / save prevention test", () => {
     afterEach(() => sandbox.restore());
     beforeEach(() => User.getStoragePool().flush());
 

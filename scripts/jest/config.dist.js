@@ -11,8 +11,8 @@ getYarnWorkspaces()
     })
     .forEach(name => {
         // Named entry points
-        moduleNameMapper[`^@commodo/${name}/(.*)$`] = `<rootDir>packages/${name}/src/$1`;
-        moduleNameMapper[`^@commodo/${name}$`] = `<rootDir>packages/${name}/src`;
+        moduleNameMapper[`^@commodo/${name}/(.*)$`] = `<rootDir>packages/${name}/dist/$1`;
+        moduleNameMapper[`^@commodo/${name}$`] = `<rootDir>packages/${name}/dist`;
     });
 
 module.exports = Object.assign({}, baseConfig, {
