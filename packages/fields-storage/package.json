@@ -14,5 +14,8 @@
     "@commodo/name": "^0.0.0",
     "repropose": "^1.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }
