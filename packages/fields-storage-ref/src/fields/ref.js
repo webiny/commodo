@@ -377,9 +377,8 @@ const ref: FieldFactory = ({
                  * after main model was saved. Can be disabled, although not recommended since manual saving needs to be done in that case.
                  * @param enabled
                  * @param options
-                 * @returns {EntityField}
                  */
-                setAutoSave(enabled: boolean = true): EntityField {
+                setAutoSave(enabled: boolean = true) {
                     this.auto.save = enabled;
                     return this;
                 },
@@ -397,9 +396,8 @@ const ref: FieldFactory = ({
                  * deleted, before main model was deleted. Can be disabled, although not recommended since manual deletion needs to be done in that case.
                  * @param enabled
                  * @param options
-                 * @returns {EntityField}
                  */
-                setAutoDelete(enabled: boolean = true, options: ?Object = null): EntityField {
+                setAutoDelete(enabled: boolean = true, options: ?Object = null) {
                     this.auto.delete = enabled;
                     return this;
                 },
