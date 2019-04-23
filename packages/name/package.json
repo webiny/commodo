@@ -21,5 +21,8 @@
     "composeable",
     "models",
     "name"
-  ]
+  ],
+  "scripts": {
+    "build": "babel src --out-dir dist --source-maps --ignore **/*.test.js"
+  }
 }

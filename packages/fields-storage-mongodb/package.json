@@ -25,5 +25,8 @@
     "models",
     "storage",
     "mongodb"
-  ]
+  ],
+  "scripts": {
+    "build": "babel src --out-dir dist --source-maps --ignore **/*.test.js"
+  }
 }

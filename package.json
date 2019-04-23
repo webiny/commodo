@@ -11,12 +11,15 @@
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-flow": "^7.0.0",
     "@babel/runtime": "^7.0.0",
+    "all-contributors-cli": "^5.6.0",
     "babel-core": "^7.0.0-0",
     "babel-jest": "^23.6.0",
     "camelcase": "^5.2.0",
     "get-yarn-workspaces": "^1.0.2",
+    "husky": "^1.3.1",
     "jest": "^23.6.0",
     "lerna": "^3.13.3",
+    "lint-staged": "^8.1.5",
     "mdbid": "^1.0.0",
     "prettier": "^1.14.2",
     "ramda": "^0.25.0",
@@ -24,8 +27,41 @@
   },
   "scripts": {
     "test:coverage": "yarn test --coverage",
-    "test": "jest --config ./scripts/jest/config.src.js",
-    "lerna:publish": "lerna publish --conventional-commits --yes"
+    "lerna:publish": "lerna publish --conventional-commits --yes",
+    "lerna:run:build": "lerna run build",
+    "cz": "git-cz",
+    "postbuild": "npm run flow-copy-source",
+    "flow-copy-source": "flow-copy-source src dist --ignore **/*.test.js",
+    "test": "npm run test:jest:src",
+    "test:jest:src": "jest --config ./scripts/jest/config.src.js",
+    "test:jest:src:coverage": "npx jest --config ./scripts/jest/config.src.js --coverage --collectCoverageFrom=src/**/*.js",
+    "test:jest:src:coverage:coveralls": "npm run test:jest:src:coverage && cat ./coverage/lcov.info | coveralls",
+    "test:jest:dist": "npm run build && jest --config ./scripts/jest/config.dist.js --colors",
+    "lint-staged": "lint-staged",
+    "contributors:add": "all-contributors add",
+    "contributors:generate": "all-contributors generate"
   },
-  "name": "commodo"
+  "name": "commodo",
+  "pre-commit": [
+    "lint-staged"
+  ],
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*.js": [
+      "prettier --write",
+      "eslint --fix",
+      "flow focus-check",
+      "jest --config ./scripts/jest/config.src.js --findRelatedTests",
+      "git add"
+    ]
+  }
 }
