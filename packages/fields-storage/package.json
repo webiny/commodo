@@ -1,0 +1,18 @@
+{
+  "name": "@commodo/fields-storage",
+  "version": "0.0.0-semantically-released",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webiny/commodo.git"
+  },
+  "contributors": [
+    "Adrian Smijulj <adrian@webiny.com>"
+  ],
+  "dependencies": {
+    "@commodo/hooks": "0.0.0-semantically-released",
+    "@commodo/name": "0.0.0-semantically-released",
+    "repropose": "^1.0.0"
+  },
+  "license": "MIT"
+}

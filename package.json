@@ -1,0 +1,31 @@
+{
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.1",
+    "@babel/plugin-transform-runtime": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-flow": "^7.0.0",
+    "@babel/runtime": "^7.0.0",
+    "babel-core": "^7.0.0-0",
+    "babel-jest": "^23.6.0",
+    "camelcase": "^5.2.0",
+    "get-yarn-workspaces": "^1.0.2",
+    "jest": "^23.6.0",
+    "lerna": "^3.13.3",
+    "mdbid": "^1.0.0",
+    "prettier": "^1.14.2",
+    "ramda": "^0.25.0",
+    "sinon": "^7.2.7"
+  },
+  "scripts": {
+    "test:coverage": "yarn test --coverage",
+    "test": "jest --config ./scripts/jest/config.src.js",
+    "new-version": "lerna version --conventional-commits --yes"
+  },
+  "name": "commodo"
+}

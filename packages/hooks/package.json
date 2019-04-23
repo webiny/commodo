@@ -1,0 +1,16 @@
+{
+  "name": "@commodo/hooks",
+  "version": "0.0.0-semantically-released",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webiny/commodo.git"
+  },
+  "contributors": [
+    "Adrian Smijulj <adrian@webiny.com>"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "repropose": "^1.0.0"
+  }
+}

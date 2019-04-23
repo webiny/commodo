@@ -1,0 +1,33 @@
+// @flow
+const FIELD_DATA_TYPE_ERROR = "FIELD_DATA_TYPE_ERROR";
+const POPULATE_FAILED_NOT_OBJECT = "POPULATE_FAILED_NOT_OBJECT";
+const MODEL_CLASS_NOT_SET = "MODEL_CLASS_NOT_SET";
+const MODEL_WITHOUT_POPULATE = "MODEL_POPULATE_MISSING";
+const VALIDATION_FAILED_INVALID_FIELDS = "VALIDATION_FAILED_INVALID_FIELDS";
+const VALIDATION_FAILED_INVALID_FIELD = "VALIDATION_FAILED_INVALID_FIELD";
+
+export default class WithFieldsError extends Error {
+    static FIELD_DATA_TYPE_ERROR: string;
+    static VALIDATION_FAILED_INVALID_FIELDS: string;
+    static POPULATE_FAILED_NOT_OBJECT: string;
+    static MODEL_FIELD_INSTANCEOF_NOT_SET: string;
+    static MODEL_POPULATE_MISSING: string;
+    static VALIDATION_FAILED_INVALID_FIELD: string;
+
+    message: string;
+    code: string;
+    data: ?Object;
+    constructor(message: string = "", code: string = "", data?: Object) {
+        super();
+        this.message = message;
+        this.code = code;
+        this.data = data;
+    }
+}
+
+WithFieldsError.FIELD_DATA_TYPE_ERROR = FIELD_DATA_TYPE_ERROR;
+WithFieldsError.POPULATE_FAILED_NOT_OBJECT = POPULATE_FAILED_NOT_OBJECT;
+WithFieldsError.MODEL_FIELD_INSTANCEOF_NOT_SET = MODEL_CLASS_NOT_SET;
+WithFieldsError.MODEL_POPULATE_MISSING = MODEL_WITHOUT_POPULATE;
+WithFieldsError.VALIDATION_FAILED_INVALID_FIELDS = VALIDATION_FAILED_INVALID_FIELDS;
+WithFieldsError.VALIDATION_FAILED_INVALID_FIELD = VALIDATION_FAILED_INVALID_FIELD;

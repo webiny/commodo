@@ -1,0 +1,55 @@
+[ignore]
+.*/examples/.*
+.*/__tests__/.*
+.*/scripts/.*
+.*/build/.*
+
+[include]
+.*/node_modules/.*
+
+[libs]
+packages/webiny-api/flow-typed/npm
+
+[lints]
+
+[options]
+esproposal.class_static_fields=enable
+module.file_ext=.js
+module.file_ext=.jsx
+module.file_ext=.mjs
+module.file_ext=.md
+module.system.node.resolve_dirname=node_modules
+module.name_mapper='^@commodo/\(.*\)/types$' -> '<PROJECT_ROOT>/packages/@commodo/\1/types.js'
+module.name_mapper='^@commodo/helpers/?\(.*\)$' -> '<PROJECT_ROOT>/packages/@commodo/helpers/src/\1'
+module.name_mapper='^@commodo/fields/?\(.*\)$' -> '<PROJECT_ROOT>/packages/@commodo/fields/src/\1'
+module.name_mapper='^@commodo/fields-storage-mongodb/?\(.*\)$' -> '<PROJECT_ROOT>/packages/@commodo/fields-storage-mongodb/src/\1'
+module.name_mapper='^@commodo/fields-storage/?\(.*\)$' -> '<PROJECT_ROOT>/packages/@commodo/fields-storage/src/\1'
+
+[strict]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,34 @@
+1. Usporedba prije/poslije:
+
+class ComplexModel extends Model {
+    constructor() {
+        super();
+        this.attr("firstName").char();
+        this.attr("lastName").char();
+        this.attr("verification").model(VerificationModel);
+        this.attr("tags").models(TagModel);
+        this.attr("simpleModel").model(SimpleModel);
+        this.attr("simpleModels").models(SimpleModel);
+        this.attr("simpleModelsLoadedFromTable")
+            .models(SimpleModel)
+            .setAutoSave(false);
+    }
+}
+ComplexModel.classId = "ComplexModel"
+
+Poslije:
+
+const ComplexModel = compose(
+    withName("ComplexModel"),
+    withFields({
+        firstName: string(),
+        lastName: string(),
+        verification: model({ instanceOf: VerificationModel }),
+        tags: string({ list: true, instanceOf: TagModel }),
+        simpleModel: compose(ref())(model({ list: true, instanceOf: SimpleModel })),
+        simpleModels: compose(
+            ref(),
+            list()
+        )(model({ instanceOf: SimpleModel }))
+    })
+)(Model);
