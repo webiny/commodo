@@ -20,8 +20,3 @@ jobs:
       script:
         - npm run test:jest:src:coverage:coveralls
         - npm run build
-      deploy:
-        provider: script
-        skip_cleanup: true
-        script:
-          - npm run release
