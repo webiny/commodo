@@ -196,7 +196,7 @@ const ref: FieldFactory = ({
                         });
 
                         /**
-                         * Same as in EntityField, models present here were already validated when parent model called the validate method.
+                         * Same as in non-list ref field, models present here were already validated when parent model called the validate method.
                          * At this point, models are ready to be saved (only loaded models).
                          */
                         this.parent.onHook("__afterSave", async () => {
