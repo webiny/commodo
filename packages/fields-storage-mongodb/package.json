@@ -18,5 +18,12 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "keywords": [
+    "commodo",
+    "composeable",
+    "models",
+    "storage",
+    "mongodb"
+  ]
 }

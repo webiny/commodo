@@ -15,5 +15,11 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "keywords": [
+    "commodo",
+    "composeable",
+    "models",
+    "name"
+  ]
 }
