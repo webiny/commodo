@@ -124,7 +124,7 @@ const ref: FieldFactory = ({
                 init() {
                     if (list) {
                         if (!hasName(this.parent)) {
-                            throw Error("Parent entity has no name.");
+                            throw Error("Parent model has no name assigned.");
                         }
 
                         this.current = new Collection();
