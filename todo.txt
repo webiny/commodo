@@ -1,4 +1,0 @@
-- [ ] da li @commodo/fields-storage mora biti peer ili pravi dependency za storage-mongodb pckg ?
-        tu koristim recimo createPaginationData f-ju
-
-- [ ] ...
