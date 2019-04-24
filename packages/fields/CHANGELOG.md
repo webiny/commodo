@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.5](https://github.com/webiny/commodo/compare/@commodo/fields@0.0.4...@commodo/fields@0.0.5) (2019-04-24)
+
+
+### Bug Fixes
+
+* update README ([01daf25](https://github.com/webiny/commodo/commit/01daf25))
+
+
+
+
+
 ## [0.0.4](https://github.com/webiny/commodo/compare/@commodo/fields@0.0.3...@commodo/fields@0.0.4) (2019-04-24)
 
 **Note:** Version bump only for package @commodo/fields
