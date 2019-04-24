@@ -39,7 +39,8 @@
     "lint-staged": "lint-staged",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
-    "lerna:run:build": "lerna run build",
+    "lerna:build": "lerna run build",
+    "lerna:publish": "node scripts/publish.js",
     "cz": "git-cz"
   },
   "name": "commodo",
