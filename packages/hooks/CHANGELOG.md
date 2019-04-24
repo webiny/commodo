@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.4](https://github.com/webiny/commodo/compare/@commodo/hooks@0.0.3...@commodo/hooks@0.0.4) (2019-04-24)
+
+**Note:** Version bump only for package @commodo/hooks
+
+
+
+
+
 ## [0.0.3](https://github.com/webiny/commodo/compare/@commodo/hooks@0.0.2...@commodo/hooks@0.0.3) (2019-04-23)
 
 
