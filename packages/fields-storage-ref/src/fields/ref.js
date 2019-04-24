@@ -808,9 +808,9 @@ const ref: FieldFactory = ({
                     // Only if we have a valid ID set, we must load linked entity.
                     const initial = this.initial;
                     if (this.parent.isId(initial)) {
-                        const entityClass = this.getEntityClass();
-                        if (entityClass) {
-                            const entity = await entityClass.findById(initial);
+                        const modelClass = this.getEntityClass();
+                        if (modelClass) {
+                            const entity = await modelClass.findById(initial);
                             this.initial = entity;
                             // If current value is not dirty, than we can set initial value as current, otherwise we
                             // assume that something else was set as current value like a new entity.
