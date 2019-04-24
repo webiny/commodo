@@ -19,11 +19,8 @@ const VERDACCIO_NPM_REGISTRY = "http://localhost:4873";
     console.log(chalk.green("Creating a new version..."));
     const { stdout, stderr } = await execa.shell("lerna version --conventional-commits --yes");
 
-    if (stderr) {
-        console.log(chalk.red(stderr));
-        return;
-    }
-
+    // TODO: What if error?
+    console.log(chalk.red(stderr));
     console.log(stdout);
 
     console.log(chalk.green("Copying non-code files..."));
