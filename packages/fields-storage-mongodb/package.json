@@ -1,6 +1,6 @@
 {
   "name": "@commodo/fields-storage-mongodb",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -12,7 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "@commodo/fields": "^0.0.4",
-    "@commodo/fields-storage": "^0.0.5",
+    "@commodo/fields-storage": "^0.0.6",
     "mdbid": "^1.0.0",
     "mongodb": "^3.1.13"
   },

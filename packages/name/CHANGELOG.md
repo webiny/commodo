@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.6](https://github.com/webiny/commodo/compare/@commodo/name@0.0.5...@commodo/name@0.0.6) (2019-04-24)
+
+
+### Bug Fixes
+
+* update README ([41a1d7d](https://github.com/webiny/commodo/commit/41a1d7d))
+
+
+
+
+
 ## [0.0.5](https://github.com/webiny/commodo/compare/@commodo/name@0.0.4...@commodo/name@0.0.5) (2019-04-24)
 
 **Note:** Version bump only for package @commodo/name
