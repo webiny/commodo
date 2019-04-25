@@ -31,15 +31,15 @@
   },
   "scripts": {
     "test": "npm run test:src",
-    "test:src:coverage": "npx jest --config ./scripts/jest/config.src.js --coverage --collectCoverageFrom=src/**/*.js",
-    "test:src:coverage:coveralls": "npm run test:jest:src:coverage && cat ./coverage/lcov.info | coveralls",
+    "test:src:coverage": "yarn jest --config ./scripts/jest/config.src.js --coverage",
+    "test:src:coverage:coveralls": "npm run test:src:coverage && cat ./coverage/lcov.info | coveralls",
     "test:src": "jest --config ./scripts/jest/config.src.js --colors",
     "test:dist": "yarn lerna:run:build && jest --config ./scripts/jest/config.dist.js --colors",
-    "test:coverage": "yarn test --coverage",
     "lint-staged": "lint-staged",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "lerna:publish": "lerna publish --conventional-commits --yes --contents dist",
+    "lerna:rm-dist": "lerna exec -- rm -rf dist",
     "prepack": "node scripts/prepack.js",
     "cz": "git-cz"
   },
@@ -65,8 +65,5 @@
       "jest --config ./scripts/jest/config.src.js --findRelatedTests",
       "git add"
     ]
-  },
-  "dependencies": {
-    "@babel/runtime": "^7.4.3"
   }
 }
