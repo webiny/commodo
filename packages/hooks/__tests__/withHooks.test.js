@@ -88,3 +88,13 @@ test(`"withHooks" must assign hooks correctly`, async () => {
     });
 
 });
+
+test(`"withHooks" must not do anything if no hooks were passed`, async () => {
+    const TestModel = compose(
+        withHooks(),
+        withHooks()
+    )(function() {});
+
+    const model = new TestModel();
+    expect(model.__hooks).toEqual({});
+});
