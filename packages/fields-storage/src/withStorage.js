@@ -243,7 +243,7 @@ const withStorage = (configuration: Configuration) => {
                         } else {
                             const model = new this();
                             model.setExisting();
-                            model.populateFromStorage(result[i]);
+                            await model.populateFromStorage(result[i]);
                             this.getStoragePool().add(model);
                             collection.push(model);
                         }
@@ -316,7 +316,7 @@ const withStorage = (configuration: Configuration) => {
 
                     const model: $Subtype<Entity> = new this();
                     model.setExisting();
-                    model.populateFromStorage(((result: any): Object));
+                    await model.populateFromStorage(((result: any): Object));
                     this.getStoragePool().add(model);
                     return model;
                 }
