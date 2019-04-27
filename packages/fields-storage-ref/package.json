@@ -1,6 +1,6 @@
 {
   "name": "@commodo/fields-storage-ref",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -11,8 +11,8 @@
   ],
   "dependencies": {
     "@commodo/fields": "^0.0.5",
-    "@commodo/hooks": "^0.0.5",
-    "@commodo/name": "^0.0.7",
+    "@commodo/hooks": "^0.0.6",
+    "@commodo/name": "^0.0.8",
     "repropose": "^1.0.0"
   },
   "license": "MIT",

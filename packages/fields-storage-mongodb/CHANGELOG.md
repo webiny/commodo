@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@0.0.9...@commodo/fields-storage-mongodb@0.1.0) (2019-04-27)
+
+
+### Features
+
+* add "aggregate" function (specific to MongoDB) ([466f4fa](https://github.com/webiny/commodo/commit/466f4fa))
+
+
+
+
+
 ## [0.0.9](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@0.0.8...@commodo/fields-storage-mongodb@0.0.9) (2019-04-24)
 
 **Note:** Version bump only for package @commodo/fields-storage-mongodb
