@@ -6,7 +6,7 @@
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
-Commodo is a set of [higher order functions](https://en.wikipedia.org/wiki/Higher-order_function) that let you define and **com**pose rich data **mod**els.
+Commodo is a set of [higher order functions](https://en.wikipedia.org/wiki/Higher-order_function) that let you define and **com**pose rich data **mod**el **o**bjects.
 
 ## Quick example
 ```javascript
