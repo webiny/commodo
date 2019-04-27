@@ -61,28 +61,6 @@ class MongoDbDriver {
     }
 
     async find({ model, options }) {
-        if (options.aggregation) {
-            if (typeof options.aggregation === "function") {
-                return options.aggregation({
-                    aggregate: async pipeline => {
-                        return await this.getDatabase()
-                            .collection(this.getCollectionName(model))
-                            .aggregate(pipeline)
-                            .toArray();
-                    },
-                    QueryResult
-                });
-            }
-
-            // Get first documents from cursor using each
-            const results = await this.getDatabase()
-                .collection(this.getCollectionName(model))
-                .aggregate(options.aggregation)
-                .toArray();
-
-            return new QueryResult(results);
-        }
-
         const clonedOptions = { limit: 10, offset: 0, ...options };
 
         MongoDbDriver.__preparePerPageOption(clonedOptions);

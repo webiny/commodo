@@ -6,5 +6,6 @@ export default {
     deleteOne: () => {},
     countDocuments: () => {},
     updateOne: () => {},
-    insertOne: () => {}
+    insertOne: () => {},
+    aggregate: () => find
 };
