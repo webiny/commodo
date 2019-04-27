@@ -14,7 +14,7 @@ test(`"withHooks" must assign hooks correctly`, async () => {
             save() {
                 ++counts.save;
                 this.internalCounts.save += 10;
-            },
+            }
         }),
         withHooks({
             beforeSave() {
@@ -86,7 +86,6 @@ test(`"withHooks" must assign hooks correctly`, async () => {
         save: 30,
         afterSave: 0
     });
-
 });
 
 test(`"withHooks" must not do anything if no hooks were passed`, async () => {
@@ -97,4 +96,24 @@ test(`"withHooks" must not do anything if no hooks were passed`, async () => {
 
     const model = new TestModel();
     expect(model.__hooks).toEqual({});
+});
+
+test(`thrown errors`, async () => {
+    const TestModel = compose(
+        withHooks({
+            xyz: () => {
+                throw Error("Thrown.");
+            }
+        })
+    )(function() {});
+
+    const model = new TestModel();
+
+    try {
+        await model.triggerHook('xyz');
+    } catch (e) {
+        return;
+    }
+
+    throw Error(`Error should've been thrown.`);
 });
