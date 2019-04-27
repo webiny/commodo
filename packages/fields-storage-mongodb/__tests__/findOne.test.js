@@ -13,6 +13,7 @@ describe("findOne test", function() {
     beforeEach(() => SimpleModel.getStoragePool().flush());
     it("findOne - must generate correct query", async () => {
         const collectionSpy = sandbox.spy(database, "collection");
+        // We mock 'find' because it is called internally.
         const findOneSpy = sandbox.spy(collection, "find");
 
         await SimpleModel.findOne();
@@ -28,6 +29,7 @@ describe("findOne test", function() {
     });
 
     it("findOne - should find previously inserted model", async () => {
+        // We mock 'find' because it is called internally.
         const findOneStub = sandbox.stub(collection, "find").callsFake(() => {
             findCursor.data = [
                 {
@@ -50,6 +52,7 @@ describe("findOne test", function() {
     });
 
     it("findOne - should include search query if passed", async () => {
+        // We mock 'find' because it is called internally.
         const findOneSpy = sandbox.spy(collection, "find");
 
         await SimpleModel.findOne({

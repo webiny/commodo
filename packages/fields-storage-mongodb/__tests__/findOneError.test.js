@@ -7,6 +7,7 @@ describe("findOne error test", function() {
     afterEach(() => sandbox.restore());
 
     it("findOne - should find previously inserted model", async () => {
+        // We mock 'find' because it is called internally.
         const findOneStub = sandbox.stub(collection, "find").callsFake(() => {
             throw Error("This is an error.");
         });
