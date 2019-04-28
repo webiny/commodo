@@ -48,6 +48,11 @@ console.log(getName(user)); // "User"
 
 ## Reference
 
-#### `withName(name: string): Function`
-#### `hasName(any): boolean`
-#### `getName(any): string`
+##### `withName(name: string): Function`
+Assigns a name to an object.
+
+##### `hasName(any): boolean`
+Checks whether an object has a name assigned.
+
+##### `getName(any): string`
+Returns a name (if any) assigned to the passed value.
