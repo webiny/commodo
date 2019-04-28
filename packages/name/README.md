@@ -20,7 +20,7 @@ const Company = compose(
 )(function() {});
 ```
 
-Additionaly, use `hasName` and `getName` functions to determine if the object / `Function` object has a name assigned to it (using `withName`) and of course get the value when needed.
+Additionaly, use `hasName` and `getName` functions to determine if the object / `Function` object has a name assigned to it and of course get the actual value when needed.
 
 ```js
 import { withName, hasName, getName } from "@commodo/name";
