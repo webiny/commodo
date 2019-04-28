@@ -46,5 +46,5 @@ Creates a new function with hooks callbacks assigned to its instances. Every ins
 ##### `hook(name: string): Promise<void>`
 Calls a hook or in other words, executes all registered hook callbacks.
 
-##### `onHook(name: string, callback: Function)`
+##### `onHook(name: string, callback: Function)`
 Registers a callback for given hook.
