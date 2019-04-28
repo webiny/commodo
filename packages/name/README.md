@@ -46,8 +46,8 @@ console.log(hasName(user)); // true
 console.log(getName(user)); // "User"
 ```
 
-# Reference
+## Reference
 
-### `withName(name: string): Function`
-### `hasName(any): boolean`
-### `getName(any): string`
+#### `withName(name: string): Function`
+#### `hasName(any): boolean`
+#### `getName(any): string`
