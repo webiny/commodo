@@ -68,7 +68,7 @@ user.populate({
 await user.save();
 ```
 
-## List of core HOFs:
+## Core packages:
 
 | Package | Short Description |
 | :--- | :---: |
@@ -76,6 +76,11 @@ await user.save();
 | [@commodo/name](./packages/name) | Assign a name to your models. |
 | [@commodo/hooks](./packages/hooks) | Provides methods for defining and triggering hooks on your models. |
 | [@commodo/fields-storage](./packages/fields-storage) | Enables saving models, for example to a MongoDB or MySQL database. |
+
+## Additional packages:
+
+| Package | Short Description |
+| :--- | :---: |
 | [@commodo/fields-storage-ref](./packages/fields-storage-ref) | Provides `ref` field, for saving references to other models saved in database. |
 | [@commodo/fields-storage-mongodb](./packages/fields-storage-mongodb) | A MongoDB driver for @commodo/fields-storage package. |
 
