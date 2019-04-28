@@ -3,7 +3,7 @@
 Use `withHooks` higher order function to define custom hooks - points in code on which you can hook on to, and execute one or more snyc or async callbacks.
 
 ## Example
-In the following example, an "emailSent" hook is defined in the `sendEmail` method. And upon applying `withHooks`, a callback to it is defined.
+In the following example, in the `sendEmail` method, an "emailSent" hook is defined. Note that the `await` keyword is prepended, since registered hook callbacks can contain async code. But this is not a requirement -  some use cases might not need to wait for all of the registered callbacks to resolve.
 
 ```js
 import { withHooks } from "@commodo/hooks";
@@ -35,4 +35,4 @@ const Company = compose(
 )(function() {});
 ```
 
-A good example where hooks are utilized is the [withStorage](../fields-storage) higher order function, which once applied, registers a set of hooks like `beforeCreate`, `afterCreate`, `beforeUpdate` and so on. These enable you to append additional functionality at a specific action.
+A good example where hooks are also utilized is the [withStorage](../fields-storage) higher order function, which once applied, registers a set of hooks like `beforeCreate`, `afterCreate`, `beforeUpdate` and so on.
