@@ -41,7 +41,12 @@ A good example where hooks are also utilized is the [withStorage](../fields-stor
 ## Reference
 
 ##### `withHooks(callbacks: ?{[string]: Function}): WithHooksFunction`
-Creates a new function with hooks callbacks assigned to its instances. Every instance also receives `hook` and `onHook` methods, for defining and triggering additional hooks inside methods.
+Creates a new function with hook callbacks assigned to its instances. 
+Passed argument is an object that contains names of hooks as keys, and callbacks as values.
+
+### WithHooksFunction
+
+Instances of `WithHooksFunction` are decorated with `hook` and `onHook` methods.
 
 ##### `hook(name: string): Promise<void>`
 Calls a hook or in other words, executes all registered hook callbacks.
