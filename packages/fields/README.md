@@ -1,7 +1,7 @@
 # @commodo/fields
 Creates a new function, whose instances are decorated with defined fields and additional methods.
 
-## Example
+## Usage
 ```js
 import { withFields, string, number, boolean, fields } from "@commodo/fields";
 import { compose } from "ramda";
