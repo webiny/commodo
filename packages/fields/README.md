@@ -67,5 +67,5 @@ Returns a single field.
 #### `clean(): void`
 Sets instance as clean.
 
-#### `isDirty(): void`
+#### `isDirty(): boolean`
 Checks if instance is dirty.
