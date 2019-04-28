@@ -3,7 +3,7 @@ Creates a new function, whose instances will contain passed fields.
 
 ## Example
 ```js
-import { withFields, string, number, boolean, model } from "@commodo/fields";
+import { withFields, string, number, boolean, fields } from "@commodo/fields";
 import { compose } from "ramda";
 
 const User = compose(
