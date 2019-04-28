@@ -1,6 +1,6 @@
 # @commodo/name
 
-Use `withName` higher order function to assign a name of the model.
+Use `withName` higher order function to assign a name to objects and `Function` objects.
 
 ## Example
 
@@ -20,15 +20,15 @@ const Company = compose(
 )(function() {});
 ```
 
-## Helper functions
+## Additional functions
 
-Use `hasName` and `getName` functions to determine if the object has a name assigned to it (using `withName`) and of course get the value when needed.
+Use `hasName` and `getName` functions to determine if the object / `Function` object has a name assigned to it (using `withName`) and of course get the value when needed.
 
 ```
 import { withName, hasName, getName } from "@commodo/name";
 import { compose } from "ramda";
 
-// Define two models and assign a name to the second one.
+// Create two functions and only assign a name to the second one.
 const Unknown = function() {};
 const User = compose(
   withName("User"),
