@@ -11,7 +11,7 @@ const User = compose(
       email: string(),
       previousEmails: string({ list: true }),
       age: number({
-         validation: (value) => {
+         validation: value => {
             if (value < 30) {
                throw Error("User too young.")
             }
