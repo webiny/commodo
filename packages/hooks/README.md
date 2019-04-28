@@ -39,7 +39,7 @@ const Company = compose(
   ...
 )(function() {});
 ```
-Note: for more information about the `withProps` higher order function, please check the docs of the [repropose](https://github.com/doitadrian/commodo/edit/master/packages/hooks/README.md) package.
+Note: for more information about the `withProps` higher order function, please check the docs of the [repropose](https://github.com/doitadrian/repropose) package.
 
 ## Reference
 
