@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@0.1.2...@commodo/fields-storage-mongodb@0.2.0) (2019-04-28)
+
+
+### Features
+
+* rename "object" field to "fields" ([3f17ceb](https://github.com/webiny/commodo/commit/3f17ceb))
+
+
+
+
+
 ## [0.1.2](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@0.1.1...@commodo/fields-storage-mongodb@0.1.2) (2019-04-28)
 
 **Note:** Version bump only for package @commodo/fields-storage-mongodb

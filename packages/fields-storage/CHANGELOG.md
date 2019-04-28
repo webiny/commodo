@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage@0.0.11...@commodo/fields-storage@0.1.0) (2019-04-28)
+
+
+### Features
+
+* rename "object" field to "fields" ([3f17ceb](https://github.com/webiny/commodo/commit/3f17ceb))
+
+
+
+
+
 ## [0.0.11](https://github.com/webiny/commodo/compare/@commodo/fields-storage@0.0.10...@commodo/fields-storage@0.0.11) (2019-04-28)
 
 
