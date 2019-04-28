@@ -44,7 +44,7 @@ A good example where hooks are also utilized is the [withStorage](../fields-stor
 Creates a new function with hook callbacks assigned to its instances. 
 Passed argument is an object that contains names of hooks as keys, and callbacks as values.
 
-### WithHooksFunction
+### `WithHooksFunction`
 
 Instances of `WithHooksFunction` are decorated with `hook` and `onHook` methods.
 
