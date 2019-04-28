@@ -43,7 +43,7 @@ Note: for more information about the `withProps` higher order function, please c
 
 ## Reference
 
-##### `withHooks(callbacks: ?{[string]: Function}): WithHooksFunction`
+#### `withHooks(callbacks: ?{[string]: Function}): WithHooksFunction`
 Creates a new function, whose instances are decorated with methods for defining hooks and registering hook callbacks. 
 Optionally, one or more hook callbacks can be passed as the first argument - an object that contains names of the hooks as keys, and callbacks as values.
 
@@ -51,8 +51,8 @@ Optionally, one or more hook callbacks can be passed as the first argument - an 
 
 Instances of `WithHooksFunction` are decorated with `hook` and `registerHookCallback` methods.
 
-##### `hook(name: string): Promise<void>`
+#### `hook(name: string): Promise<void>`
 Calls a hook or in other words, executes all registered hook callbacks.
 
-##### `registerHookCallback(name: string, callback: Function)`
+#### `registerHookCallback(name: string, callback: Function)`
 Registers a callback for given hook. Useful when registering hooks inside of custom methods.
