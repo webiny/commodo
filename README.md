@@ -84,6 +84,12 @@ await user.save();
 | [@commodo/fields-storage-ref](./packages/fields-storage-ref) | Provides `ref` field, for saving references to other models saved in database. |
 | [@commodo/fields-storage-mongodb](./packages/fields-storage-mongodb) | A MongoDB driver for @commodo/fields-storage package. |
 
+## Community packages:
+
+| Package | Short Description |
+| :--- | :---: |
+| [commodo-fields-date](./packages/fields-storage-ref) | Provides `date` field, for saving dates. |
+
 ## Contributing
 Please see our [Contributing Guideline](/CONTRIBUTING.md) which explains repo organization, linting, testing, and other steps.
 
