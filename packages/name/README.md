@@ -20,7 +20,7 @@ const Company = compose(
 )(function() {});
 ```
 
-Additionaly, use `hasName` and `getName` functions to determine if function or its instance has a name and of course to get the actual value when needed.
+Additionaly, use `hasName` function to determine if a function or an instance of a function has a name and when needed, `getName` function get the actual value.
 
 ```js
 import { withName, hasName, getName } from "@commodo/name";
@@ -52,7 +52,7 @@ console.log(getName(user)); // "User"
 Returns a new function with a name assigned to it and all of its instances.
 
 ##### `hasName(any): boolean`
-Checks whether an object has a name assigned.
+Checks if a passed value has a name assigned.
 
 ##### `getName(any): string`
 Returns a name assigned to the passed value.
