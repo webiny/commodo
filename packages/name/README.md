@@ -22,7 +22,7 @@ const Company = compose(
 
 ## Helper functions
 
-Use `hasName` and `getName` functions to determine if the object has a name assigned (using `withName`) and get the value.
+Use `hasName` and `getName` functions to determine if the object has a name assigned to it (using `withName`) and of course get the value when needed.
 
 ```
 import { withName } from "@commodo/name";
