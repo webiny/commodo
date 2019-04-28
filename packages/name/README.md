@@ -51,7 +51,7 @@ console.log(getName(user)); // "User"
 Creates a new function with a name assigned to it and passed to its instances.
 
 ##### `hasName(value: any): boolean`
-Checks if a passed value has a name assigned to it.
+Checks if passed value has a name assigned to it.
 
 ##### `getName(value: any): string`
 Returns a name assigned to the passed value. Returns empty string if none assigned.
