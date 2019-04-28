@@ -45,15 +45,27 @@ async user.validate();
 
 ## Reference
 
-##### `withFields(fields : { [string] : FieldFactory }): WithFieldsFunction`
+#### `withFields(fields : { [string] : FieldFactory }): WithFieldsFunction`
 Creates a new function, whose instances contain defined fields and are decorated with `populate` and `validate` methods.
 
 ### `WithFieldsFunction`
 
 Except fields, instances of `WithFieldsFunction` are decorated with a couple of useful methods.
 
-##### `populate(data: Object): void`
-Calls a hook or in other words, executes all registered hook callbacks.
+#### `populate(data: Object): void`
+Populates fields with given data.
 
-##### `registerHookCallback(name: string, callback: Function)`
-Registers a callback for given hook. Useful when registering hooks inside of custom methods.
+#### `validate(): Promise<void>`
+Validates all fields.
+
+#### `getFields(): Array<Field>`
+Returns all fields.
+
+#### `getField(name: string): ?Field`
+Returns a single field.
+
+#### `clean(): void`
+Sets instance as clean.
+
+#### `isDirty(): void`
+Checks if instance is dirty.
