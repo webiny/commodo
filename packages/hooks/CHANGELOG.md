@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.7](https://github.com/webiny/commodo/compare/@commodo/hooks@0.0.6...@commodo/hooks@0.0.7) (2019-04-28)
+
+
+### Bug Fixes
+
+* rename "onHook" method to "registerHookCallback" ([7db77d5](https://github.com/webiny/commodo/commit/7db77d5))
+* rename "triggerHook" method to just "hook" ([c350add](https://github.com/webiny/commodo/commit/c350add))
+
+
+
+
+
 ## [0.0.6](https://github.com/webiny/commodo/compare/@commodo/hooks@0.0.5...@commodo/hooks@0.0.6) (2019-04-27)
 
 **Note:** Version bump only for package @commodo/hooks
