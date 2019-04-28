@@ -38,7 +38,7 @@ console.log(hasName(Unknown)); // false
 console.log(hasName(User)); // true
 console.log(getName(User)); // "User"
 
-// It also works on function instances.
+// Also works on an instance of a function.
 const user = new User();
 
 console.log(hasName(user)); // true
