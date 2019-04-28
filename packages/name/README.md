@@ -34,6 +34,7 @@ const User = compose(
 
 // The Unknown function doesn't have a name assigned.
 console.log(hasName(Unknown)); // false
+console.log(getName(Unknown)); // ""
 
 console.log(hasName(User)); // true
 console.log(getName(User)); // "User"
