@@ -1,7 +1,7 @@
 # @commodo/hooks
 Hooks are points in code on which you can hook on to and execute one or more callbacks. 
 
-This is where the `withHooks` higher order function comes in. It creates a new function, decorated with methods for defining hooks and registration of callbacks.
+This is where the `withHooks` higher order function comes in. It creates a new function, decorated with methods for defining custom hooks and registration of hook callbacks.
 
 ## Example
 In the following example, an "emailSent" hook is defined in the `sendEmail` method. Note that the `await` keyword is prepended, since registered hook callbacks can contain async code. But this is not a requirement - in some use cases making a call without the `await` keyword can also suffice.
