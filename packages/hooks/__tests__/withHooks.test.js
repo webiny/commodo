@@ -37,10 +37,10 @@ test(`"withHooks" must assign hooks correctly`, async () => {
                 afterSave: 0
             },
             async save() {
-                await this.triggerHook("beforeSave");
-                await this.triggerHook("save");
+                await this.hook("beforeSave");
+                await this.hook("save");
                 // Here we would do: await instance.save();
-                await this.triggerHook("afterSave");
+                await this.hook("afterSave");
 
                 // Just testing inline "afterSave" hook registration.
                 this.onHook("afterSave", () => {
@@ -110,7 +110,7 @@ test(`thrown errors`, async () => {
     const model = new TestModel();
 
     try {
-        await model.triggerHook('xyz');
+        await model.hook('xyz');
     } catch (e) {
         return;
     }

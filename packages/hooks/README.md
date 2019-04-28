@@ -22,7 +22,7 @@ const User = compose(
             
             // Trigger "emailSent" hook.
             // Since registered callbacks can contain async code, we use await keyword.
-            await this.triggerHook("emailSent")
+            await this.hook("emailSent")
             
             return true;
         }

@@ -28,19 +28,19 @@ const defaults = {
     }
 };
 
-const triggerHook = async (name, { params, model }) => {
+const hook = async (name, { params, model }) => {
     if (params.hooks[name] === false) {
         return;
     }
-    await model.triggerHook(name, { model, params });
+    await model.hook(name, { model, params });
 };
 
-const triggerSaveUpdateCreateHooks = async (prefix, { existing, model, params }) => {
-    await triggerHook(prefix + "Save", { model, params });
+const registerSaveUpdateCreateHooks = async (prefix, { existing, model, params }) => {
+    await hook(prefix + "Save", { model, params });
     if (existing) {
-        await triggerHook(prefix + "Update", { model, params });
+        await hook(prefix + "Update", { model, params });
     } else {
-        await triggerHook(prefix + "Create", { model, params });
+        await hook(prefix + "Create", { model, params });
     }
 };
 
@@ -88,19 +88,19 @@ const withStorage = (configuration: Configuration) => {
 
                 const existing = this.isExisting();
 
-                await triggerSaveUpdateCreateHooks("before", { existing, model: this, params });
+                await registerSaveUpdateCreateHooks("before", { existing, model: this, params });
 
                 try {
-                    await triggerHook("__save", { model: this, params });
+                    await hook("__save", { model: this, params });
                     if (existing) {
-                        await triggerHook("__update", { model: this, params });
+                        await hook("__update", { model: this, params });
                     } else {
-                        await triggerHook("__create", { model: this, params });
+                        await hook("__create", { model: this, params });
                     }
 
                     params.validation !== false && (await this.validate());
 
-                    await triggerSaveUpdateCreateHooks("__before", {
+                    await registerSaveUpdateCreateHooks("__before", {
                         existing,
                         model: this,
                         params
@@ -115,7 +115,7 @@ const withStorage = (configuration: Configuration) => {
                         });
                     }
 
-                    await triggerSaveUpdateCreateHooks("__after", {
+                    await registerSaveUpdateCreateHooks("__after", {
                         existing,
                         model: this,
                         params
@@ -131,7 +131,7 @@ const withStorage = (configuration: Configuration) => {
                     this.__storage.processing = null;
                 }
 
-                await triggerSaveUpdateCreateHooks("after", { existing, model: this, params });
+                await registerSaveUpdateCreateHooks("after", { existing, model: this, params });
             },
             /**
              * Deletes current and all linked models (if autoDelete on the attribute was enabled).
@@ -147,14 +147,14 @@ const withStorage = (configuration: Configuration) => {
                 params = { ...params, ...defaults.delete };
 
                 try {
-                    await this.triggerHook("delete", { params, model: this });
+                    await this.hook("delete", { params, model: this });
 
                     params.validation !== false && (await this.validate());
 
-                    await this.triggerHook("beforeDelete", { params, model: this });
+                    await this.hook("beforeDelete", { params, model: this });
 
                     await this.getStorageDriver().delete({ model: this, params });
-                    await this.triggerHook("afterDelete", { params, model: this });
+                    await this.hook("afterDelete", { params, model: this });
 
                     this.constructor.getStoragePool().remove(this);
                 } catch (e) {

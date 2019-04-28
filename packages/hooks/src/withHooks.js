@@ -26,7 +26,7 @@ const withHooks = (hooks: ?{ [string]: Function }) => {
 
                     this.__hooks[name].push(cb);
                 },
-                async triggerHook(...args) {
+                async hook(...args) {
                     const [name, ...rest] = args;
                     if (Array.isArray(this.__hooks[name])) {
                         for (let i = 0; i < this.__hooks[name].length; i++) {

@@ -258,7 +258,7 @@ const ref: FieldFactory = ({
                                 };
                                 for (let i = 0; i < models.current.length; i++) {
                                     if (__instanceOf(models.current[i], models.class)) {
-                                        await models.current[i].triggerHook("delete");
+                                        await models.current[i].hook("delete");
                                     }
                                 }
                             }
@@ -350,7 +350,7 @@ const ref: FieldFactory = ({
                                 await this.load();
                                 const model = this.initial;
                                 if (__instanceOf(model, instanceOf)) {
-                                    await model.triggerHook("delete");
+                                    await model.hook("delete");
                                 }
                             }
                         });
