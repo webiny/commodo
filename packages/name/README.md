@@ -25,7 +25,7 @@ const Company = compose(
 Use `hasName` and `getName` functions to determine if the object has a name assigned to it (using `withName`) and of course get the value when needed.
 
 ```
-import { withName } from "@commodo/name";
+import { withName, hasName, getName } from "@commodo/name";
 import { compose } from "ramda";
 
 // Define two models and assign a name to them.
