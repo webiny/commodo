@@ -1,5 +1,5 @@
 # @commodo/fields
-Creates a new function, whose instances will contain passed fields.
+Creates a new function, whose instances are decorated with defined fields and additional methods.
 
 ## Example
 ```js
@@ -9,6 +9,7 @@ import { compose } from "ramda";
 const User = compose(
    withFields({
         email: string(),
+        previousEmails: string({ list: true }),
         age: number(),
         verified: boolean(),
         company: fields({ instanceOf: Company })
