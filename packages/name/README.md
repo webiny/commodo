@@ -2,7 +2,7 @@
 
 Use `withName` higher order function to assign a name to objects.
 
-## Example
+## Usage
 
 ```js
 import { withName } from "@commodo/name";
