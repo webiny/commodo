@@ -169,7 +169,7 @@ const ref: FieldFactory = ({
                          */
                         this.toStorage = false;
 
-                        this.parent.onHook("__save", async () => {
+                        this.parent.registerHookCallback("__save", async () => {
                             if (this.readOnly === true) {
                                 return;
                             }
@@ -199,7 +199,7 @@ const ref: FieldFactory = ({
                          * Same as in non-list ref field, models present here were already validated when parent model called the validate method.
                          * At this point, models are ready to be saved (only loaded models).
                          */
-                        this.parent.onHook("__afterSave", async () => {
+                        this.parent.registerHookCallback("__afterSave", async () => {
                             if (this.readOnly === true) {
                                 return;
                             }
@@ -243,7 +243,7 @@ const ref: FieldFactory = ({
                             }
                         });
 
-                        this.parent.onHook("delete", async () => {
+                        this.parent.registerHookCallback("delete", async () => {
                             if (this.readOnly === true) {
                                 return;
                             }
@@ -264,7 +264,7 @@ const ref: FieldFactory = ({
                             }
                         });
 
-                        this.parent.onHook("beforeDelete", async () => {
+                        this.parent.registerHookCallback("beforeDelete", async () => {
                             if (this.readOnly === true) {
                                 return;
                             }
@@ -311,7 +311,7 @@ const ref: FieldFactory = ({
                          * validation will be called internally in the save method. Save operations will be executed starting from bottom
                          * nested models, ending with the main parent model.
                          */
-                        this.parent.onHook("__beforeSave", async () => {
+                        this.parent.registerHookCallback("__beforeSave", async () => {
                             if (this.readOnly === true) {
                                 return;
                             }
@@ -341,7 +341,7 @@ const ref: FieldFactory = ({
                          * Once parent model starts the delete process, we must also make the same on all linked models.
                          * The deletes are done on initial storage models, not on models stored as current value.
                          */
-                        this.parent.onHook("delete", async () => {
+                        this.parent.registerHookCallback("delete", async () => {
                             if (this.readOnly === true) {
                                 return;
                             }
@@ -355,7 +355,7 @@ const ref: FieldFactory = ({
                             }
                         });
 
-                        this.parent.onHook("beforeDelete", async () => {
+                        this.parent.registerHookCallback("beforeDelete", async () => {
                             if (this.getAutoDelete()) {
                                 await this.load();
                                 const model = this.initial;

@@ -46,10 +46,10 @@ Creates a new function with callbacks to hooks passed to its instances.
 
 ### `WithHooksFunction`
 
-Instances of `WithHooksFunction` are decorated with `hook` and `onHook` methods.
+Instances of `WithHooksFunction` are decorated with `hook` and `registerHookCallback` methods.
 
 ##### `hook(name: string): Promise<void>`
 Calls a hook or in other words, executes all registered hook callbacks.
 
-##### `onHook(name: string, callback: Function)`
+##### `registerHookCallback(name: string, callback: Function)`
 Registers a callback for given hook. Useful when registering hooks inside of custom methods.

@@ -7,7 +7,7 @@ const withHooks = (hooks: ?{ [string]: Function }) => {
         withProps(props => {
             if (hooks) {
                 Object.keys(hooks).forEach((name: string) => {
-                    hooks && hooks[name] && props.onHook(name, hooks[name]);
+                    hooks && hooks[name] && props.registerHookCallback(name, hooks[name]);
                 });
             }
             return {};
@@ -19,7 +19,7 @@ const withHooks = (hooks: ?{ [string]: Function }) => {
 
             return {
                 __hooks: {},
-                onHook(name, cb) {
+                registerHookCallback(name, cb) {
                     if (!this.__hooks[name]) {
                         this.__hooks[name] = [];
                     }
