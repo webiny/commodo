@@ -1,6 +1,6 @@
 # @commodo/name
 
-Use `withName` higher order function to assign a name to objects.
+Use `withName` higher order function to create a new function with a name assigned to it.
 
 ## Usage
 
@@ -20,7 +20,7 @@ const Company = compose(
 )(function() {});
 ```
 
-Additionaly, use `hasName` and `getName` functions to determine if the object / `Function` object has a name assigned to it and of course get the actual value when needed.
+Additionaly, use `hasName` and `getName` functions to determine if function or its instance has a name and of course to get the actual value when needed.
 
 ```js
 import { withName, hasName, getName } from "@commodo/name";
