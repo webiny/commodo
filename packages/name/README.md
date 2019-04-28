@@ -1,6 +1,6 @@
 # @commodo/name
 
-Use `withName` higher order function to assign a name to objects and `Function` objects.
+Use `withName` higher order function to assign a name to objects.
 
 ## Example
 
@@ -20,7 +20,7 @@ const Company = compose(
 )(function() {});
 ```
 
-## Additional functions
+### Additional functions
 
 Use `hasName` and `getName` functions to determine if the object / `Function` object has a name assigned to it (using `withName`) and of course get the value when needed.
 
@@ -47,3 +47,8 @@ const user = new User();
 console.log(hasName(user)); // true
 console.log(getName(user)); // "User"
 ```
+
+# Reference
+### withName(name: string): Function
+### hasName(any): boolean
+### getName(any): string
