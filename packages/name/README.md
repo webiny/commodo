@@ -49,10 +49,10 @@ console.log(getName(user)); // "User"
 ## Reference
 
 ##### `withName(name: string): Function`
-Creates a new function with a name assigned to it.
+Creates a new function with a name assigned to it and passed to its instances.
 
-##### `hasName(any): boolean`
+##### `hasName(value: any): boolean`
 Checks if a passed value has a name assigned to it.
 
-##### `getName(any): string`
-Returns a name assigned to the passed value.
+##### `getName(value: any): string`
+Returns a name assigned to the passed value. Returns empty string if none assigned.
