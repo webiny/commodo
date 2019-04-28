@@ -4,19 +4,19 @@ Use `withName` higher order function to assign a name to objects and `Function` 
 
 ## Example
 
-```
+```js
 import { withName } from "@commodo/name";
 import { compose } from "ramda";
 
 // Define two models and assign a name to them.
 const User = compose(
   withName("User"),
-  ...
+  (...)
 )(function() {});
 
 const Company = compose(
   withName("Company"),
-  ...
+  (...)
 )(function() {});
 ```
 
@@ -24,7 +24,7 @@ const Company = compose(
 
 Use `hasName` and `getName` functions to determine if the object / `Function` object has a name assigned to it (using `withName`) and of course get the value when needed.
 
-```
+```js
 import { withName, hasName, getName } from "@commodo/name";
 import { compose } from "ramda";
 
@@ -32,7 +32,7 @@ import { compose } from "ramda";
 const Unknown = function() {};
 const User = compose(
   withName("User"),
-  ...
+  (...)
 )(function() {});
 
 // The Unknown object doesn't have a name assigned.
