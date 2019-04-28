@@ -1,7 +1,7 @@
 class FieldsStorageAdapter {
     constructor() {
         this.fields = {
-            object: [
+            fields: [
                 async field => {
                     const value = field.getValue();
                     if (field.list) {

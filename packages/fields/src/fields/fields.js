@@ -28,10 +28,10 @@ const prepareValue = ({ value, instanceOf }) => {
     return newValue;
 };
 
-const object: FieldFactory = ({ list, instanceOf, ...rest }: Object) => {
+const fields: FieldFactory = ({ list, instanceOf, ...rest }: Object) => {
     if (!instanceOf) {
         throw new WithFieldsError(
-            `When defining a "object" field, "instanceOf" argument must be set.`,
+            `When defining a "fields" field, "instanceOf" argument must be set.`,
             WithFieldsError.MODEL_FIELD_INSTANCEOF_NOT_SET
         );
     }
@@ -75,7 +75,7 @@ const object: FieldFactory = ({ list, instanceOf, ...rest }: Object) => {
                 }
             };
         })
-    )(createField({ ...rest, list, type: "object" }));
+    )(createField({ ...rest, list, type: "fields" }));
 };
 
-export default object;
+export default fields;

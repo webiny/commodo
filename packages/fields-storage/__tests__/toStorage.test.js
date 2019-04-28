@@ -1,5 +1,5 @@
 import User from "./resources/models/user";
-import { withFields, string, number, object, onGet, readOnly } from "@commodo/fields";
+import { withFields, string, number, fields, onGet, readOnly } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { compose } from "ramda";
 import Model from "./resources/models/Model";
@@ -45,19 +45,19 @@ describe("toStorage test", () => {
                     readOnly(),
                     onGet(() => "attr3DynValue")
                 )(number()),
-                attr4: object({ instanceOf: C }),
-                attr5: object({ instanceOf: C, list: true }),
+                attr4: fields({ instanceOf: C }),
+                attr5: fields({ instanceOf: C, list: true }),
                 attr6: compose(
                     readOnly(),
                     onGet(() => new C().populate({ attr1: "attr6DynValue" }))
-                )(object({ instanceOf: C })),
+                )(fields({ instanceOf: C })),
                 attr7: compose(
                     readOnly(),
                     onGet(() => [
                         new C().populate({ attr1: "attr6DynValue" }),
                         new C().populate({ attr1: "attr6DynValue" })
                     ])
-                )(object({ instanceOf: C, list: true, readOnly: true }))
+                )(fields({ instanceOf: C, list: true, readOnly: true }))
             }),
             withName("B")
         )(Model);
@@ -70,7 +70,7 @@ describe("toStorage test", () => {
                     readOnly(),
                     onGet(() => "attr3DynValue")
                 )(number()),
-                attr4: object({ instanceOf: B })
+                attr4: fields({ instanceOf: B })
             }),
             withName("A")
         )(Model);

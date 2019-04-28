@@ -1,4 +1,4 @@
-import { withFields, number, string, boolean, object } from "@commodo/fields";
+import { withFields, number, string, boolean, fields } from "@commodo/fields";
 import { compose } from "ramda";
 
 const noop = function() {};
@@ -19,7 +19,7 @@ export const Size = compose(
 export const Image = compose(
     withFields({
         file: string(),
-        size: object({ instanceOf: Size }),
+        size: fields({ instanceOf: Size }),
         visible: boolean({ defaultValue: false })
     })
 )(noop);
@@ -33,7 +33,7 @@ export const Company = compose(
                 }
             }
         }),
-        image: object({
+        image: fields({
             instanceOf: Image,
             validation(value) {
                 if (!value) {
@@ -69,7 +69,7 @@ export const User = compose(
                 return value;
             }
         }),
-        company: object({
+        company: fields({
             instanceOf: Company,
             validation(value) {
                 if (!value) {

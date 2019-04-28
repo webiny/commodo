@@ -1,6 +1,6 @@
 import { User, Company } from "./models/userModels";
 import { compose } from "ramda";
-import { withFields, object, WithFieldsError, setOnce, onSet, onGet } from "@commodo/fields";
+import { withFields, fields, WithFieldsError, setOnce, onSet, onGet } from "@commodo/fields";
 const noop = function() {};
 
 describe("field object test", () => {
@@ -11,9 +11,9 @@ describe("field object test", () => {
 
         const Model = compose(
             withFields({
-                field1: object({ instanceOf: Model1 }),
-                field2: object({ instanceOf: Model2 }),
-                invalidField: object({ instanceOf: InvalidModel })
+                field1: fields({ instanceOf: Model1 }),
+                field2: fields({ instanceOf: Model2 }),
+                invalidField: fields({ instanceOf: InvalidModel })
             })
         )(noop);
 
@@ -39,7 +39,7 @@ describe("field object test", () => {
             }
 
             expect(error.message).toBe(
-                `Invalid data type: object field "field1" cannot accept value [object Object].`
+                `Invalid data type: fields field "field1" cannot accept value [object Object].`
             );
         });
 
@@ -51,7 +51,7 @@ describe("field object test", () => {
                 error = e;
             }
             expect(error.message).toBe(
-                `Invalid data type: object field "field2" cannot accept value [object Object].`
+                `Invalid data type: fields field "field2" cannot accept value [object Object].`
             );
         });
 
@@ -226,7 +226,7 @@ describe("field object test", () => {
         const UserWithSetOnce = compose(
             withFields({
                 company: compose(setOnce())(
-                    object({
+                    fields({
                         instanceOf: Company,
                         validation(value) {
                             if (!value) {
@@ -262,7 +262,7 @@ describe("field object test", () => {
                 company: compose(
                     onSet(() => ({ name: "onSet Name Value", city: "onSet City Value" }))
                 )(
-                    object({
+                    fields({
                         instanceOf: Company
                     })
                 )
@@ -283,7 +283,7 @@ describe("field object test", () => {
         const UserWithOnGetOnSet = compose(
             withFields({
                 company: compose(onGet(() => ({ random: "Something overridden randomly." })))(
-                    object({
+                    fields({
                         instanceOf: Company
                     })
                 )

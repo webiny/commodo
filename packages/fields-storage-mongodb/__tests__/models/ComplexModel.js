@@ -1,5 +1,5 @@
 import Model from "./model";
-import { withFields, string, object, boolean } from "@commodo/fields";
+import { withFields, string, fields, boolean } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { ref } from "@commodo/fields-storage-ref";
 import { id } from "@commodo/fields-storage-mongodb";
@@ -44,8 +44,8 @@ const ComplexModel = compose(
     withFields({
         firstName: string(),
         lastName: string(),
-        verification: object({ instanceOf: VerificationModel }),
-        tags: object({ list: true, instanceOf: TagModel }),
+        verification: fields({ instanceOf: VerificationModel }),
+        tags: fields({ list: true, instanceOf: TagModel }),
         simpleModel: ref({ instanceOf: SimpleModel }),
         simpleModels: ref({ list: true, instanceOf: SimpleModel })
     }),

@@ -1,5 +1,5 @@
 import { compose } from "ramda";
-import { withFields, onSet, onGet, string, number, boolean, object, setOnce } from "@commodo/fields";
+import { withFields, onSet, onGet, string, number, boolean, fields, setOnce } from "@commodo/fields";
 
 describe("field models test", () => {
     const Model1 = compose(
@@ -44,8 +44,8 @@ describe("field models test", () => {
 
     const Model = compose(
         withFields({
-            field1: object({ instanceOf: Model1, list: true }),
-            field2: object({ instanceOf: Model2, list: true })
+            field1: fields({ instanceOf: Model1, list: true }),
+            field2: fields({ instanceOf: Model2, list: true })
         })
     )(function() {});
 
@@ -168,7 +168,7 @@ describe("field models test", () => {
         } catch (e) {
             expect(e.code).toBe("FIELD_DATA_TYPE_ERROR");
             expect(e.message).toBe(
-                'Invalid data type: object field "field1" cannot accept value 123.'
+                'Invalid data type: fields field "field1" cannot accept value 123.'
             );
             return;
         }
@@ -179,7 +179,7 @@ describe("field models test", () => {
     test("validation must be executed on both field and model level", async () => {
         const Model = compose(
             withFields({
-                field1: object({
+                field1: fields({
                     instanceOf: Model1,
                     list: true,
                     validation: value => {
@@ -235,7 +235,7 @@ describe("field models test", () => {
     test("should not set value if setOnce is enabled", async () => {
         const ModelWithSetOnce = compose(
             withFields({
-                field1: compose(setOnce())(object({ list: true, instanceOf: Model1 }))
+                field1: compose(setOnce())(fields({ list: true, instanceOf: Model1 }))
             })
         )(function() {});
 
@@ -270,7 +270,7 @@ describe("field models test", () => {
                     onGet(value => {
                         return applyOnGet ? "random" : value;
                     })
-                )(object({ list: true, instanceOf: Model1 }))
+                )(fields({ list: true, instanceOf: Model1 }))
             })
         )(function() {});
 

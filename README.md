@@ -36,7 +36,7 @@ const User = compose(
     age: number(),
     scores: number({ list: true }),
     enabled: boolean({ value: false }),
-    verification: object({ instanceOf: Verification })
+    verification: fields({ instanceOf: Verification })
   }),
   withHooks({
     async beforeCreate() {
