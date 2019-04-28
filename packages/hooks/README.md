@@ -4,7 +4,7 @@ Hooks are points in code on which you can hook on to and execute one or more cal
 This is where the `withHooks` higher order function comes in. It creates a new function, decorated with methods for defining custom hooks and registration of hook callbacks.
 
 ## Example
-In the following example, an "emailSent" hook is defined in the `sendEmail` method. Note that the `await` keyword is prepended, since registered hook callbacks can contain async code. But this is not a requirement - in some use cases making a call without the `await` keyword can also suffice.
+In the following example, an "emailSent" hook is defined in the `sendEmail` method. Note that the `await` keyword is prepended, since registered hook callbacks can contain async code. But this is not a requirement - in some cases making a call without the `await` keyword could also suffice.
 
 At the very end, the `withHooks` higher order function is applied, and conveniently a callback for the "emailSent" hook is provided.
 
