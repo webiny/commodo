@@ -4,7 +4,9 @@ Hooks are points in code on which you can hook on to and execute one or more sny
 This is where the `withHooks` higher order function comes in. It creates a new function, decorated with methods for defining hooks and registration of callbacks.
 
 ## Example
-In the following example, in the `sendEmail` method, an "emailSent" hook is defined. Note that the `await` keyword is prepended, since registered hook callbacks can contain async code. But this is not a requirement -  some use cases might not need to wait for all of the registered callbacks to resolve.
+In the following example, an "emailSent" hook is defined in the `sendEmail` method. Note that the `await` keyword is prepended, since registered hook callbacks can contain async code. But this is not a requirement - in some use cases making a call without the `await` keyword can also suffice.
+
+At the very end, the `withHooks` higher order function is applied, and conveniently a callback for the "emailSent" hook is provided.
 
 ```js
 import { withHooks } from "@commodo/hooks";
@@ -12,11 +14,6 @@ import { compose } from "ramda";
 import { withProps } from "repropose";
 
 const User = compose(
-    withHooks({
-        emailSent: () => {
-            // Do the necessary actions.
-        }
-    }),
     withProps({
         async sendEmail() {
             (...)
@@ -26,6 +23,11 @@ const User = compose(
             await this.hook("emailSent")
             
             return true;
+        }
+    }),
+   withHooks({
+        emailSent: () => {
+            // Do the necessary sync or async actions.
         }
     })
 )(function() {});
