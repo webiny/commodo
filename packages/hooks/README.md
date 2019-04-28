@@ -5,7 +5,7 @@ This is where the `withHooks` higher order function comes in. It creates a new f
 
 A good example where hooks are efficiently utilized is the [withStorage](../fields-storage) higher order function. Once applied, it registers a set of hooks like `beforeCreate`, `afterCreate`, `beforeUpdate` and so on. Please check the documention of the package for more information.
 
-## Example
+## Usage
 In the following example, an "emailSent" hook is defined in the `sendEmail` method. Note that the `await` keyword is prepended, since registered hook callbacks can contain async code. But this is not a requirement - in some cases making a call without the `await` keyword could also suffice.
 
 At the very end, the `withHooks` higher order function is applied, and conveniently a callback for the "emailSent" hook is provided.
