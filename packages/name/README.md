@@ -1,6 +1,5 @@
 # @commodo/name
-
-Use `withName` higher order function to create a new function with a name assigned to it.
+Creates a new function with a name assigned to it and passed to its instances.
 
 ## Usage
 
