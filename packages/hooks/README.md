@@ -44,7 +44,7 @@ A good example where hooks are efficiently utilized is the [withStorage](../fiel
 ## Reference
 
 ##### `withHooks(callbacks: ?{[string]: Function}): WithHooksFunction`
-Creates a new function with callbacks to hooks passed to its instances. 
+Creates a new function with provided hook callbacks that will be passed to its instances. 
 `callbacks` argument is an object that contains name of the hook as key, and callback as value.
 
 ### `WithHooksFunction`
