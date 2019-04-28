@@ -5,7 +5,7 @@ Use `withHooks` higher order function to define custom hooks - points in code on
 ## Example
 In the following example, an "emailSent" hook is defined in the `sendEmail` method. And upon applying `withHooks`, a callback to it is defined.
 
-```
+```js
 import { withHooks } from "@commodo/hooks";
 import { compose } from "ramda";
 import { withProps } from "repropose";
