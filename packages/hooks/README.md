@@ -52,4 +52,4 @@ Instances of `WithHooksFunction` are decorated with `hook` and `onHook` methods.
 Calls a hook or in other words, executes all registered hook callbacks.
 
 ##### `onHook(name: string, callback: Function)`
-Registers a callback for given hook.
+Registers a callback for given hook. Useful when registering hooks inside of custom methods.
