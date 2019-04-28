@@ -38,7 +38,7 @@ const Company = compose(
 )(function() {});
 ```
 
-A good example where hooks are also utilized is the [withStorage](../fields-storage) higher order function, which once applied, registers a set of hooks like `beforeCreate`, `afterCreate`, `beforeUpdate` and so on. Check the documention there for more information.
+A good example where hooks are efficiently utilized is the [withStorage](../fields-storage) higher order function, which once applied, registers a set of hooks like `beforeCreate`, `afterCreate`, `beforeUpdate` and so on. Check the documention there for more information.
 
 
 ## Reference
