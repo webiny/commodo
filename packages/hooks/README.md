@@ -45,7 +45,7 @@ Note: for more information about the `withProps` higher order function, please c
 
 ##### `withHooks(callbacks: ?{[string]: Function}): WithHooksFunction`
 Creates a new function, whose instances are decorated with methods for defining hooks and registering hook callbacks. 
-Optionally, hook callbacks can immediately be passed as the first argument upon calling the `withHooks` function, an object that contains names of the hooks as keys, and callbacks as values.
+Optionally, one or more hook callbacks can be passed as the first argument - an object that contains names of the hooks as keys, and callbacks as values.
 
 ### `WithHooksFunction`
 
