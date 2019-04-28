@@ -37,6 +37,7 @@ const Company = compose(
   ...
 )(function() {});
 ```
+Note: for more information about the `withProps` higher order function, please check the docs of the [repropose](https://github.com/doitadrian/commodo/edit/master/packages/hooks/README.md) package.
 
 A good example where hooks are efficiently utilized is the [withStorage](../fields-storage) higher order function, which once applied, registers a set of hooks like `beforeCreate`, `afterCreate`, `beforeUpdate` and so on. Check the documention there for more information.
 
