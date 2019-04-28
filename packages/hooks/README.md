@@ -1,5 +1,5 @@
 # @commodo/hooks
-Hooks are points in code on which you can hook on to and execute one or more snyc or async callbacks. 
+Hooks are points in code on which you can hook on to and execute one or more callbacks. 
 
 This is where the `withHooks` higher order function comes in. It creates a new function, decorated with methods for defining hooks and registration of callbacks.
 
