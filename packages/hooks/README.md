@@ -3,6 +3,8 @@ Hooks are points in code on which you can hook on to and execute one or more cal
 
 This is where the `withHooks` higher order function comes in. It creates a new function, decorated with methods for defining custom hooks and registration of hook callbacks.
 
+A good example where hooks are efficiently utilized is the [withStorage](../fields-storage) higher order function. Once applied, it registers a set of hooks like `beforeCreate`, `afterCreate`, `beforeUpdate` and so on. Please check the documention of the package for more information.
+
 ## Example
 In the following example, an "emailSent" hook is defined in the `sendEmail` method. Note that the `await` keyword is prepended, since registered hook callbacks can contain async code. But this is not a requirement - in some cases making a call without the `await` keyword could also suffice.
 
@@ -38,8 +40,6 @@ const Company = compose(
 )(function() {});
 ```
 Note: for more information about the `withProps` higher order function, please check the docs of the [repropose](https://github.com/doitadrian/commodo/edit/master/packages/hooks/README.md) package.
-
-A good example where hooks are efficiently utilized is the [withStorage](../fields-storage) higher order function. Once applied, it registers a set of hooks like `beforeCreate`, `afterCreate`, `beforeUpdate` and so on. Please check the documention of the package for more information.
 
 ## Reference
 
