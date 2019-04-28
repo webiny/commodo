@@ -28,16 +28,22 @@ Use `hasName` and `getName` functions to determine if the object has a name assi
 import { withName, hasName, getName } from "@commodo/name";
 import { compose } from "ramda";
 
-// Define two models and assign a name to them.
+// Define two models and assign a name to the second one.
 const Unknown = function() {};
 const User = compose(
   withName("User"),
   ...
 )(function() {});
 
-// The Unknown function doesn't have a name assigned.
+// The Unknown object doesn't have a name assigned.
 console.log(hasName(Unknown)); // false
 
 console.log(hasName(User)); // true
 console.log(getName(User)); // "User"
+
+// It also works on instantiated objects.
+const user = new User();
+
+console.log(hasName(user)); // true
+console.log(getName(user)); // "User"
 ```
