@@ -1,7 +1,7 @@
 # @commodo/hooks
 Hooks are points in code on which you can hook on to and execute one or more callbacks. 
 
-This is where the `withHooks` higher order function comes in. It creates a new function, which decorated with methods for defining custom hooks and registration of hook callbacks.
+This is where the `withHooks` higher order function comes in. It creates a new function, whose instances are decorated with methods for defining custom hooks and registration of hook callbacks.
 
 A good example where hooks are efficiently utilized is the [withStorage](../fields-storage) higher order function. Once applied, it registers a set of hooks like `beforeCreate`, `afterCreate`, `beforeUpdate` and so on. Please check the documention of the package for more information.
 
@@ -44,8 +44,8 @@ Note: for more information about the `withProps` higher order function, please c
 ## Reference
 
 ##### `withHooks(callbacks: ?{[string]: Function}): WithHooksFunction`
-Instances of `withHooks` function will be decorated with methods for defining hooks and registering hook callbacks.
-`callbacks` argument is an object that contains name of the hook as key, and callback as value.
+Creates a new function, whose instances are decorated with methods for defining hooks and registering hook callbacks. 
+Optionally, hook callbacks can immediately be passed as the first argument upon calling the `withHooks` function, an object that contains names of the hooks as keys, and callbacks as values.
 
 ### `WithHooksFunction`
 
