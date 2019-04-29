@@ -78,11 +78,26 @@ user.email = true;
 ```
 
 Each field can accept a few options:
-#### list: boolean
-If set to `true`, field will accep
-#### readOnly: boolean
-#### validation: Function
-#### value: any
+#### `list: boolean`
+If set to `true`, field will accept an `null` or an array of values. When setting field value, if a single item in the passed array is of incorrect data type, an error will be thrown.
+
+#### `validation: Function`
+A function for validating the assigned value. Not for data-type validation (since it's already done upon assigning a value), but for checking if the value complies with custom logic, for example if the assigned value is greater than 20.
+
+#### `value: any`
+
+Except options, fields can also be enhanced with a couple of provided higher order functions:
+
+#### `onGet: Function => Function`
+
+#### `onSet: Function => Function`
+
+#### `skipOnPopulate: Function => Function`
+
+#### `setOnce: Function => Function`
+
+#### `readOnly: Function => Function`
+When enabled, field will no longer accept any value. Can be paired with `onGet` higher order function, to achieve "dynamic" fields (more on this in the next section).
 
 ## Reference
 
