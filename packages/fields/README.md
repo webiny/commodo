@@ -46,7 +46,7 @@ async user.validate();
 ## Reference
 
 #### `withFields(fields : { [string] : FieldFactory }): WithFieldsFunction`
-Creates a new function, whose instances contain defined fields and are decorated with `populate` and `validate` methods.
+Creates a new function, whose instances contain defined fields and are decorated with a couple of useful methods.
 
 ### `WithFieldsFunction`
 
