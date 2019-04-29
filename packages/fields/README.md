@@ -46,10 +46,10 @@ async user.validate();
 ## Fields
 
 There are four types of fields you can define:
-1. `string` - accepts string values
-2. `number` - accepts number values
-3. `boolean` - accepts boolean values
-4. `fields` - accepts an object or an instance of another `withFields` function
+1. `string` - accepts `null` and string values
+2. `number` - accepts `null` and number values
+3. `boolean` - accepts `null` and boolean values
+4. `fields` - accepts `null`, a plain object or an instance of another `withFields` function
 
 In the following examples, all types of fields are utilized:
 ```
@@ -63,6 +63,26 @@ const User = compose(
 )(function() {});
 ```
 
+Note that if the data type of a value is different than field type, an error will immediately be thrown:
+```
+const User = compose(
+   withFields({
+      email: string()    
+   })
+)(function() {});
+
+const user = new User();
+
+// Throws a WithFieldsError (code: "FIELD_DATA_TYPE_ERROR"):
+user.email = true;
+```
+
+Each field can accept a few options:
+#### list: boolean
+If set to `true`, field will accep
+#### readOnly: boolean
+#### validation: Function
+#### value: any
 
 ## Reference
 
