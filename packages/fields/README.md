@@ -1,5 +1,5 @@
 # @commodo/fields
-Creates a new function, whose instances are decorated with defined fields and additional methods.
+Creates a new function, whose instances are decorated with defined fields and a couple of useful methods (more information in the following sections).
 
 ## Usage
 ```js
@@ -43,10 +43,34 @@ user.populate({
 async user.validate();
 ```
 
+## Fields
+
+There are four types of fields you can define:
+1. `string` - accepts string values
+2. `number` - accepts number values
+3. `boolean` - accepts boolean values
+4. `fields` - accepts an object or an instance of another `withFields` function
+
+In the following examples, all types of fields are utilized:
+```
+const User = compose(
+   withFields({
+      email: string(),
+      age: number(),
+      verified: boolean(),
+      company: fields({ instanceOf: Company })
+    })
+)(function() {});
+```
+
+
 ## Reference
 
 #### `withFields(fields : { [string] : FieldFactory }): WithFieldsFunction`
 Creates a new function, whose instances contain defined fields and are decorated with a couple of useful methods.
+
+### FieldFactory
+
 
 ### `WithFieldsFunction`
 
