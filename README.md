@@ -86,9 +86,9 @@ await user.save();
 
 ## Community packages:
 
-| Package | Short Description |
-| :--- | :---: |
-| [commodo-fields-date](./packages/fields-storage-ref) | Provides `date` field, for saving dates. |
+| Package | Short Description | Version |
+| :--- | :---: | :---: |
+| [commodo-fields-date](./packages/fields-storage-ref) | Provides `date` field, for saving dates. | [![](https://img.shields.io/npm/v/commodo-fields-date.svg)](https://www.npmjs.com/package/commoodo-fields-date) |
 
 ## Contributing
 Please see our [Contributing Guideline](/CONTRIBUTING.md) which explains repo organization, linting, testing, and other steps.
