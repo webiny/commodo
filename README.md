@@ -72,17 +72,17 @@ await user.save();
 
 | Package | Short Description | Version |
 | :--- | :---: | :---: |
-| [@commodo/fields](./packages/fields) | The starting point of every model. Provides base `string`, `number`, `boolean` and `model` fields. | [![](https://img.shields.io/npm/v/repropose.svg)](https://www.npmjs.com/package/repropose) |
-| [@commodo/name](./packages/name) | Assign a name to your models. | [![](https://img.shields.io/npm/v/repropose.svg)](https://www.npmjs.com/package/repropose) |
-| [@commodo/hooks](./packages/hooks) | Provides methods for defining and triggering hooks on your models. | [![](https://img.shields.io/npm/v/repropose.svg)](https://www.npmjs.com/package/repropose) |
-| [@commodo/fields-storage](./packages/fields-storage) | Enables saving models, for example to a MongoDB or MySQL database. | [![](https://img.shields.io/npm/v/repropose.svg)](https://www.npmjs.com/package/repropose) |
+| [@commodo/fields](./packages/fields) | The starting point of every model. Provides base `string`, `number`, `boolean` and `model` fields. | [![](https://img.shields.io/npm/v/@commodo/fields.svg)](https://www.npmjs.com/package/repropose) |
+| [@commodo/name](./packages/name) | Assign a name to your models. | [![](https://img.shields.io/npm/v/@commodo/name.svg)](https://www.npmjs.com/package/repropose) |
+| [@commodo/hooks](./packages/hooks) | Provides methods for defining and triggering hooks on your models. | [![](https://img.shields.io/npm/v/@commodo/hooks.svg)](https://www.npmjs.com/package/repropose) |
+| [@commodo/fields-storage](./packages/fields-storage) | Enables saving models, for example to a MongoDB or MySQL database. | [![](https://img.shields.io/npm/v/@commodo/fields-storage.svg)](https://www.npmjs.com/package/repropose) |
 
 ## Additional packages:
 
 | Package | Short Description | Version |
 | :--- | :---: | :---: |
-| [@commodo/fields-storage-ref](./packages/fields-storage-ref) | Provides `ref` field, for saving references to other models saved in database. | [![](https://img.shields.io/npm/v/repropose.svg)](https://www.npmjs.com/package/repropose) |
-| [@commodo/fields-storage-mongodb](./packages/fields-storage-mongodb) | A MongoDB driver for @commodo/fields-storage package. | [![](https://img.shields.io/npm/v/repropose.svg)](https://www.npmjs.com/package/repropose) |
+| [@commodo/fields-storage-ref](./packages/fields-storage-ref) | Provides `ref` field, for saving references to other models saved in database. | [![](https://img.shields.io/npm/v/@commodo/fields-storage-ref.svg)](https://www.npmjs.com/package/repropose) |
+| [@commodo/fields-storage-mongodb](./packages/fields-storage-mongodb) | A MongoDB driver for @commodo/fields-storage package. | [![](https://img.shields.io/npm/v/@commodo/fields-storage-mongodb.svg)](https://www.npmjs.com/package/repropose) |
 
 ## Community packages:
 
