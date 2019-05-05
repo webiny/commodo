@@ -50,8 +50,8 @@ class CustomDriver {
     }
 
     async count({ model, options }) {
-        const [results, totalCount] = await this.find({ model, options });
-        return totalCount || 0;
+        const [results, meta] = await this.find({ model, options });
+        return meta.totalCount;
     }
 
     isId(value: any): boolean {
@@ -82,7 +82,13 @@ class CustomDriver {
         const namespace = getName(model);
         const records = this.data[namespace];
         if (!records) {
-            return [];
+            const meta = createPaginationMeta({
+                totalCount: 0,
+                page: options.page,
+                perPage: options.perPage
+            });
+
+            return [[], meta];
         }
 
         const collection = [];

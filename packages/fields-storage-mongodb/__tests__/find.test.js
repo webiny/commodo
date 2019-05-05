@@ -61,11 +61,29 @@ describe("find test", function() {
         const skipSpy = sandbox.spy(findCursor, "skip");
         const sortSpy = sandbox.spy(findCursor, "sort");
 
-        await SimpleModel.find({
+        sandbox
+            .stub(collection, "countDocuments")
+            .onCall(0)
+            .callsFake(() => {
+                return 20;
+            });
+
+        const results = await SimpleModel.find({
             page: 3,
             perPage: 7,
             query: { age: 30 },
             sort: { createdOn: -1, id: 1 }
+        });
+
+        expect(results.getMeta()).toEqual({
+            page: 3,
+            perPage: 7,
+            totalCount: 20,
+            totalPages: 3,
+            from: 15,
+            to: 20,
+            nextPage: null,
+            previousPage: 2
         });
 
         expect(limitSpy.getCall(0).args[0]).toEqual(7);
