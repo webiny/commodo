@@ -232,7 +232,7 @@ const withStorage = (configuration: Configuration) => {
 
                 const collection = new Collection()
                     .setParams(prepared)
-                    .setMeta({ ...createPaginationMeta(), meta });
+                    .setMeta({ ...createPaginationMeta(), ...meta });
 
                 const result: ?Array<Object> = results;
                 if (result instanceof Array) {

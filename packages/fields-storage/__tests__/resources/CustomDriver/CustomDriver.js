@@ -1,5 +1,6 @@
 import { getName } from "@commodo/name";
 import mdbid from "mdbid";
+import { createPaginationMeta } from "@commodo/fields-storage";
 
 class CustomDriver {
     constructor() {
@@ -15,7 +16,6 @@ class CustomDriver {
         if (!model.id) {
             model.id = mdbid();
         }
-
 
         const namespace = getName(model);
         // Check if table exists.
@@ -99,7 +99,13 @@ class CustomDriver {
             collection.push(record);
         }
 
-        return [collection, collection.length];
+        const meta = createPaginationMeta({
+            totalCount: collection.length,
+            page: options.page,
+            perPage: options.perPage
+        });
+
+        return [collection, meta];
     }
 }
 
