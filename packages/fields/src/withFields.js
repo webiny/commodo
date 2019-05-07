@@ -12,7 +12,7 @@ const withFields = (fields: Object) => {
 
             let list = fields;
             if (typeof fields === "function") {
-                list = fields(this);
+                list = fields(instance);
             }
 
             for (let newFieldName in list) {
