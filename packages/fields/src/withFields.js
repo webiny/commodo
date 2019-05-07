@@ -56,7 +56,7 @@ const withFields = (fields: Object) => {
                         const values = this.getFields();
                         for (let valueKey in values) {
                             const value = values[valueKey];
-                            if (!value || value.skipOnPopulate || !data.hasOwnProperty(valueKey)) {
+                            if (!value || value.skipOnPopulate || !(valueKey in data)) {
                                 continue;
                             }
 
