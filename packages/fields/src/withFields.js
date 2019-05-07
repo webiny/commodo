@@ -11,7 +11,7 @@ const withFields = (fields: Object) => {
             const newFields = { __withFields: instance.__withFields };
 
             let list = fields;
-            if (typeof fields === 'function') {
+            if (typeof fields === "function") {
                 list = fields(this);
             }
 
@@ -30,7 +30,7 @@ const withFields = (fields: Object) => {
 
                 newFields.__withFields[newFieldName].name = newFieldName;
                 newFields.__withFields[newFieldName].parent = instance;
-                if (typeof newFields.__withFields[newFieldName].init === 'function') {
+                if (typeof newFields.__withFields[newFieldName].init === "function") {
                     newFields.__withFields[newFieldName].init();
                 }
             }
@@ -52,19 +52,16 @@ const withFields = (fields: Object) => {
                     return this.__withFields[name];
                 },
                 populate(data) {
-                    // This "is-object?" check is good enough.
-                    if (!data || !data.hasOwnProperty) {
-                        return this;
-                    }
+                    if (data && typeof data === "object") {
+                        const values = this.getFields();
+                        for (let valueKey in values) {
+                            const value = values[valueKey];
+                            if (!value || value.skipOnPopulate || !data.hasOwnProperty(valueKey)) {
+                                continue;
+                            }
 
-                    const values = this.getFields();
-                    for (let valueKey in values) {
-                        const value = values[valueKey];
-                        if (!value || value.skipOnPopulate || !data.hasOwnProperty(valueKey)) {
-                            continue;
+                            values[valueKey].setValue(data[valueKey]);
                         }
-
-                        values[valueKey].setValue(data[valueKey]);
                     }
 
                     return this;
