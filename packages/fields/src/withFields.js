@@ -53,7 +53,7 @@ const withFields = (fields: Object) => {
                 },
                 populate(data) {
                     // This "is-object?" check is good enough.
-                    if (!data.hasOwnProperty) {
+                    if (!data || !data.hasOwnProperty) {
                         return;
                     }
 
