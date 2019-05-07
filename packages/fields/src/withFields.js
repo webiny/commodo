@@ -54,7 +54,7 @@ const withFields = (fields: Object) => {
                 populate(data) {
                     // This "is-object?" check is good enough.
                     if (!data || !data.hasOwnProperty) {
-                        return;
+                        return this;
                     }
 
                     const values = this.getFields();
