@@ -8,7 +8,7 @@ const withFields = (fields: Object) => {
             __withFields: true // For satisfying hasFields helper function.
         }),
         withProps(instance => {
-            const newFields = { __withFields: instance.__withFields };
+            const newFields = { __withFields: { ...instance.__withFields } };
 
             let list = fields;
             if (typeof fields === "function") {

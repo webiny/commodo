@@ -1,7 +1,7 @@
 import { withFields, onGet, number, boolean } from "@commodo/fields";
 import { compose } from "ramda";
 
-test(`should be possible to access other fields in onGet callback`, async () => {
+test(`should and should not be possible to access other fields in onGet callback (depending on order of applying)`, async () => {
     const Model = compose(
         withFields(instance => ({
             x4Value: onGet(() => {
