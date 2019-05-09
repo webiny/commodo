@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@0.0.18...@commodo/fields-storage-ref@0.1.0) (2019-05-09)
+
+
+### Features
+
+* removed readOnly option in fields and HOF ([dac1969](https://github.com/webiny/commodo/commit/dac1969))
+
+
+
+
+
 ## [0.0.18](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@0.0.17...@commodo/fields-storage-ref@0.0.18) (2019-05-07)
 
 **Note:** Version bump only for package @commodo/fields-storage-ref

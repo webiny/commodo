@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/webiny/commodo/compare/@commodo/fields@0.1.2...@commodo/fields@0.2.0) (2019-05-09)
+
+
+### Bug Fixes
+
+* correctly pass current instance to "withFields" ([18102d4](https://github.com/webiny/commodo/commit/18102d4))
+* do not use "hasOwnProperty" (not always present on objects) ([1e5f339](https://github.com/webiny/commodo/commit/1e5f339))
+* improve "is-object" check in the populate method ([0d5b465](https://github.com/webiny/commodo/commit/0d5b465))
+* internal setting of "set" flag works correctly ([1cf27c8](https://github.com/webiny/commodo/commit/1cf27c8))
+* withFields must not contain "__withFields" reference ([f47fc24](https://github.com/webiny/commodo/commit/f47fc24))
+
+
+### Features
+
+* define custom getter / setter for a field ([1a38113](https://github.com/webiny/commodo/commit/1a38113))
+* removed readOnly option in fields and HOF ([dac1969](https://github.com/webiny/commodo/commit/dac1969))
+
+
+
+
+
 ## [0.1.2](https://github.com/webiny/commodo/compare/@commodo/fields@0.1.1...@commodo/fields@0.1.2) (2019-05-07)
 
 
