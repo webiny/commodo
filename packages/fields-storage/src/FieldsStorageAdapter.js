@@ -26,7 +26,7 @@ class FieldsStorageAdapter {
         const output = {};
         for (let name in fields) {
             const field = fields[name];
-            if (field.toStorage === false || field.readOnly === true) {
+            if (field.toStorage === false) {
                 continue;
             }
 

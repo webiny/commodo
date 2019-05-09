@@ -1,6 +1,7 @@
-import { withFields, string, number, boolean, onGet } from "@commodo/fields";
+import { withFields, string, number, boolean } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { compose } from "ramda";
+import { withProps } from "repropose";
 import Model from "./Model";
 
 const User = compose(
@@ -8,8 +9,12 @@ const User = compose(
         firstName: string(),
         lastName: string(),
         age: number(),
-        enabled: boolean(),
-        totalSomething: onGet(() => 555)(string({ readOnly: true }))
+        enabled: boolean()
+    }),
+    withProps({
+        get totalSomething() {
+            return 555;
+        }
     }),
     withName("User")
 )(Model);

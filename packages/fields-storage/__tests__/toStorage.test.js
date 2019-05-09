@@ -1,7 +1,8 @@
 import User from "./resources/models/user";
-import { withFields, string, number, fields, onGet, readOnly } from "@commodo/fields";
+import { withFields, string, fields } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { compose } from "ramda";
+import { withProps } from "repropose";
 import Model from "./resources/models/Model";
 
 describe("toStorage test", () => {
@@ -28,48 +29,51 @@ describe("toStorage test", () => {
         const C = compose(
             withFields({
                 attr1: string(),
-                attr2: string(),
-                attr3: compose(
-                    readOnly(),
-                    onGet(() => "attr3DynValue")
-                )(number())
+                attr2: string()
+            }),
+            withProps({
+                get attr3() {
+                    return "attr3DynValue";
+                }
             }),
             withName("C")
         )(Model);
 
         const B = compose(
+            withProps({
+                get attr3() {
+                    return "attr3DynValue";
+                }
+            }),
             withFields({
                 attr1: string(),
                 attr2: string(),
-                attr3: compose(
-                    readOnly(),
-                    onGet(() => "attr3DynValue")
-                )(number()),
                 attr4: fields({ instanceOf: C }),
-                attr5: fields({ instanceOf: C, list: true }),
-                attr6: compose(
-                    readOnly(),
-                    onGet(() => new C().populate({ attr1: "attr6DynValue" }))
-                )(fields({ instanceOf: C })),
-                attr7: compose(
-                    readOnly(),
-                    onGet(() => [
+                attr5: fields({ instanceOf: C, list: true })
+            }),
+            withProps({
+                get attr6() {
+                    new C().populate({ attr1: "attr6DynValue" });
+                },
+                get attr7() {
+                    return [
                         new C().populate({ attr1: "attr6DynValue" }),
                         new C().populate({ attr1: "attr6DynValue" })
-                    ])
-                )(fields({ instanceOf: C, list: true, readOnly: true }))
+                    ];
+                }
             }),
             withName("B")
         )(Model);
 
         const A = compose(
+            withProps({
+                get attr3() {
+                    return "attr3DynValue";
+                }
+            }),
             withFields({
                 attr1: string(),
                 attr2: string(),
-                attr3: compose(
-                    readOnly(),
-                    onGet(() => "attr3DynValue")
-                )(number()),
                 attr4: fields({ instanceOf: B })
             }),
             withName("A")

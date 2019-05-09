@@ -11,13 +11,12 @@ describe("getFields test", () => {
             "lastName",
             "age",
             "enabled",
-            "totalSomething"
         ]);
 
         expect(allFields["firstName"].type).toBe("string");
         expect(allFields["lastName"].type).toBe("string");
         expect(allFields["enabled"].type).toBe("boolean");
         expect(allFields["age"].type).toBe("number");
-        expect(allFields["totalSomething"].type).toBe("number");
+        expect(allFields["totalSomething"]).toBe(undefined);
     });
 });

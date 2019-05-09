@@ -170,10 +170,6 @@ const ref: FieldFactory = ({
                         this.toStorage = false;
 
                         this.parent.registerHookCallback("__save", async () => {
-                            if (this.readOnly === true) {
-                                return;
-                            }
-
                             // If loading is in progress, wait until loaded.
                             const mustManage = this.isDirty() || this.state.loading;
                             if (!mustManage) {
@@ -200,10 +196,6 @@ const ref: FieldFactory = ({
                          * At this point, models are ready to be saved (only loaded models).
                          */
                         this.parent.registerHookCallback("__afterSave", async () => {
-                            if (this.readOnly === true) {
-                                return;
-                            }
-
                             // We don't have to do the following check here:
                             // this.value.isLoading() && (await this.value.load());
 
@@ -244,10 +236,6 @@ const ref: FieldFactory = ({
                         });
 
                         this.parent.registerHookCallback("delete", async () => {
-                            if (this.readOnly === true) {
-                                return;
-                            }
-
                             if (this.getAutoDelete()) {
                                 await this.load();
                                 const models = {
@@ -265,10 +253,6 @@ const ref: FieldFactory = ({
                         });
 
                         this.parent.registerHookCallback("beforeDelete", async () => {
-                            if (this.readOnly === true) {
-                                return;
-                            }
-
                             if (this.getAutoDelete()) {
                                 await this.load();
                                 const models = {
@@ -312,10 +296,6 @@ const ref: FieldFactory = ({
                          * nested models, ending with the main parent model.
                          */
                         this.parent.registerHookCallback("__beforeSave", async () => {
-                            if (this.readOnly === true) {
-                                return;
-                            }
-
                             // At this point current value is an instance or is not instance. It cannot be in the 'loading' state, because that was
                             // already checked in the validate method - if in that step model was in 'loading' state, it will be waited before proceeding.
                             if (this.getAutoSave()) {
@@ -342,10 +322,6 @@ const ref: FieldFactory = ({
                          * The deletes are done on initial storage models, not on models stored as current value.
                          */
                         this.parent.registerHookCallback("delete", async () => {
-                            if (this.readOnly === true) {
-                                return;
-                            }
-
                             if (this.getAutoDelete()) {
                                 await this.load();
                                 const model = this.initial;

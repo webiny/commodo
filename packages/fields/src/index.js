@@ -8,4 +8,3 @@ export { default as setOnce } from "./setOnce";
 export { default as skipOnPopulate } from "./skipOnPopulate";
 export { default as onGet } from "./onGet";
 export { default as onSet } from "./onSet";
-export { default as readOnly } from "./readOnly";
