@@ -1,4 +1,4 @@
-import { string, number, boolean, model, list } from "@commodo/fields/fields";
+import { string } from "@commodo/fields/fields";
 import { withFields, skipOnPopulate } from "@commodo/fields";
 import { compose } from "ramda";
 
