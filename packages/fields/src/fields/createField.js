@@ -1,22 +1,23 @@
 import { type FieldFactory } from "@commodo/fields/types";
 
-const createField: FieldFactory = ({ type, list, validation, ...rest }) => {
+const createField: FieldFactory = ({ type, list, validation, get, set, ...rest }) => {
     return function(parent) {
         const instance = {
             parent,
+            get,
+            set,
             name: "",
             type,
             list,
             validation,
             current: null,
             state: { loading: false, loaded: false, dirty: false, set: false },
-
             getValue() {
                 return this.current;
             },
             setValue(value: any, options: Object = {}) {
                 // If needed, implement skipMarkAsSet option (at the time of implementation, it was not needed).
-                this.set = true;
+                this.state.set = true;
 
                 if (options.skipDifferenceCheck) {
                     if (options.forceSetAsDirty) {

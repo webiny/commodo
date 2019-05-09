@@ -21,10 +21,24 @@ const withFields = (fields: Object) => {
 
                 Object.defineProperty(newFields, newFieldName, {
                     get() {
+                        if (this.__withFields[newFieldName].get) {
+                            return this.__withFields[newFieldName].get.call(
+                                this,
+                                this.__withFields[newFieldName]
+                            );
+                        }
                         return this.__withFields[newFieldName].getValue();
                     },
                     set(value) {
-                        this.__withFields[newFieldName].setValue(value);
+                        if (this.__withFields[newFieldName].set) {
+                            this.__withFields[newFieldName].set.call(
+                                this,
+                                this.__withFields[newFieldName],
+                                value
+                            );
+                        } else {
+                            this.__withFields[newFieldName].setValue(value);
+                        }
                     }
                 });
 
