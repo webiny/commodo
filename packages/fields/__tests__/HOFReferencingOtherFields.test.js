@@ -3,13 +3,11 @@ import { withProps } from "repropose";
 import { compose } from "ramda";
 
 /**
- * Different approaches:
- * 1. FAIL - "numberX3_tryWithPassedInstance": the problem is that "instance" is a reference to current function's instance, which does not have
- * "number" field assigned to it. There is no cure here for now.
- * 2. FAIL - "numberX3_tryWithGetField" : fails since "number" is not assigned to this instance yet.
- * 3. PASS - yes, because "this" is referencing the top applied layer, which now has access to everything.
+ * Just have in mind that getField will work, since in the chain of applied props / fields,
+ * final instance will have one __withFields, and getField works with it. The reference is always
+ * carried, which is OK. It's kinda "static" internal property.
  */
-test(`mutual field access - should UNFORTUNATELY NOT (this is double check) be able to reference fields that will be applied later`, async () => {
+test(`mutual field access - should be able to reference fields that will be applied later, using getField`, async () => {
     const Model = compose(
         withFields({
             number: number()
@@ -20,7 +18,7 @@ test(`mutual field access - should UNFORTUNATELY NOT (this is double check) be a
             })(number()),
             numberX3_tryWithGetField: onGet(() => {
                 // Just return since it's undefined, this instance does not contain number as field.
-                return instance.getField("number");
+                return instance.getField("number").getValue() * 3;
             })(number())
         })),
         withProps({
@@ -35,5 +33,5 @@ test(`mutual field access - should UNFORTUNATELY NOT (this is double check) be a
 
     expect(model.numberX3_asFunction()).toBe(300);
     expect(model.numberX3_tryWithPassedInstance).toBe(NaN);
-    expect(model.numberX3_tryWithGetField).toBe(undefined);
+    expect(model.numberX3_tryWithGetField).toBe(300);
 });

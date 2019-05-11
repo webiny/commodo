@@ -8,48 +8,46 @@ const withFields = (fields: Object) => {
             __withFields: true // For satisfying hasFields helper function.
         }),
         withProps(instance => {
-            const newFields = { __withFields: { ...instance.__withFields } };
-
-            let list = fields;
+            let fieldsList = fields;
             if (typeof fields === "function") {
-                list = fields(instance);
+                fieldsList = fields(instance);
             }
 
-            for (let newFieldName in list) {
-                const valueFactory = list[newFieldName];
-                newFields.__withFields[newFieldName] = new valueFactory();
+            for (let newFieldName in fieldsList) {
+                const valueFactory = fieldsList[newFieldName];
+                instance.__withFields.fields[newFieldName] = new valueFactory();
 
-                Object.defineProperty(newFields, newFieldName, {
+                Object.defineProperty(instance, newFieldName, {
                     get() {
-                        if (this.__withFields[newFieldName].get) {
-                            return this.__withFields[newFieldName].get.call(
+                        if (this.__withFields.fields[newFieldName].get) {
+                            return this.__withFields.fields[newFieldName].get.call(
                                 this,
-                                this.__withFields[newFieldName]
+                                this.__withFields.fields[newFieldName]
                             );
                         }
-                        return this.__withFields[newFieldName].getValue();
+                        return this.__withFields.fields[newFieldName].getValue();
                     },
                     set(value) {
-                        if (this.__withFields[newFieldName].set) {
-                            this.__withFields[newFieldName].set.call(
+                        if (this.__withFields.fields[newFieldName].set) {
+                            this.__withFields.fields[newFieldName].set.call(
                                 this,
-                                this.__withFields[newFieldName],
+                                this.__withFields.fields[newFieldName],
                                 value
                             );
                         } else {
-                            this.__withFields[newFieldName].setValue(value);
+                            this.__withFields.fields[newFieldName].setValue(value);
                         }
                     }
                 });
 
-                newFields.__withFields[newFieldName].name = newFieldName;
-                newFields.__withFields[newFieldName].parent = instance;
-                if (typeof newFields.__withFields[newFieldName].init === "function") {
-                    newFields.__withFields[newFieldName].init();
+                instance.__withFields.fields[newFieldName].name = newFieldName;
+                instance.__withFields.fields[newFieldName].parent = instance;
+                if (typeof instance.__withFields.fields[newFieldName].init === "function") {
+                    instance.__withFields.fields[newFieldName].init();
                 }
             }
 
-            return newFields;
+            return {};
         }),
         withProps(props => {
             if (props.__withFields) {
@@ -57,13 +55,16 @@ const withFields = (fields: Object) => {
             }
 
             return {
-                __withFields: {},
-                processing: { validation: false, dirty: false },
+                __withFields: {
+                    fields: {},
+                    processing: { validation: false, dirty: false },
+                },
+                
                 getFields() {
-                    return this.__withFields;
+                    return this.__withFields.fields;
                 },
                 getField(name) {
-                    return this.__withFields[name];
+                    return this.__withFields.fields[name];
                 },
                 populate(data) {
                     if (data && typeof data === "object") {
@@ -82,10 +83,10 @@ const withFields = (fields: Object) => {
                 },
 
                 async validate() {
-                    if (this.processing.validation) {
+                    if (this.__withFields.processing.validation) {
                         return;
                     }
-                    this.processing.validation = true;
+                    this.__withFields.processing.validation = true;
 
                     const invalidFields = {};
                     const fields = this.getFields();
@@ -103,7 +104,7 @@ const withFields = (fields: Object) => {
                         }
                     }
 
-                    this.processing.validation = false;
+                    this.__withFields.processing.validation = false;
 
                     if (Object.keys(invalidFields).length > 0) {
                         throw new WithFieldsError(
@@ -125,22 +126,22 @@ const withFields = (fields: Object) => {
                 },
 
                 isDirty(): boolean {
-                    if (this.processing.dirty) {
+                    if (this.__withFields.processing.dirty) {
                         return false;
                     }
 
-                    this.processing.dirty = true;
+                    this.__withFields.processing.dirty = true;
 
                     const fields = this.getFields();
                     for (let valueKey in fields) {
                         const field = fields[valueKey];
                         if (field && field.isDirty()) {
-                            this.processing.dirty = false;
+                            this.__withFields.processing.dirty = false;
                             return true;
                         }
                     }
 
-                    this.processing.dirty = false;
+                    this.__withFields.processing.dirty = false;
                     return false;
                 }
             };

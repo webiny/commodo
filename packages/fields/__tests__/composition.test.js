@@ -73,7 +73,6 @@ test(`must carry get/set callbacks even over other HOFs`, async () => {
         "a",
         "b",
         "__withFields",
-        "processing",
         "getFields",
         "getField",
         "populate",
@@ -88,7 +87,6 @@ test(`must carry get/set callbacks even over other HOFs`, async () => {
         "a",
         "b",
         "__withFields",
-        "processing",
         "getFields",
         "getField",
         "populate",
@@ -116,9 +114,9 @@ test(`must carry get/set callbacks even over other HOFs`, async () => {
     expect(user.firstName).toBe("john");
     expect(user.lastName).toBe("doe");
 
-    expect(user.__withFields.email.current).toBe("user@internet.com");
-    expect(user.__withFields.age.current).toBe(123);
-    expect(user.__withFields.enabled.current).toBe(true);
-    expect(user.__withFields.firstName.current).toBe("john");
-    expect(user.__withFields.lastName.current).toBe("doe");
+    expect(user.__withFields.fields.email.current).toBe("user@internet.com");
+    expect(user.__withFields.fields.age.current).toBe(123);
+    expect(user.__withFields.fields.enabled.current).toBe(true);
+    expect(user.__withFields.fields.firstName.current).toBe("john");
+    expect(user.__withFields.fields.lastName.current).toBe("doe");
 });
