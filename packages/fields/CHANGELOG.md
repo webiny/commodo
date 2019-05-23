@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1](https://github.com/webiny/commodo/compare/@commodo/fields@0.2.0...@commodo/fields@0.2.1) (2019-05-23)
+
+
+### Bug Fixes
+
+* reference to __withFields must be carried across the instantiation chain ([a7506a3](https://github.com/webiny/commodo/commit/a7506a3))
+
+
+
+
+
 # [0.2.0](https://github.com/webiny/commodo/compare/@commodo/fields@0.1.2...@commodo/fields@0.2.0) (2019-05-09)
 
 

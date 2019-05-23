@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@0.1.0...@commodo/fields-storage-ref@0.2.0) (2019-05-23)
+
+
+### Features
+
+* enable complete definition of "using" upon creating ref field ([8c84acc](https://github.com/webiny/commodo/commit/8c84acc))
+
+
+
+
+
 # [0.1.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@0.0.18...@commodo/fields-storage-ref@0.1.0) (2019-05-09)
 
 
