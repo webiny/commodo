@@ -5,8 +5,14 @@ import {
     MainSetOnceEntity
 } from "../../resources/models/modelsAttributeModels";
 import sinon from "sinon";
-const sandbox = sinon.createSandbox();
 import { Collection } from "@commodo/fields-storage";
+import { withFields, string } from "@commodo/fields";
+import { withName } from "@commodo/name";
+import { ref } from "@commodo/fields-storage-ref";
+import { compose } from "ramda";
+import Model from "./../../resources/models/Model";
+
+const sandbox = sinon.createSandbox();
 
 describe("attribute models test", () => {
     afterEach(() => sandbox.restore());
@@ -72,13 +78,13 @@ describe("attribute models test", () => {
                 return [
                     [
                         { id: "AA", name: "Bucky", type: "dog" },
-                        { id: 'twelve', name: "Rocky", type: "dog" }
+                        { id: "twelve", name: "Rocky", type: "dog" }
                     ]
                 ];
             })
             .onCall(1)
             .callsFake(() => {
-                return [[{ id: 'thirteen', firstName: "Foo", lastName: "Bar" }]];
+                return [[{ id: "thirteen", firstName: "Foo", lastName: "Bar" }]];
             });
 
         expect(Array.isArray(mainEntity.getField("attribute1").current)).toBe(true);
@@ -90,14 +96,14 @@ describe("attribute models test", () => {
         expect(attribute1).toBeInstanceOf(Collection);
         expect(attribute1.length).toBe(2);
         expect(attribute1[0].id).toEqual("AA");
-        expect(attribute1[1].id).toEqual('twelve');
+        expect(attribute1[1].id).toEqual("twelve");
         expect(attribute1[0]).toBeInstanceOf(Entity1);
         expect(attribute1[1]).toBeInstanceOf(Entity1);
 
         const attribute2 = await mainEntity.attribute2;
         expect(attribute2).toBeInstanceOf(Collection);
         expect(attribute2.length).toBe(1);
-        expect(attribute2[0].id).toEqual('thirteen');
+        expect(attribute2[0].id).toEqual("thirteen");
         expect(attribute2[0]).toBeInstanceOf(Entity2);
 
         modelsFind.restore();
@@ -108,10 +114,10 @@ describe("attribute models test", () => {
             .stub(MainEntity.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: 'oneTwoThree' };
+                return { id: "oneTwoThree" };
             });
 
-        const mainEntity = await MainEntity.findById('oneTwoThree');
+        const mainEntity = await MainEntity.findById("oneTwoThree");
         modelFind.restore();
 
         const modelsFind = sandbox.spy(mainEntity.getStorageDriver(), "find");
@@ -159,9 +165,7 @@ describe("attribute models test", () => {
 
     test("setUsing method must set all passed parameters correctly", async () => {
         const model = new MainEntity();
-        model
-            .getField("attribute1")
-            .setUsing(Entity2, "customAttribute");
+        model.getField("attribute1").setUsing(Entity2, "customAttribute");
 
         expect(model.getField("attribute1").classes).toEqual({
             models: {
@@ -172,6 +176,75 @@ describe("attribute models test", () => {
             using: {
                 field: "customAttribute",
                 class: Entity2
+            }
+        });
+    });
+
+    test(`"using" argument set as array that contains instanceOf and fieldName - test 1`, async () => {
+        const MainEntity = compose(
+            withFields({
+                attribute1: ref({
+                    list: true,
+                    instanceOf: Entity1,
+                    using: [Entity2, "customAttribute"]
+                })
+            }),
+            withName("MainEntity")
+        )(Model);
+
+        const model = new MainEntity();
+
+        expect(model.getField("attribute1").classes).toEqual({
+            models: {
+                field: "mainEntity",
+                class: Entity1
+            },
+            parent: "MainEntity",
+            using: {
+                field: "customAttribute",
+                class: Entity2
+            }
+        });
+    });
+
+    test(`"using" argument set as array that contains instanceOf and fieldName - test 2`, async () => {
+        const SecurityGroup = compose(
+            withFields({
+                name: string()
+            }),
+            withName("SecurityGroup")
+        )(Model);
+
+        const SecurityGroups2Entities = compose(
+            withFields({
+                entity: ref({ instanceOf: [], refNameField: "entityClassId" }),
+                entityClassId: string(),
+                group: ref({ instanceOf: SecurityGroup })
+            }),
+            withName("SecurityGroups2Entities")
+        )(Model);
+
+        const SecurityUser = compose(
+            withFields({
+                groups: ref({
+                    list: true,
+                    instanceOf: [SecurityGroup, "entity"],
+                    using: [SecurityGroups2Entities, "group"]
+                })
+            }),
+            withName("SecurityUser")
+        )(Model);
+
+        const user = new SecurityUser();
+        expect(user.getField("groups").classes).toEqual({
+            models: {
+                field: "entity",
+                class: SecurityGroup
+            },
+            parent: "SecurityUser",
+            using: {
+                field: "group",
+                class: SecurityGroups2Entities
             }
         });
     });

@@ -53,7 +53,12 @@ function __validateArguments({ instanceOf, list, using }) {
             );
         }
 
-        for (let i = 0; i < instanceOf.length; i++) {
+        // Deciding between `instanceOf: [A, B, C]` and `instanceOf: [[A, B, C], "fieldName"]`
+        const instancesOf = typeof instanceOf[1] === 'string'
+            ? instanceOf[0]
+            : instanceOf;
+
+        for (let i = 0; i < instancesOf.length; i++) {
             let instanceOfElement = instanceOf[i];
             if (!hasFields(instanceOfElement)) {
                 throw new WithFieldsError(
@@ -64,11 +69,13 @@ function __validateArguments({ instanceOf, list, using }) {
         }
     }
 
-    if (list && using && !hasFields(using)) {
-        throw new WithFieldsError(
-            `When defining a "ref" field with "using" ref, and, "using" must represent an object with fields.`,
-            WithFieldsError.MODEL_FIELD_INSTANCEOF_NOT_SET
-        );
+    if (list && using) {
+        const usingInstanceOf = Array.isArray(using) ? using[0] : using;
+        if (!hasFields(usingInstanceOf))
+            throw new WithFieldsError(
+                `When defining a "ref" field with "using" ref, and, "using" must represent an object with fields.`,
+                WithFieldsError.MODEL_FIELD_INSTANCEOF_NOT_SET
+            );
     }
 }
 
@@ -83,7 +90,6 @@ const ref: FieldFactory = ({
     autoDelete,
     autoSave,
     refNameField,
-    refFieldName,
     options = {},
     ...rest
 }: Object) => {
@@ -139,9 +145,20 @@ const ref: FieldFactory = ({
 
                         this.classes = {
                             parent: getName(this.parent),
-                            models: { class: instanceOf, field: refFieldName },
+                            models: { class: null, field: null },
                             using: { class: null, field: null }
                         };
+
+                        if (Array.isArray(instanceOf)) {
+                            if (typeof instanceOf[1] === 'string') {
+                                this.classes.models.class = instanceOf[0];
+                                this.classes.models.field = instanceOf[1];
+                            } else {
+                                this.classes.models.class = instanceOf;
+                            }
+                        } else {
+                            this.classes.models.class = instanceOf;
+                        }
 
                         // We will use the same value here to (when loading models without a middle aggregation model).
                         if (!this.classes.models.field) {
@@ -151,7 +168,11 @@ const ref: FieldFactory = ({
                         }
 
                         if (using) {
-                            this.setUsing(using);
+                            if (Array.isArray(using)) {
+                                this.setUsing(...using);
+                            } else {
+                                this.setUsing(using);
+                            }
                         }
 
                         /**
