@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1](https://github.com/webiny/commodo/compare/@commodo/fields-storage@0.2.0...@commodo/fields-storage@0.2.1) (2019-05-24)
+
+
+### Bug Fixes
+
+* storage data is set directly into "current", without calling setValue ([03d5419](https://github.com/webiny/commodo/commit/03d5419))
+
+
+
+
+
 # [0.2.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage@0.1.1...@commodo/fields-storage@0.2.0) (2019-05-09)
 
 
