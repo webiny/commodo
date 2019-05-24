@@ -63,7 +63,7 @@ describe("find test", function() {
         });
     });
 
-    it("find - must throw an error if storage data is invalid", async () => {
+    it("find - must NOT throw an error if storage data is invalid", async () => {
         const findStub = sandbox.stub(User.getStorageDriver(), "find").callsFake(() => {
             return [
                 [
@@ -75,17 +75,7 @@ describe("find test", function() {
             ];
         });
 
-        try {
-            await User.find();
-        } catch (e) {
-            expect(e.message).toBe(
-                'Invalid data type: boolean field "enabled" cannot accept value 123.'
-            );
-            return;
-        } finally {
-            findStub.restore();
-        }
-
-        throw Error(`Error should've been thrown.`);
+        await User.find();
+        findStub.restore();
     });
 });

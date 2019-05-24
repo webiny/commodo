@@ -66,10 +66,9 @@ class FieldsStorageAdapter {
                         value = await this.fields[field.type][1](value);
                     }
 
-                    field.setValue(value, {
-                        skipDifferenceCheck: true,
-                        forceSetAsClean: true
-                    });
+                    // Directly set the value and set "set" property as true.
+                    field.current = value;
+                    field.state.set = true;
                 }
             }
         }

@@ -549,11 +549,11 @@ const ref: FieldFactory = ({
                     if (list) {
                         return;
                     }
-                    setValue.bind(this)(value, {
-                        skipDifferenceCheck: true,
-                        forceSetAsClean: true
-                    });
+
+                    this.current = value;
                     this.initial = value;
+                    this.state.set = true;
+
                     return this;
                 },
 
