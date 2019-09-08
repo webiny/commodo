@@ -40,7 +40,7 @@ test(`"this" used in hooks must be a correct reference`, async () => {
                 this.number2 = this.number2 + 25;
             }
         })
-    )(function() {});
+    )();
 
     const testModel1 = new TestModel1();
     await testModel1.doSomething();

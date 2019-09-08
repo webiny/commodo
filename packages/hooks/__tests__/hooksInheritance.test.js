@@ -2,7 +2,7 @@ import { withHooks } from "@commodo/hooks";
 import { compose } from "ramda";
 import { withProps } from "repropose";
 
-test(`applying additional hooks must not apply them also to the base function`, async () => {
+test(`applying additional hooks MUST ALSO (unfortunately) apply them also to the base function`, async () => {
     let count = 0;
 
     const TestModel1 = compose(
@@ -12,7 +12,7 @@ test(`applying additional hooks must not apply them also to the base function`, 
                 count++;
             }
         })
-    )(function() {});
+    )();
 
     const TestModel2 = compose(
         withProps({}),
@@ -22,6 +22,42 @@ test(`applying additional hooks must not apply them also to the base function`, 
             }
         })
     )(TestModel1);
+
+    const testModel1 = new TestModel1();
+    const testModel2 = new TestModel2();
+
+    expect(Object.keys(testModel1.__hooks)).toEqual(["hook1", "hook2"]);
+    expect(Object.keys(testModel2.__hooks)).toEqual(["hook1", "hook2"]);
+});
+
+test(`applying extracted hooks MUST NOT apply them also to the base function`, async () => {
+    let count = 0;
+
+    const setOfProps1 = base =>
+        compose(
+            withProps({}),
+            withHooks({
+                hook1() {
+                    count++;
+                }
+            })
+        )(base);
+
+    const setOfProps2 = base =>
+        compose(
+            withProps({}),
+            withHooks({
+                hook2() {
+                    count++;
+                }
+            })
+        )(base);
+
+    const TestModel1 = setOfProps1();
+    const TestModel2 = compose(
+        setOfProps2,
+        setOfProps1
+    )();
 
     const testModel1 = new TestModel1();
     const testModel2 = new TestModel2();

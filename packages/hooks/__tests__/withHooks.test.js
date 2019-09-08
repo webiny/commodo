@@ -68,7 +68,7 @@ test(`"withHooks" must assign hooks correctly`, async () => {
                 ++this.internalCounts.afterSave;
             }
         })
-    )(function() {});
+    )();
 
     const testModel = new TestModel();
     await testModel.save();
@@ -92,7 +92,7 @@ test(`"withHooks" must not do anything if no hooks were passed`, async () => {
     const TestModel = compose(
         withHooks(),
         withHooks()
-    )(function() {});
+    )();
 
     const model = new TestModel();
     expect(model.__hooks).toEqual({});
@@ -105,12 +105,12 @@ test(`thrown errors`, async () => {
                 throw Error("Thrown.");
             }
         })
-    )(function() {});
+    )();
 
     const model = new TestModel();
 
     try {
-        await model.hook('xyz');
+        await model.hook("xyz");
     } catch (e) {
         return;
     }
