@@ -46,9 +46,9 @@ describe("multiple delete / save prevention test", () => {
 
         expect(deleteOperation.callCount).toEqual(1);
 
-        user.__storage.processing = "delete";
+        user.__withStorage.processing = "delete";
         await user.delete();
-        user.__storage.processing = null;
+        user.__withStorage.processing = null;
 
         expect(deleteOperation.callCount).toEqual(1);
     });

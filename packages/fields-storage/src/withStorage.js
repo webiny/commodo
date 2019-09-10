@@ -62,7 +62,7 @@ const withStorage = (configuration: Configuration) => {
             }
         }),
         withProps(props => ({
-            __storage: {
+            __withStorage: {
                 existing: false,
                 processing: false,
                 fieldsStorageAdapter: new FieldsStorageAdapter()
@@ -71,20 +71,20 @@ const withStorage = (configuration: Configuration) => {
                 return this.constructor.getStorageDriver().isId(value);
             },
             isExisting() {
-                return this.__storage.existing;
+                return this.__withStorage.existing;
             },
             setExisting(existing: boolean = true) {
-                this.__storage.existing = existing;
+                this.__withStorage.existing = existing;
                 return this;
             },
             async save(params: ?SaveParams): Promise<void> {
                 params = { ...params, ...defaults.save };
 
-                if (this.__storage.processing) {
+                if (this.__withStorage.processing) {
                     return;
                 }
 
-                this.__storage.processing = "save";
+                this.__withStorage.processing = "save";
 
                 const existing = this.isExisting();
 
@@ -127,7 +127,7 @@ const withStorage = (configuration: Configuration) => {
                 } catch (e) {
                     throw e;
                 } finally {
-                    this.__storage.processing = null;
+                    this.__withStorage.processing = null;
                 }
 
                 await registerSaveUpdateCreateHooks("after", { existing, model: this, params });
@@ -137,11 +137,11 @@ const withStorage = (configuration: Configuration) => {
              * @param params
              */
             async delete(params: ?Object) {
-                if (this.__storage.processing) {
+                if (this.__withStorage.processing) {
                     return;
                 }
 
-                this.__storage.processing = "delete";
+                this.__withStorage.processing = "delete";
 
                 params = { ...params, ...defaults.delete };
 
@@ -159,16 +159,16 @@ const withStorage = (configuration: Configuration) => {
                 } catch (e) {
                     throw e;
                 } finally {
-                    props.__storage.processing = null;
+                    props.__withStorage.processing = null;
                 }
             },
 
             getStorageDriver() {
-                return this.constructor.__storage.driver;
+                return this.constructor.__withStorage.driver;
             },
 
             async populateFromStorage(data: Object) {
-                await this.__storage.fieldsStorageAdapter.fromStorage({
+                await this.__withStorage.fieldsStorageAdapter.fromStorage({
                     data,
                     fields: this.getFields()
                 });
@@ -176,39 +176,38 @@ const withStorage = (configuration: Configuration) => {
             },
 
             async toStorage() {
-                return this.__storage.fieldsStorageAdapter.toStorage({ fields: this.getFields() });
+                return this.__withStorage.fieldsStorageAdapter.toStorage({ fields: this.getFields() });
             }
         })),
         withStaticProps(() => {
-            const __storage = {
+            const __withStorage = {
                 ...configuration
             };
 
-            if (!__storage.driver) {
+            if (!__withStorage.driver) {
                 throw new WithStorageError(
                     `Storage driver missing.`,
                     WithStorageError.STORAGE_DRIVER_MISSING
                 );
             }
 
-            __storage.driver =
-                typeof __storage.driver === "function" ? __storage.driver(this) : __storage.driver;
+            __withStorage.driver =
+                typeof __withStorage.driver === "function" ? __withStorage.driver(this) : __withStorage.driver;
 
             if (configuration.pool) {
-                __storage.storagePool =
-                    typeof __storage.pool === "function" ? __storage.pool(this) : __storage.pool;
+                __withStorage.storagePool =
+                    typeof __withStorage.pool === "function" ? __withStorage.pool(this) : __withStorage.pool;
             } else {
-                __storage.storagePool = new StoragePool();
+                __withStorage.storagePool = new StoragePool();
             }
 
             return {
-                __withStorage: true, // For satisfying hasStorage helper function. TODO: remove this one
-                __storage,
+                __withStorage,
                 getStoragePool() {
-                    return this.__storage.storagePool;
+                    return this.__withStorage.storagePool;
                 },
                 getStorageDriver() {
-                    return this.__storage.driver;
+                    return this.__withStorage.driver;
                 },
                 isId(value) {
                     return this.getStorageDriver().isId(value);
@@ -229,7 +228,7 @@ const withStorage = (configuration: Configuration) => {
                     prepared.perPage = Number.isInteger(prepared.perPage) ? prepared.perPage : 10;
 
                     if (prepared.perPage && prepared.perPage > 0) {
-                        const maxPerPage = this.__storage.maxPerPage || 100;
+                        const maxPerPage = this.__withStorage.maxPerPage || 100;
                         if (Number.isInteger(maxPerPage) && prepared.perPage > maxPerPage) {
                             throw new WithStorageError(
                                 `Cannot query for more than ${maxPerPage} models per page.`,

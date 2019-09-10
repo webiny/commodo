@@ -16,7 +16,7 @@ describe("driver override test", () => {
         const user = new CustomUser();
         expect(user.getStorageDriver()).toBeInstanceOf(CustomDriver);
 
-        CustomUser.__storage.driver = new EvenMoreCustomDriver();
+        CustomUser.__withStorage.driver = new EvenMoreCustomDriver();
         expect(CustomUser.getStorageDriver()).toBeInstanceOf(EvenMoreCustomDriver);
     });
 });
