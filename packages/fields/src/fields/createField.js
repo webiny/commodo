@@ -2,80 +2,80 @@ import { type FieldFactory } from "@commodo/fields/types";
 
 const createField: FieldFactory = ({ type, list, validation, get, set, ...rest }) => {
     return function(parent) {
-        const instance = {
-            parent,
-            get,
-            set,
-            name: "",
-            type,
-            list,
-            validation,
-            current: null,
-            state: { loading: false, loaded: false, dirty: false, set: false },
-            getValue() {
-                return this.current;
-            },
-            setValue(value: any, options: Object = {}) {
-                // If needed, implement skipMarkAsSet option (at the time of implementation, it was not needed).
-                this.state.set = true;
+        this.parent = parent;
+        this.get = get;
+        this.set = set;
+        this.name = "";
+        this.type = type;
+        this.list = list;
+        this.validation = validation;
+        this.current = null;
+        this.state = { loading: false, loaded: false, dirty: false, set: false };
 
-                if (options.skipDifferenceCheck) {
-                    if (options.forceSetAsDirty) {
-                        this.state.dirty = true;
-                    } else {
-                        if (options.forceSetAsClean) {
-                            this.state.dirty = false;
-                        }
-                    }
+        this.getValue = () => {
+            return this.current;
+        };
+
+        this.setValue = (value: any, options: Object = {}) => {
+            // If needed, implement skipMarkAsSet option (at the time of implementation, it was not needed).
+            this.state.set = true;
+
+            if (options.skipDifferenceCheck) {
+                if (options.forceSetAsDirty) {
+                    this.state.dirty = true;
                 } else {
-                    if (!this.state.dirty && this.isDifferentFrom(value)) {
-                        this.state.dirty = true;
+                    if (options.forceSetAsClean) {
+                        this.state.dirty = false;
                     }
                 }
-
-                this.current = value;
-                return this;
-            },
-
-            isDifferentFrom(value: mixed): boolean {
-                return this.current !== value;
-            },
-
-            isDirty(): boolean {
-                return this.state.dirty;
-            },
-
-            clean() {
-                this.state.dirty = false;
-                return this;
-            },
-
-            isEmpty() {
-                return this.current === null || typeof this.current === "undefined";
-            },
-
-            isSet(): boolean {
-                return this.state.set;
-            },
-
-            reset(): void {
-                this.current = null;
-                this.state.dirty = false;
-                this.state.set = false;
-            },
-
-            async validate() {
-                if (typeof this.validation === "function") {
-                    await this.validation(await this.getValue());
+            } else {
+                if (!this.state.dirty && this.isDifferentFrom(value)) {
+                    this.state.dirty = true;
                 }
+            }
+
+            this.current = value;
+            return this;
+        };
+
+        this.isDifferentFrom = (value: mixed) => {
+            return this.current !== value;
+        };
+
+        this.isDirty = () => {
+            return this.state.dirty;
+        };
+
+        this.clean = () => {
+            this.state.dirty = false;
+            return this;
+        };
+
+        this.isEmpty = () => {
+            return this.current === null || typeof this.current === "undefined";
+        };
+
+        this.isSet = () => {
+            return this.state.set;
+        };
+
+        this.reset = () => {
+            this.current = null;
+            this.state.dirty = false;
+            this.state.set = false;
+        };
+
+        this.validate = async () => {
+            if (typeof this.validation === "function") {
+                await this.validation(await this.getValue());
             }
         };
 
-        if ('value' in rest) {
-            instance.setValue(rest.value);
+        if ("value" in rest) {
+            this.setValue(rest.value);
         }
 
-        return instance;
+        typeof this.construct === "function" && this.construct();
     };
 };
 

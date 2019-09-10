@@ -7,9 +7,6 @@
 [include]
 .*/node_modules/.*
 
-[libs]
-packages/webiny-api/flow-typed/npm
-
 [lints]
 
 [options]

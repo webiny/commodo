@@ -9,7 +9,7 @@ test(`should be possible to access other fields in onSet callback`, async () => 
             })(number()),
             x2Value: boolean()
         }))
-    )(function() {});
+    )();
 
     const model = new Model();
     model.value = 100;

@@ -54,9 +54,7 @@ function __validateArguments({ instanceOf, list, using }) {
         }
 
         // Deciding between `instanceOf: [A, B, C]` and `instanceOf: [[A, B, C], "fieldName"]`
-        const instancesOf = typeof instanceOf[1] === 'string'
-            ? instanceOf[0]
-            : instanceOf;
+        const instancesOf = typeof instanceOf[1] === "string" ? instanceOf[0] : instanceOf;
 
         for (let i = 0; i < instancesOf.length; i++) {
             let instanceOfElement = instanceOf[i];
@@ -90,7 +88,6 @@ const ref: FieldFactory = ({
     autoDelete,
     autoSave,
     refNameField,
-    options = {},
     ...rest
 }: Object) => {
     __validateArguments({ instanceOf, list, using });
@@ -150,7 +147,7 @@ const ref: FieldFactory = ({
                         };
 
                         if (Array.isArray(instanceOf)) {
-                            if (typeof instanceOf[1] === 'string') {
+                            if (typeof instanceOf[1] === "string") {
                                 this.classes.models.class = instanceOf[0];
                                 this.classes.models.field = instanceOf[1];
                             } else {
@@ -392,9 +389,8 @@ const ref: FieldFactory = ({
                  * Should linked model be automatically deleted once parent model is deleted? By default, linked models will be automatically
                  * deleted, before main model was deleted. Can be disabled, although not recommended since manual deletion needs to be done in that case.
                  * @param enabled
-                 * @param options
                  */
-                setAutoDelete(enabled: boolean = true, options: ?Object = null) {
+                setAutoDelete(enabled: boolean = true) {
                     this.auto.delete = enabled;
                     return this;
                 },
@@ -648,9 +644,7 @@ const ref: FieldFactory = ({
                     if (notEmpty && this.hasMultipleEntityClasses()) {
                         if (!this.options.refNameField) {
                             throw new WithFieldsError(
-                                `Entity field "${
-                                    this.name
-                                }" accepts multiple Entity classes but does not have "refNameField" option defined.`,
+                                `Entity field "${this.name}" accepts multiple Entity classes but does not have "refNameField" option defined.`,
                                 WithFieldsError.VALIDATION_FAILED_INVALID_FIELD
                             );
                         }
@@ -658,9 +652,7 @@ const ref: FieldFactory = ({
                         let refNameField = this.getRefNameField();
                         if (!refNameField) {
                             throw new WithFieldsError(
-                                `Entity field "${
-                                    this.name
-                                }" accepts multiple Entity classes but classId field is missing.`,
+                                `Entity field "${this.name}" accepts multiple Entity classes but classId field is missing.`,
                                 WithFieldsError.VALIDATION_FAILED_INVALID_FIELD
                             );
                         }
@@ -674,17 +666,13 @@ const ref: FieldFactory = ({
                                 const heldValue = await refNameField.getValue();
                                 if (!(typeof heldValue === "string")) {
                                     throw new WithFieldsError(
-                                        `Entity field "${
-                                            this.name
-                                        }" accepts multiple Entity classes but it was not found (classId field holds invalid non-string value).`,
+                                        `Entity field "${this.name}" accepts multiple Entity classes but it was not found (classId field holds invalid non-string value).`,
                                         WithFieldsError.VALIDATION_FAILED_INVALID_FIELD
                                     );
                                 }
 
                                 throw new WithFieldsError(
-                                    `Entity field "${
-                                        this.name
-                                    }" accepts multiple Entity classes but it was not found (classId field holds value "${heldValue}").`,
+                                    `Entity field "${this.name}" accepts multiple Entity classes but it was not found (classId field holds value "${heldValue}").`,
                                     WithFieldsError.VALIDATION_FAILED_INVALID_FIELD
                                 );
                             }
@@ -974,6 +962,8 @@ const ref: FieldFactory = ({
                                 }
                                 models[i] = model;
                             }
+                            // TODO: Could be a bug, what happens with object that wasn't loaded properly?
+                            // TODO: We throw exception?
                             continue;
                         }
 

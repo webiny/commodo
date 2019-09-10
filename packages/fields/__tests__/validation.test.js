@@ -32,7 +32,7 @@ test(`must throw validation errors where appropriate`, async () => {
                 }
             })
         })
-    )(function() {});
+    )();
 
     const user = new User();
 
@@ -71,11 +71,11 @@ test(`must throw validation errors where appropriate`, async () => {
 
     expect(error.code).toBe("VALIDATION_FAILED_INVALID_FIELDS");
     expect(error.data).toEqual({
-        "invalidFields": {
-            "tags": {
-                "code": "VALIDATION_FAILED_INVALID_FIELD",
-                "data": null,
-                "message": "Cannot set more than six tags."
+        invalidFields: {
+            tags: {
+                code: "VALIDATION_FAILED_INVALID_FIELD",
+                data: null,
+                message: "Cannot set more than six tags."
             }
         }
     });
@@ -91,11 +91,11 @@ test(`must throw validation errors where appropriate`, async () => {
 
     expect(error.code).toBe("VALIDATION_FAILED_INVALID_FIELDS");
     expect(error.data).toEqual({
-        "invalidFields": {
-            "tags": {
-                "code": "VALIDATION_FAILED_INVALID_FIELD",
-                "data": null,
-                "message": "Tag must not be more than six characters long."
+        invalidFields: {
+            tags: {
+                code: "VALIDATION_FAILED_INVALID_FIELD",
+                data: null,
+                message: "Tag must not be more than six characters long."
             }
         }
     });

@@ -14,12 +14,12 @@ describe("model attribute test", () => {
         model.getField("company").setStorageValue("A");
         expect(model.getField("company").current).toBe("A");
 
-        sandbox.stub(model.getStorageDriver(), "findOne").callsFake(() => {
+        sandbox.stub(Company.getStorageDriver(), "findOne").callsFake(() => {
             return { id: "A", name: "TestCompany" };
         });
 
         const company = await model.company;
-        model.getStorageDriver().findOne.restore();
+        Company.getStorageDriver().findOne.restore();
 
         expect(company).toBeInstanceOf(Company);
         model.company.name = "TestCompany";
@@ -28,7 +28,7 @@ describe("model attribute test", () => {
     test("should return correct storage value", async () => {
         const model = new User();
 
-        const ids = {B: mdbid(), one: mdbid(), five: mdbid()};
+        const ids = { B: mdbid(), one: mdbid(), five: mdbid() };
 
         model.getField("company").setStorageValue("one");
         expect(await model.getField("company").getStorageValue()).toEqual("one");
@@ -125,7 +125,7 @@ describe("model attribute test", () => {
         // This time we should have an update on User model, update on company model and insert on linked image model.
         // Additionally, image model has a createdBy attribute, but since it's empty, nothing must happen here.
 
-        const C =mdbid();
+        const C = mdbid();
         save = sandbox
             .stub(user.getStorageDriver(), "save")
             .onCall(0)
@@ -335,7 +335,7 @@ describe("model attribute test", () => {
 
         // "one.two = ..." triggers loading of entity (ONLY WITH DEBUGGER), regular test run works just fine!!!
         // OMG -_-
-        one.getField('two').setValue({
+        one.getField("two").setValue({
             name: "Another Two",
             three: {
                 name: "Another Three",
@@ -434,7 +434,7 @@ describe("model attribute test", () => {
         modelFindById.restore();
 
         // one.getField("two").setValue("anotherTwo"); // Use this one for debugging.
-        one.two = 'anotherTwo'; // Causes "loading" flag to be true, probably some kind of a babel/transpile issue.
+        one.two = "anotherTwo"; // Causes "loading" flag to be true, probably some kind of a babel/transpile issue.
 
         modelFindById = sandbox
             .stub(One.getStorageDriver(), "findOne")

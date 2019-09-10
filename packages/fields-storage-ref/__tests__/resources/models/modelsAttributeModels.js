@@ -3,7 +3,7 @@ import { withName } from "@commodo/name";
 import { withHooks } from "@commodo/hooks";
 import { ref } from "@commodo/fields-storage-ref";
 import { compose } from "ramda";
-import Model from "./Model";
+import createModel from "./createModel";
 import required from "./validators/required";
 
 const Entity1 = compose(
@@ -29,7 +29,7 @@ const Entity1 = compose(
             }
         }
     })
-)(Model);
+)(createModel());
 
 const Entity2 = compose(
     withHooks({
@@ -50,9 +50,8 @@ const Entity2 = compose(
         markedAsCannotDelete: boolean(),
         model1Entities: ref({ list: true, instanceOf: Entity1 })
     }),
-    withName("Entity2"),
-
-)(Model);
+    withName("Entity2")
+)(createModel());
 
 const MainEntity = compose(
     withFields({
@@ -60,7 +59,7 @@ const MainEntity = compose(
         attribute2: ref({ list: true, instanceOf: Entity2 })
     }),
     withName("MainEntity")
-)(Model);
+)(createModel());
 
 const MainSetOnceEntity = compose(
     withFields({
@@ -68,7 +67,7 @@ const MainSetOnceEntity = compose(
         attribute2: ref({ list: true, instanceOf: Entity2 })
     }),
     withName("MainSetOnceEntity")
-)(Model);
+)(createModel());
 
 const MainEntityWithStorage = compose(
     withFields({
@@ -76,6 +75,6 @@ const MainEntityWithStorage = compose(
         attribute2: ref({ list: true, instanceOf: Entity2, toStorage: true })
     }),
     withName("MainEntityWithStorage")
-)(Model);
+)(createModel());
 
 export { Entity1, Entity2, MainEntity, MainSetOnceEntity, MainEntityWithStorage };

@@ -1,5 +1,14 @@
 import { compose } from "ramda";
-import { withFields, onSet, onGet, string, number, boolean, fields, setOnce } from "@commodo/fields";
+import {
+    withFields,
+    onSet,
+    onGet,
+    string,
+    number,
+    boolean,
+    fields,
+    setOnce
+} from "@commodo/fields";
 
 describe("field models test", () => {
     const Model1 = compose(
@@ -20,7 +29,7 @@ describe("field models test", () => {
                 }
             })
         })
-    )(function() {});
+    )();
 
     const Model2 = compose(
         withFields({
@@ -40,14 +49,14 @@ describe("field models test", () => {
             }),
             enabled: boolean()
         })
-    )(function() {});
+    )();
 
     const Model = compose(
         withFields({
             field1: fields({ instanceOf: Model1, list: true }),
             field2: fields({ instanceOf: Model2, list: true })
         })
-    )(function() {});
+    )();
 
     test("should pass - empty arrays set", async () => {
         const modelInstance = new Model();
@@ -189,7 +198,7 @@ describe("field models test", () => {
                     }
                 })
             })
-        )(function() {});
+        )();
 
         const newModel = new Model();
 
@@ -237,7 +246,7 @@ describe("field models test", () => {
             withFields({
                 field1: compose(setOnce())(fields({ list: true, instanceOf: Model1 }))
             })
-        )(function() {});
+        )();
 
         const newModel = new ModelWithSetOnce();
 
@@ -272,7 +281,7 @@ describe("field models test", () => {
                     })
                 )(fields({ list: true, instanceOf: Model1 }))
             })
-        )(function() {});
+        )();
 
         const newModel = new Model();
 

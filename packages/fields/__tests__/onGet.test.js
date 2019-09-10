@@ -19,7 +19,7 @@ test(`should and should not be possible to access other fields in onGet callback
                 return instance.value * 3;
             })(number())
         }))
-    )(function() {});
+    )();
 
     const model = new Model();
     model.value = 100;
@@ -34,9 +34,7 @@ test(`should and should not be possible to access other fields in onGet callback
     model.value = 400;
     expect(model.value).toBe(800);
 
-    // Check onGet applied on first and last "withFields" calls
     expect(model.x4Value).toBe(3200);
 
-    // The problem here is that recevied instance reference doesn't have value field assigned yet.
-    expect(model.x3Value).toBe(NaN);
+    expect(model.x3Value).toBe(2400);
 });

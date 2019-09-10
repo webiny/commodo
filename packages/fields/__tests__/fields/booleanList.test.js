@@ -2,7 +2,7 @@ import { boolean } from "@commodo/fields/fields";
 import { withFields, WithFieldsError } from "@commodo/fields";
 import { compose } from "ramda";
 
-const Model = compose(withFields({ attribute: boolean({ list: true }) }))(function() {});
+const Model = compose(withFields({ attribute: boolean({ list: true }) }))();
 
 test("boolean field should accept boolean values (list)", () => {
     const model = new Model();

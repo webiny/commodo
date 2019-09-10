@@ -12,7 +12,7 @@ test(`new instances must be their own instances, must not be linked with previou
             age: string(),
             enabled: string()
         })
-    )(function() {});
+    )();
 
     const user1 = new User();
     user1.firstName = "firstName1";

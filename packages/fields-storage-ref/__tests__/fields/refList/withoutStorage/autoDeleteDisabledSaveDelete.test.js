@@ -385,35 +385,41 @@ describe("save and delete models attribute test", () => {
             .stub(MainEntity.getStorageDriver(), "find")
             .onCall(0)
             .callsFake(() => {
-                return [[
-                    { id: B, name: "b", type: "dog", markedAsCannotDelete: true },
-                    { id: C, name: "c", type: "dog", markedAsCannotDelete: false }
-                ]];
+                return [
+                    [
+                        { id: B, name: "b", type: "dog", markedAsCannotDelete: true },
+                        { id: C, name: "c", type: "dog", markedAsCannotDelete: false }
+                    ]
+                ];
             })
             .onCall(1)
             .callsFake(() => {
-                return [[
-                    {
-                        id: D,
-                        firstName: "John",
-                        lastName: "Doe",
-                        markedAsCannotDelete: true
-                    },
-                    {
-                        id: E,
-                        firstName: "Jane",
-                        lastName: "Doe",
-                        markedAsCannotDelete: false
-                    }
-                ]];
+                return [
+                    [
+                        {
+                            id: D,
+                            firstName: "John",
+                            lastName: "Doe",
+                            markedAsCannotDelete: true
+                        },
+                        {
+                            id: E,
+                            firstName: "Jane",
+                            lastName: "Doe",
+                            markedAsCannotDelete: false
+                        }
+                    ]
+                ];
             })
             .onCall(2)
             .callsFake(() => {
-                return [[
-                    { id: F, name: "f", type: "dog", markedAsCannotDelete: false },
-                    { id: G, name: "g", type: "dog", markedAsCannotDelete: false },
-                    { id: H, name: "h", type: "parrot", markedAsCannotDelete: false }
-                ]];
+                return [
+                    [
+                        { id: F, name: "f", type: "dog", markedAsCannotDelete: false },
+                        { id: G, name: "g", type: "dog", markedAsCannotDelete: false },
+                        { id: H, name: "h", type: "parrot", markedAsCannotDelete: false }
+                    ]
+                ];
             })
             .onCall(3)
             .callsFake(() => {
@@ -448,7 +454,7 @@ describe("save and delete models attribute test", () => {
         expect(modelFind.callCount).toEqual(0);
 
         const attr1 = await mainEntity.attribute1;
-        attr1[0].markedAsCannotDelete = false
+        attr1[0].markedAsCannotDelete = false;
 
         expect(modelFind.callCount).toEqual(1);
 
@@ -476,7 +482,7 @@ describe("save and delete models attribute test", () => {
         expect(modelFind.callCount).toEqual(1);
 
         const attr2 = await mainEntity.attribute2;
-        attr2[0].markedAsCannotDelete = false
+        attr2[0].markedAsCannotDelete = false;
 
         error = null;
         try {

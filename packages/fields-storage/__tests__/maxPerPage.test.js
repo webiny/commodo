@@ -12,7 +12,7 @@ const EntityWithoutMaxPerPage = compose(
     withStorage({
         driver: new CustomDriver()
     })
-)(function() {});
+)();
 
 const EntityWithMaxPerPage = compose(
     withFields({
@@ -23,7 +23,7 @@ const EntityWithMaxPerPage = compose(
         driver: new CustomDriver(),
         maxPerPage: 500
     })
-)(function() {});
+)();
 
 const EntityWithMaxPerPageSetToNull = compose(
     withFields({
@@ -34,7 +34,7 @@ const EntityWithMaxPerPageSetToNull = compose(
         driver: new CustomDriver(),
         maxPerPage: null
     })
-)(function() {});
+)();
 
 describe("maxPerPage test", () => {
     test("must throw errors if maxPerPage config parameter was exceeded", async () => {

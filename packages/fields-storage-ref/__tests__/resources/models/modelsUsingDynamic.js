@@ -3,14 +3,14 @@ import { withName } from "@commodo/name";
 import { ref } from "@commodo/fields-storage-ref";
 import { compose } from "ramda";
 import { withProps } from "repropose";
-import Model from "./Model";
+import createModel from "./createModel";
 
 const GroupDynamic = compose(
     withFields({
         name: string()
     }),
     withName("GroupDynamic")
-)(Model);
+)(createModel());
 
 const UserDynamic = compose(
     withProps({
@@ -22,7 +22,7 @@ const UserDynamic = compose(
         name: string()
     })),
     withName("UserDynamic")
-)(Model);
+)(createModel());
 
 const UserDynamicGroupsDynamic = compose(
     withFields({
@@ -30,6 +30,6 @@ const UserDynamicGroupsDynamic = compose(
         groupDynamic: ref({ instanceOf: GroupDynamic })
     }),
     withName("UserDynamicGroupsDynamic")
-)(Model);
+)(createModel());
 
 export { UserDynamic, GroupDynamic, UserDynamicGroupsDynamic };

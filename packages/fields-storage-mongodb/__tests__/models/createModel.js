@@ -3,13 +3,14 @@ import { MongoDbDriver, withId } from "@commodo/fields-storage-mongodb";
 import { database } from "./../database";
 import { compose } from "ramda";
 
-const Model = compose(
-    withId(),
-    withStorage({
-        driver: new MongoDbDriver({
-            database
+const createModel = base =>
+    compose(
+        withId(),
+        withStorage({
+            driver: new MongoDbDriver({
+                database
+            })
         })
-    })
-)(function() {});
+    )(base);
 
-export default Model;
+export default createModel;

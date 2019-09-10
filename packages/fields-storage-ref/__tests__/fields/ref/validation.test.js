@@ -1,6 +1,6 @@
 import { User, Company } from "../../resources/models/userCompanyImage";
 import { withName } from "@commodo/name";
-import Model from "../../resources/models/Model";
+import createModel from "../../resources/models/createModel";
 import { One, Two } from "../../resources/models/oneTwoThree";
 import sinon from "sinon";
 import { WithFieldsError, withFields, string } from "@commodo/fields";
@@ -179,7 +179,7 @@ describe("model attribute test", () => {
             withFields({
                 name: string()
             })
-        )(Model);
+        )(createModel());
 
         const One = compose(
             withName("One"),
@@ -194,7 +194,7 @@ describe("model attribute test", () => {
                     }
                 })
             })
-        )(Model);
+        )(createModel());
 
         let findById = sandbox
             .stub(One.getStorageDriver(), "findOne")

@@ -2,28 +2,28 @@ import { withFields, string } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { ref } from "@commodo/fields-storage-ref";
 import { compose } from "ramda";
-import Model from "./Model";
+import createModel from "./createModel";
 
 const A = compose(
     withName("A"),
     withFields({
         name: string()
     })
-)(Model);
+)(createModel());
 
 const B = compose(
     withName("B"),
     withFields({
         name: string()
     })
-)(Model);
+)(createModel());
 
 const C = compose(
     withName("C"),
     withFields({
         name: string()
     })
-)(Model);
+)(createModel());
 
 const Main = compose(
     withName("Main"),
@@ -31,14 +31,14 @@ const Main = compose(
         assignedTo: ref({ instanceOf: [A, B, C], refNameField: "assignedToRefName" }),
         assignedToRefName: string()
     })
-)(Model);
+)(createModel());
 
 const MainMissingRefNameFieldOption = compose(
     withName("MainMissingRefNameFieldOption"),
     withFields({
         assignedTo: ref({ instanceOf: [A, B, C] })
     })
-)(Model);
+)(createModel());
 
 const MainMissingRefNameField = compose(
     withName("MainMissingRefNameField"),
@@ -46,12 +46,12 @@ const MainMissingRefNameField = compose(
         assignedTo: ref({ instanceOf: [A, B, C], refNameField: "assignedToRefName" }),
         assignedToRefNameEdited: string()
     })
-)(Model);
+)(createModel());
 
 const InvalidEntityClass = compose(
     withName("InvalidEntityClass"),
     withFields({})
-)(Model);
+)(createModel());
 
 export {
     Main,

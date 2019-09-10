@@ -2,29 +2,29 @@ import { withFields, string } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { ref } from "@commodo/fields-storage-ref";
 import { compose } from "ramda";
-import Model from "./Model";
+import createModel from "./createModel";
 
 const ClassCDynamic = compose(
     withName("ClassCDynamic"),
     withFields({
-        name: string(),
+        name: string()
     })
-)(Model);
+)(createModel());
 
 const ClassBDynamic = compose(
     withName("ClassBDynamic"),
     withFields({
         name: string(),
-        classCDynamic: ref({instanceOf: ClassCDynamic})
+        classCDynamic: ref({ instanceOf: ClassCDynamic })
     })
-)(Model);
+)(createModel());
 
 const ClassADynamic = compose(
     withName("ClassADynamic"),
     withFields({
         name: string(),
-        classBDynamic: ref({instanceOf: ClassBDynamic})
+        classBDynamic: ref({ instanceOf: ClassBDynamic })
     })
-)(Model);
+)(createModel());
 
 export { ClassADynamic, ClassBDynamic, ClassCDynamic };

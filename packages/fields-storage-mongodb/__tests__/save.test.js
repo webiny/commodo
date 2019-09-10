@@ -2,7 +2,6 @@ import sinon from "sinon";
 import SimpleModel from "./models/simpleModel";
 import { collection } from "./database";
 import mongodb from "mongodb";
-import mdbid from "mdbid";
 
 const sandbox = sinon.createSandbox();
 

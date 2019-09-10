@@ -1,4 +1,4 @@
-import Model from "./model";
+import createModel from "./createModel";
 import { withFields, string, fields, boolean } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { ref } from "@commodo/fields-storage-ref";
@@ -16,21 +16,21 @@ const VerificationModel = compose(
             }
         })
     })
-)(function() {});
+)();
 
 const TagModel = compose(
     withFields({
         slug: string(),
         label: string()
     })
-)(function() {});
+)();
 
 const SimpleModel = compose(
     withName("SimpleModel"),
     withFields({
         name: string()
     })
-)(Model);
+)(createModel());
 
 const ComplexModels2SimpleModels = compose(
     withName("ComplexModels2SimpleModels"),
@@ -38,7 +38,7 @@ const ComplexModels2SimpleModels = compose(
         complexModel: id(),
         simpleModel: id()
     })
-)(Model);
+)(createModel());
 
 const ComplexModel = compose(
     withFields({
@@ -50,6 +50,6 @@ const ComplexModel = compose(
         simpleModels: ref({ list: true, instanceOf: SimpleModel })
     }),
     withName("ComplexModel")
-)(Model);
+)(createModel());
 
 export { VerificationModel, TagModel, ComplexModel, SimpleModel, ComplexModels2SimpleModels };

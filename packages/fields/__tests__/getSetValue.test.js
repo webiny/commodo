@@ -11,7 +11,7 @@ test(`must set value into private __withFields property correctly`, async () => 
             age: number({ name: "age" }),
             enabled: boolean({ name: "enabled" })
         })
-    )(function() {});
+    )();
 
     const user = new User();
     user.firstName = "John";

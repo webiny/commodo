@@ -3,8 +3,9 @@ import { withName } from "@commodo/name";
 import { withHooks } from "@commodo/hooks";
 import { ref } from "@commodo/fields-storage-ref";
 import { compose } from "ramda";
-import Model from "./Model";
+import createModel from "./createModel";
 import required from "./validators/required";
+
 const Image = compose(
     withName("Image"),
     withHooks({
@@ -21,9 +22,8 @@ const Image = compose(
         size: number(),
         createdBy: ref({ instanceOf: User }),
         markedAsCannotDelete: boolean()
-    })),
-
-)(Model);
+    }))
+)(createModel());
 
 const Company = compose(
     withName("Company"),
@@ -41,7 +41,7 @@ const Company = compose(
         image: ref({ instanceOf: Image, autoDelete: true }),
         markedAsCannotDelete: boolean()
     })
-)(Model);
+)(createModel());
 
 const User = compose(
     withName("User"),
@@ -62,6 +62,6 @@ const User = compose(
         company: ref({ instanceOf: Company, autoDelete: true }),
         markedAsCannotDelete: boolean()
     })
-)(Model);
+)(createModel());
 
 export { User, Company, Image };

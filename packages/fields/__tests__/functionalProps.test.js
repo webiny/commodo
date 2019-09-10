@@ -19,7 +19,7 @@ test(`should be possible to access current instance as first "withFields" argume
             value1: number(),
             value2: number()
         })
-    )(function() {});
+    )();
 
     const model = new Model();
     expect(Object.keys(model.getFields())).toEqual(["value1", "value2", "value300"]);

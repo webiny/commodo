@@ -6,7 +6,7 @@ import { withFields, string, setOnce } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { ref } from "@commodo/fields-storage-ref";
 import { compose } from "ramda";
-import Model from "./../../resources/models/Model";
+import createModel from "./../../resources/models/createModel";
 
 const sandbox = sinon.createSandbox();
 
@@ -83,7 +83,7 @@ describe("model attribute test", () => {
                     }
                 })
             })
-        )(Model);
+        )(createModel());
 
         const Primary = compose(
             withName("Primary"),
@@ -97,7 +97,7 @@ describe("model attribute test", () => {
                 }),
                 secondary: setOnce()(ref({ instanceOf: Secondary }))
             })
-        )(Model);
+        )(createModel());
 
         const secondary1 = new Secondary();
         secondary1.name = "secondary1";

@@ -12,7 +12,7 @@ test(`must populate fields correctly`, async () => {
             enabled: boolean(),
             deleted: boolean()
         })
-    )(function() {});
+    )();
 
     const user = new User();
     user.populate({

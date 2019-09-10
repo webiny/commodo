@@ -1,8 +1,6 @@
 import { withFields, number, string, boolean, fields } from "@commodo/fields";
 import { compose } from "ramda";
 
-const noop = function() {};
-
 export const Size = compose(
     withFields({
         height: number({
@@ -14,7 +12,7 @@ export const Size = compose(
         }),
         width: number()
     })
-)(noop);
+)();
 
 export const Image = compose(
     withFields({
@@ -22,7 +20,7 @@ export const Image = compose(
         size: fields({ instanceOf: Size }),
         visible: boolean({ defaultValue: false })
     })
-)(noop);
+)();
 
 export const Company = compose(
     withFields({
@@ -50,7 +48,7 @@ export const Company = compose(
             }
         })
     })
-)(noop);
+)();
 
 export const User = compose(
     withFields({
@@ -78,4 +76,4 @@ export const User = compose(
             }
         })
     })
-)(noop);
+)();

@@ -3,12 +3,12 @@ const sandbox = sinon.createSandbox();
 import { withFields } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { compose } from "ramda";
-import Model from "./resources/models/Model";
+import createModel from "./resources/models/createModel";
 
 const User = compose(
     withFields({}),
     withName("User")
-)(Model);
+)(createModel());
 
 describe("multiple delete / save prevention test", () => {
     afterEach(() => sandbox.restore());

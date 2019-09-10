@@ -1,15 +1,15 @@
-import { withFields, string, number, boolean } from "@commodo/fields";
+import { withFields, string } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { ref } from "@commodo/fields-storage-ref";
 import { compose } from "ramda";
-import Model from "./Model";
+import createModel from "./createModel";
 
 const Group = compose(
     withFields({
         name: string()
     }),
     withName("Group")
-)(Model);
+)(createModel());
 
 const UsersGroups = compose(
     withFields(() => ({
@@ -17,7 +17,7 @@ const UsersGroups = compose(
         group: ref({ instanceOf: Group })
     })),
     withName("UsersGroups")
-)(Model);
+)(createModel());
 
 const User = compose(
     withFields({
@@ -25,6 +25,6 @@ const User = compose(
         groups: ref({ instanceOf: Group, list: true, using: UsersGroups })
     }),
     withName("User")
-)(Model);
+)(createModel());
 
 export { User, Group, UsersGroups };

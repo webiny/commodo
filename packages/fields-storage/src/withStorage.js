@@ -107,8 +107,7 @@ const withStorage = (configuration: Configuration) => {
                     });
 
                     if (this.isDirty()) {
-                        const { configuration } = this.constructor.__storage;
-                        await configuration.driver.save({
+                        await this.getStorageDriver().save({
                             isUpdate: existing,
                             isCreate: !existing,
                             model: this
@@ -165,7 +164,7 @@ const withStorage = (configuration: Configuration) => {
             },
 
             getStorageDriver() {
-                return this.constructor.__storage.configuration.driver;
+                return this.constructor.__storage.driver;
             },
 
             async populateFromStorage(data: Object) {
@@ -180,165 +179,182 @@ const withStorage = (configuration: Configuration) => {
                 return this.__storage.fieldsStorageAdapter.toStorage({ fields: this.getFields() });
             }
         })),
-        withStaticProps({
-            __withStorage: true, // For satisfying hasStorage helper function. TODO: remove this one
-            __storage: {
-                configuration: { ...configuration },
-                storagePool:
-                    typeof configuration.storagePool === "function"
-                        ? new configuration.storagePool()
-                        : new StoragePool()
-            },
-            getStoragePool() {
-                return this.__storage.storagePool;
-            },
-            getStorageDriver() {
-                return this.__storage.configuration.driver;
-            },
-            isId(value) {
-                return this.getStorageDriver().isId(value);
-            },
-            async find(options: ?FindParams) {
-                if (!options) {
-                    options = {};
-                }
+        withStaticProps(() => {
+            const __storage = {
+                ...configuration
+            };
 
-                const prepared = { ...options };
+            if (!__storage.driver) {
+                throw new WithStorageError(
+                    `Storage driver missing.`,
+                    WithStorageError.STORAGE_DRIVER_MISSING
+                );
+            }
 
-                // Prepare find-specific params: perPage and page.
-                prepared.page = Number(prepared.page);
-                if (!Number.isInteger(prepared.page) || (prepared.page && prepared.page <= 1)) {
-                    prepared.page = 1;
-                }
+            __storage.driver =
+                typeof __storage.driver === "function" ? __storage.driver(this) : __storage.driver;
 
-                prepared.perPage = Number.isInteger(prepared.perPage) ? prepared.perPage : 10;
+            if (configuration.pool) {
+                __storage.storagePool =
+                    typeof __storage.pool === "function" ? __storage.pool(this) : __storage.pool;
+            } else {
+                __storage.storagePool = new StoragePool();
+            }
 
-                if (prepared.perPage && prepared.perPage > 0) {
-                    const maxPerPage = this.__storage.configuration.maxPerPage || 100;
-                    if (Number.isInteger(maxPerPage) && prepared.perPage > maxPerPage) {
-                        throw new WithStorageError(
-                            `Cannot query for more than ${maxPerPage} models per page.`,
-                            WithStorageError.MAX_PER_PAGE_EXCEEDED
-                        );
+            return {
+                __withStorage: true, // For satisfying hasStorage helper function. TODO: remove this one
+                __storage,
+                getStoragePool() {
+                    return this.__storage.storagePool;
+                },
+                getStorageDriver() {
+                    return this.__storage.driver;
+                },
+                isId(value) {
+                    return this.getStorageDriver().isId(value);
+                },
+                async find(options: ?FindParams) {
+                    if (!options) {
+                        options = {};
                     }
-                } else {
-                    prepared.perPage = 10;
-                }
 
-                const [results, meta] = await this.getStorageDriver().find({
-                    model: this,
-                    options: prepared
-                });
+                    const prepared = { ...options };
 
-                const collection = new Collection()
-                    .setParams(prepared)
-                    .setMeta({ ...createPaginationMeta(), ...meta });
+                    // Prepare find-specific params: perPage and page.
+                    prepared.page = Number(prepared.page);
+                    if (!Number.isInteger(prepared.page) || (prepared.page && prepared.page <= 1)) {
+                        prepared.page = 1;
+                    }
 
-                const result: ?Array<Object> = results;
-                if (result instanceof Array) {
-                    for (let i = 0; i < result.length; i++) {
-                        const pooled = this.getStoragePool().get(this, result[i].id);
-                        if (pooled) {
-                            collection.push(pooled);
-                        } else {
-                            const model = new this();
-                            model.setExisting();
-                            await model.populateFromStorage(result[i]);
-                            this.getStoragePool().add(model);
-                            collection.push(model);
+                    prepared.perPage = Number.isInteger(prepared.perPage) ? prepared.perPage : 10;
+
+                    if (prepared.perPage && prepared.perPage > 0) {
+                        const maxPerPage = this.__storage.maxPerPage || 100;
+                        if (Number.isInteger(maxPerPage) && prepared.perPage > maxPerPage) {
+                            throw new WithStorageError(
+                                `Cannot query for more than ${maxPerPage} models per page.`,
+                                WithStorageError.MAX_PER_PAGE_EXCEEDED
+                            );
+                        }
+                    } else {
+                        prepared.perPage = 10;
+                    }
+
+                    const [results, meta] = await this.getStorageDriver().find({
+                        model: this,
+                        options: prepared
+                    });
+
+                    const collection = new Collection()
+                        .setParams(prepared)
+                        .setMeta({ ...createPaginationMeta(), ...meta });
+
+                    const result: ?Array<Object> = results;
+                    if (result instanceof Array) {
+                        for (let i = 0; i < result.length; i++) {
+                            const pooled = this.getStoragePool().get(this, result[i].id);
+                            if (pooled) {
+                                collection.push(pooled);
+                            } else {
+                                const model = new this();
+                                model.setExisting();
+                                await model.populateFromStorage(result[i]);
+                                this.getStoragePool().add(model);
+                                collection.push(model);
+                            }
                         }
                     }
-                }
 
-                return collection;
-            },
-            /**
-             * Finds a single model matched by given ID.
-             * @param id
-             * @param params
-             */
-            async findById(id: mixed, params: ?Object): Promise<null | Entity> {
-                if (!id || !this.isId(id)) {
-                    return null;
-                }
-
-                const pooled = this.getStoragePool().get(this, id);
-                if (pooled) {
-                    return pooled;
-                }
-
-                if (!params) {
-                    params = {};
-                }
-
-                const newParams = { ...params, query: { id } };
-                return await this.findOne(newParams);
-            },
-
-            /**
-             * Finds one or more models matched by given IDs.
-             * @param ids
-             * @param params
-             */
-            async findByIds(ids: Array<mixed>, params: ?Object): Promise<Array<Entity>> {
-                const output = [];
-                for (let i = 0; i < ids.length; i++) {
-                    const model = await this.findById(ids[i], params);
-                    if (model) {
-                        output.push(model);
+                    return collection;
+                },
+                /**
+                 * Finds a single model matched by given ID.
+                 * @param id
+                 * @param params
+                 */
+                async findById(id: mixed, params: ?Object): Promise<null | Entity> {
+                    if (!id || !this.isId(id)) {
+                        return null;
                     }
-                }
 
-                return output;
-            },
-
-            /**
-             * Finds one model matched by given query parameters.
-             * @param params
-             */
-            async findOne(params: ?Object): Promise<null | $Subtype<Entity>> {
-                if (!params) {
-                    params = {};
-                }
-
-                const prepared = { ...params };
-
-                const result = await this.getStorageDriver().findOne({
-                    model: this,
-                    options: prepared
-                });
-
-                if (result) {
-                    const pooled = this.getStoragePool().get(this, result.id);
+                    const pooled = this.getStoragePool().get(this, id);
                     if (pooled) {
                         return pooled;
                     }
 
-                    const model: $Subtype<Entity> = new this();
-                    model.setExisting();
-                    await model.populateFromStorage(((result: any): Object));
-                    this.getStoragePool().add(model);
-                    return model;
+                    if (!params) {
+                        params = {};
+                    }
+
+                    const newParams = { ...params, query: { id } };
+                    return await this.findOne(newParams);
+                },
+
+                /**
+                 * Finds one or more models matched by given IDs.
+                 * @param ids
+                 * @param params
+                 */
+                async findByIds(ids: Array<mixed>, params: ?Object): Promise<Array<Entity>> {
+                    const output = [];
+                    for (let i = 0; i < ids.length; i++) {
+                        const model = await this.findById(ids[i], params);
+                        if (model) {
+                            output.push(model);
+                        }
+                    }
+
+                    return output;
+                },
+
+                /**
+                 * Finds one model matched by given query parameters.
+                 * @param params
+                 */
+                async findOne(params: ?Object): Promise<null | $Subtype<Entity>> {
+                    if (!params) {
+                        params = {};
+                    }
+
+                    const prepared = { ...params };
+
+                    const result = await this.getStorageDriver().findOne({
+                        model: this,
+                        options: prepared
+                    });
+
+                    if (result) {
+                        const pooled = this.getStoragePool().get(this, result.id);
+                        if (pooled) {
+                            return pooled;
+                        }
+
+                        const model: $Subtype<Entity> = new this();
+                        model.setExisting();
+                        await model.populateFromStorage(((result: any): Object));
+                        this.getStoragePool().add(model);
+                        return model;
+                    }
+                    return null;
+                },
+
+                /**
+                 * Counts total number of models matched by given query parameters.
+                 * @param params
+                 */
+                async count(params: ?Object): Promise<number> {
+                    if (!params) {
+                        params = {};
+                    }
+
+                    const prepared = { ...params };
+
+                    return await this.getStorageDriver().count({
+                        model: this,
+                        options: prepared
+                    });
                 }
-                return null;
-            },
-
-            /**
-             * Counts total number of models matched by given query parameters.
-             * @param params
-             */
-            async count(params: ?Object): Promise<number> {
-                if (!params) {
-                    params = {};
-                }
-
-                const prepared = { ...params };
-
-                return await this.getStorageDriver().count({
-                    model: this,
-                    options: prepared
-                });
-            }
+            };
         })
     );
 };

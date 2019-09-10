@@ -9,7 +9,7 @@ test(`must not allow changing of e-mail attribute (can be set only once)`, async
             lastName: string(),
             email: compose(setOnce())(string({ skipOnPopulate: true }))
         })
-    )(function() {});
+    )();
 
     const user = new User();
     user.firstName = "John";

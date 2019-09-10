@@ -1,7 +1,7 @@
 import { withFields, onSet, string, number, boolean } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { compose } from "ramda";
-import Model from "./resources/models/Model";
+import createModel from "./resources/models/createModel";
 
 const User = compose(
     withFields({
@@ -12,7 +12,7 @@ const User = compose(
         someValue: onSet(value => value + "-UPDATED")(string())
     }),
     withName("User")
-)(Model);
+)(createModel());
 
 describe("populate from storage", () => {
     test(`each field's "set" property must be set to true`, async () => {
@@ -22,7 +22,7 @@ describe("populate from storage", () => {
             lastName: "b",
             age: 40,
             enabled: true,
-            someValue: 'e'
+            someValue: "e"
         });
 
         expect(user.getField("firstName").isSet()).toBe(true);
@@ -35,10 +35,9 @@ describe("populate from storage", () => {
         expect(user.lastName).toBe("b");
         expect(user.age).toBe(40);
         expect(user.enabled).toBe(true);
-        expect(user.someValue).toBe('e');
+        expect(user.someValue).toBe("e");
 
-        user.someValue = 'e';
-        expect(user.someValue).toBe('e-UPDATED');
-
+        user.someValue = "e";
+        expect(user.someValue).toBe("e-UPDATED");
     });
 });

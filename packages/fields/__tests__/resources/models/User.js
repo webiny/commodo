@@ -16,6 +16,6 @@ const User = compose(
         }
     }),
     withName("User")
-)(function() {});
+)();
 
 export default User;

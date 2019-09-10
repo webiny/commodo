@@ -12,7 +12,7 @@ class StoragePool {
         return this.pool;
     }
 
-    add(model: $Subtype<Model>): this {
+    add(model: $Subtype<CreateModel>): this {
         const namespace = getName(model);
         if (!this.getPool()[namespace]) {
             this.getPool()[namespace] = {};
@@ -42,7 +42,7 @@ class StoragePool {
         return this;
     }
 
-    get(model: Class<$Subtype<Model>> | Model, id: ?mixed): ?Model {
+    get(model: Class<$Subtype<CreateModel>> | CreateModel, id: ?mixed): ?CreateModel {
         const namespace = getName(model);
         if (!this.getPool()[namespace]) {
             return undefined;

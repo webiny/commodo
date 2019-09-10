@@ -1,4 +1,4 @@
-import { Entity1, MainEntity } from "../../../resources/models/modelsAttributeModels";
+import { MainEntity } from "../../../resources/models/modelsAttributeModels";
 import sinon from "sinon";
 const sandbox = sinon.createSandbox();
 import mdbid from "mdbid";

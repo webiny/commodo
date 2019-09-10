@@ -3,7 +3,7 @@ import { withFields, string, onSet } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { ref } from "@commodo/fields-storage-ref";
 import { compose } from "ramda";
-import Model from "../../resources/models/Model";
+import createModel from "../../resources/models/createModel";
 
 describe("onSet test", () => {
     beforeEach(() => Two.getStoragePool().flush());
@@ -18,7 +18,7 @@ describe("onSet test", () => {
                 name: string(),
                 two: onSet(() => forcedTwo)(ref({ instanceOf: Two, autoDelete: true }))
             })
-        )(Model);
+        )(createModel());
 
         const one = new One();
         one.two = new Two();

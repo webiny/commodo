@@ -5,8 +5,8 @@ const noop = function() {};
 
 describe("field object test", () => {
     describe("accepting correct Model classes test", () => {
-        const Model1 = withFields()(function() {});
-        const Model2 = withFields()(function() {});
+        const Model1 = withFields()();
+        const Model2 = withFields()();
         const InvalidModel = function() {};
 
         const Model = compose(
@@ -15,7 +15,7 @@ describe("field object test", () => {
                 field2: fields({ instanceOf: Model2 }),
                 invalidField: fields({ instanceOf: InvalidModel })
             })
-        )(noop);
+        )();
 
         const testModel = new Model();
 
@@ -236,7 +236,7 @@ describe("field object test", () => {
                     })
                 )
             })
-        )(function() {});
+        )();
 
         const user = new UserWithSetOnce();
         user.populate({
@@ -267,7 +267,7 @@ describe("field object test", () => {
                     })
                 )
             })
-        )(function() {});
+        )();
 
         let user = new UserWithOnSetOnSet();
         user.populate({
@@ -288,7 +288,7 @@ describe("field object test", () => {
                     })
                 )
             })
-        )(function() {});
+        )();
 
         user = new UserWithOnGetOnSet();
         user.populate({

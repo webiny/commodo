@@ -18,7 +18,7 @@ describe("custom getters / setters test", () => {
                     return this.value * 3;
                 }
             })
-        )(function() {});
+        )();
 
         const model = new Model();
         model.value = 100;
@@ -64,7 +64,7 @@ describe("custom getters / setters test", () => {
                     }
                 })
             })
-        )(function() {});
+        )();
 
         const model = new Model();
         model.value = 100;
@@ -88,6 +88,5 @@ describe("custom getters / setters test", () => {
         // Test if setter is working.
         model.valueWithSetter = 5;
         expect(model.valueWithSetter).toBe(6505);
-
     });
 });

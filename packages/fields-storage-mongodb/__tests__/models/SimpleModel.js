@@ -3,7 +3,7 @@ import camelcase from "camelcase";
 import { withName } from "@commodo/name";
 import { withHooks } from "@commodo/hooks";
 import { withFields, string, boolean } from "@commodo/fields";
-import Model from "./Model";
+import createModel from "./createModel";
 
 const SimpleModel = compose(
     withName("SimpleModel"),
@@ -20,6 +20,6 @@ const SimpleModel = compose(
         enabled: boolean({ value: true }),
         tags: string({ list: true })
     })
-)(Model);
+)(createModel());
 
 export default SimpleModel;

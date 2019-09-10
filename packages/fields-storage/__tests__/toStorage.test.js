@@ -3,7 +3,7 @@ import { withFields, string, fields } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { compose } from "ramda";
 import { withProps } from "repropose";
-import Model from "./resources/models/Model";
+import createModel from "./resources/models/createModel";
 
 describe("toStorage test", () => {
     test("should return the same values, except dynamic attribute", async () => {
@@ -37,7 +37,7 @@ describe("toStorage test", () => {
                 }
             }),
             withName("C")
-        )(Model);
+        )(createModel());
 
         const B = compose(
             withProps({
@@ -63,7 +63,7 @@ describe("toStorage test", () => {
                 }
             }),
             withName("B")
-        )(Model);
+        )(createModel());
 
         const A = compose(
             withProps({
@@ -77,7 +77,7 @@ describe("toStorage test", () => {
                 attr4: fields({ instanceOf: B })
             }),
             withName("A")
-        )(Model);
+        )(createModel());
 
         const a = new A();
         a.populate({

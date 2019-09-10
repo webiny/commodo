@@ -16,7 +16,7 @@ const User = compose(
         driver: new CustomDriver()
     }),
     withName("User")
-)(function() {});
+)();
 
 describe("custom driver test", () => {
     test("should have CustomDriver set as driver", async () => {

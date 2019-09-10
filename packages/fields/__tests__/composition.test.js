@@ -12,7 +12,7 @@ test(`must compose models with fields correctly`, async () => {
             age: string(),
             enabled: string()
         })
-    )(function() {});
+    )();
 
     const user = new User();
     expect(Object.keys(user.getFields())).toEqual([
@@ -57,7 +57,7 @@ test(`must carry get/set callbacks even over other HOFs`, async () => {
             enabled: boolean()
         }),
         withProps({ a: 1, b: 2 })
-    )(function() {});
+    )();
 
     const user = new User();
 

@@ -3,7 +3,7 @@ import { withFields, WithFieldsError } from "@commodo/fields";
 
 import { compose } from "ramda";
 
-const Model = compose(withFields({ attribute: number() }))(function() {});
+const Model = compose(withFields({ attribute: number() }))();
 
 test("should accept number values", () => {
     const model = new Model();

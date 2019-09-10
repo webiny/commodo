@@ -2,28 +2,28 @@ import { withFields, string } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { ref } from "@commodo/fields-storage-ref";
 import { compose } from "ramda";
-import Model from "./Model";
+import createModel from "./createModel";
 
 const Six = compose(
     withName("Six"),
     withFields({
-        name: string(),
+        name: string()
     })
-)(Model);
+)(createModel());
 
 const Five = compose(
     withName("Five"),
     withFields({
-        name: string(),
+        name: string()
     })
-)(Model);
+)(createModel());
 
 const Four = compose(
     withName("Four"),
     withFields({
-        name: string(),
+        name: string()
     })
-)(Model);
+)(createModel());
 
 const Three = compose(
     withName("Three"),
@@ -32,9 +32,9 @@ const Three = compose(
         four: ref({ instanceOf: Four, autoDelete: true }),
         anotherFour: ref({ instanceOf: Four, autoDelete: true }),
         five: ref({ instanceOf: Five, autoDelete: true }),
-        six: ref({ instanceOf: Six, autoDelete: true }),
+        six: ref({ instanceOf: Six, autoDelete: true })
     })
-)(Model);
+)(createModel());
 
 const Two = compose(
     withName("Two"),
@@ -42,7 +42,7 @@ const Two = compose(
         name: string(),
         three: ref({ instanceOf: Three, autoDelete: true })
     })
-)(Model);
+)(createModel());
 
 const One = compose(
     withName("One"),
@@ -50,6 +50,6 @@ const One = compose(
         name: string(),
         two: ref({ instanceOf: Two, autoDelete: true })
     })
-)(Model);
+)(createModel());
 
 export { One, Two, Three, Four, Five, Six };

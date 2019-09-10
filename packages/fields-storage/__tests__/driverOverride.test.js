@@ -11,12 +11,12 @@ describe("driver override test", () => {
 
     test("should use CustomDriver override", async () => {
         class EvenMoreCustomDriver extends CustomDriver {}
-        const CustomUser = compose(withStorage({ driver: new CustomDriver() }))(function() {});
+        const CustomUser = compose(withStorage({ driver: new CustomDriver() }))();
 
         const user = new CustomUser();
         expect(user.getStorageDriver()).toBeInstanceOf(CustomDriver);
 
-        CustomUser.__storage.configuration.driver = new EvenMoreCustomDriver();
+        CustomUser.__storage.driver = new EvenMoreCustomDriver();
         expect(CustomUser.getStorageDriver()).toBeInstanceOf(EvenMoreCustomDriver);
     });
 });

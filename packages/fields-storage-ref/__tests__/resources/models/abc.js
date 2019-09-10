@@ -2,14 +2,14 @@ import { withFields, string } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { ref } from "@commodo/fields-storage-ref";
 import { compose } from "ramda";
-import Model from "./Model";
+import createModel from "./createModel";
 
 const ClassC = compose(
     withName("ClassC"),
     withFields({
         name: string()
     })
-)(Model);
+)(createModel());
 
 const ClassB = compose(
     withName("ClassB"),
@@ -17,7 +17,7 @@ const ClassB = compose(
         name: string(),
         classC: ref({ instanceOf: ClassC })
     })
-)(Model);
+)(createModel());
 
 const ClassA = compose(
     withName("ClassA"),
@@ -25,6 +25,6 @@ const ClassA = compose(
         name: string(),
         classB: ref({ instanceOf: ClassB })
     })
-)(Model);
+)(createModel());
 
 export { ClassA, ClassB, ClassC };

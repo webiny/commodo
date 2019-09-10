@@ -9,7 +9,7 @@ test(`must not populate e-mail (only set value on direct assigns)`, async () => 
             lastName: string(),
             email: compose(skipOnPopulate())(string({ skipOnPopulate: true }))
         })
-    )(function() {});
+    )();
 
     const user = new User();
     user.populate({

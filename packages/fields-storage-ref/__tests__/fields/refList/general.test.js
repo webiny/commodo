@@ -10,7 +10,7 @@ import { withFields, string } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { ref } from "@commodo/fields-storage-ref";
 import { compose } from "ramda";
-import Model from "./../../resources/models/Model";
+import createModel from "./../../resources/models/createModel";
 
 const sandbox = sinon.createSandbox();
 
@@ -190,7 +190,7 @@ describe("attribute models test", () => {
                 })
             }),
             withName("MainEntity")
-        )(Model);
+        )(createModel());
 
         const model = new MainEntity();
 
@@ -213,7 +213,7 @@ describe("attribute models test", () => {
                 name: string()
             }),
             withName("SecurityGroup")
-        )(Model);
+        )(createModel());
 
         const SecurityGroups2Entities = compose(
             withFields({
@@ -222,7 +222,7 @@ describe("attribute models test", () => {
                 group: ref({ instanceOf: SecurityGroup })
             }),
             withName("SecurityGroups2Entities")
-        )(Model);
+        )(createModel());
 
         const SecurityUser = compose(
             withFields({
@@ -233,7 +233,7 @@ describe("attribute models test", () => {
                 })
             }),
             withName("SecurityUser")
-        )(Model);
+        )(createModel());
 
         const user = new SecurityUser();
         expect(user.getField("groups").classes).toEqual({

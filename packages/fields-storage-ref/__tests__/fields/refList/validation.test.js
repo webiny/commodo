@@ -150,7 +150,7 @@ describe("attribute models test", () => {
         mainEntity.attribute2 = [{ id: C, firstName: "John", lastName: "Doe" }];
 
         sandbox
-            .stub(model.getStorageDriver(), "findOne")
+            .stub(Entity2.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
                 return { id: A, name: "Bucky", type: "dog" };

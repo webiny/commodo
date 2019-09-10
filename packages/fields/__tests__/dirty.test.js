@@ -9,7 +9,7 @@ describe("dirty and clean test", () => {
                 lastName: string(),
                 number: number()
             })
-        )(function() {});
+        )();
 
         const model = new Model();
 

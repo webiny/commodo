@@ -47,7 +47,7 @@ test(`must be able to attach fields and also custom methods to achieve dynamic f
                 }
             };
         })
-    )(function() {});
+    )();
 
     const model = new Model();
     model.number1 = 5;
