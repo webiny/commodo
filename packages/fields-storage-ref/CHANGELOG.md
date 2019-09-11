@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.3](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@0.2.1...@commodo/fields-storage-ref@0.2.3) (2019-09-11)
+
+
+### Bug Fixes
+
+* upgrade to work with new version of repropose ([0c4c983](https://github.com/webiny/commodo/commit/0c4c983))
+
+
+
+
+
 ## [0.2.1](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@0.2.0...@commodo/fields-storage-ref@0.2.1) (2019-05-24)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.7](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@0.2.5...@commodo/fields-storage-mongodb@0.2.7) (2019-09-11)
+
+
+### Bug Fixes
+
+* upgrade to work with new version of repropose ([0c4c983](https://github.com/webiny/commodo/commit/0c4c983))
+
+
+
+
+
 ## [0.2.5](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@0.2.4...@commodo/fields-storage-mongodb@0.2.5) (2019-05-24)
 
 **Note:** Version bump only for package @commodo/fields-storage-mongodb

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.1](https://github.com/webiny/commodo/compare/@commodo/name@0.0.11...@commodo/name@1.0.1) (2019-09-11)
+
+
+### Bug Fixes
+
+* upgrade to work with the latest version of repropose package ([57278dc](https://github.com/webiny/commodo/commit/57278dc))
+
+
+
+
+
 ## [0.0.11](https://github.com/webiny/commodo/compare/@commodo/name@0.0.10...@commodo/name@0.0.11) (2019-04-28)
 
 **Note:** Version bump only for package @commodo/name

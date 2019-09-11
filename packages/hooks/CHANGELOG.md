@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.11](https://github.com/webiny/commodo/compare/@commodo/hooks@0.0.9...@commodo/hooks@0.0.11) (2019-09-11)
+
+
+### Bug Fixes
+
+* upgrade to work with the latest version of repropose package ([2ab2630](https://github.com/webiny/commodo/commit/2ab2630))
+
+
+
+
+
 ## [0.0.9](https://github.com/webiny/commodo/compare/@commodo/hooks@0.0.8...@commodo/hooks@0.0.9) (2019-05-09)
 
 **Note:** Version bump only for package @commodo/hooks
