@@ -1,7 +1,6 @@
 import { User, Company } from "./models/userModels";
 import { compose } from "ramda";
 import { withFields, fields, WithFieldsError, setOnce, onSet, onGet } from "@commodo/fields";
-const noop = function() {};
 
 describe("field object test", () => {
     describe("accepting correct Model classes test", () => {
