@@ -58,6 +58,7 @@ const fields: FieldFactory = ({ list, instanceOf, ...rest }: Object) => {
                         );
                         return setValue.call(this, preparedValues);
                     }
+
                     const preparedValue = prepareValue({ value, instanceOf });
                     return setValue.call(this, preparedValue);
                 },

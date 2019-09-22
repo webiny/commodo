@@ -71,11 +71,11 @@ const createField: FieldFactory = ({ type, list, validation, get, set, ...rest }
             }
         };
 
+        typeof this.construct === "function" && this.construct();
+
         if ("value" in rest) {
             this.setValue(rest.value);
         }
-
-        typeof this.construct === "function" && this.construct();
     };
 };
 
