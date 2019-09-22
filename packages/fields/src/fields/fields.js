@@ -51,6 +51,10 @@ const fields: FieldFactory = ({ list, instanceOf, ...rest }: Object) => {
 
             return {
                 setValue(value) {
+                    if (value === null) {
+                        return setValue.call(this, null);
+                    }
+
                     if (this.list) {
                         const preparedValues = [];
                         value.forEach(item =>
@@ -64,6 +68,11 @@ const fields: FieldFactory = ({ list, instanceOf, ...rest }: Object) => {
                 },
                 async validate() {
                     await validate.call(this);
+
+                    if (this.current === null) {
+                        return;
+                    }
+
                     if (this.list) {
                         for (let i = 0; i < this.current.length; i++) {
                             const current = this.current[i];
