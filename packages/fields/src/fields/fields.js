@@ -50,6 +50,7 @@ const fields: FieldFactory = ({ list, instanceOf, ...rest }: Object) => {
             const { setValue, validate } = props;
 
             return {
+                instanceOf,
                 setValue(value) {
                     if (value === null) {
                         return setValue.call(this, null);

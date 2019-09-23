@@ -4,11 +4,11 @@ class FieldsStorageAdapter {
             fields: [
                 async field => {
                     const value = field.getValue();
-                    if (field.list) {
-                        if (!Array.isArray(value)) {
-                            return null;
-                        }
+                    if (value === null) {
+                        return value;
+                    }
 
+                    if (field.list) {
                         const output = [];
                         for (let i = 0; i < value.length; i++) {
                             let valueElement = value[i];
@@ -16,7 +16,35 @@ class FieldsStorageAdapter {
                         }
                         return output;
                     }
+
                     return await this.toStorage({ fields: value.getFields() });
+                },
+                async (field, value) => {
+                    if (value === null) {
+                        return null;
+                    }
+
+                    if (field.list) {
+                        const output = [];
+                        for (let i = 0; i < value.length; i++) {
+                            let valueElement = value[i];
+                            const newModel = new field.instanceOf();
+                            await this.fromStorage({
+                                data: valueElement,
+                                fields: newModel.getFields()
+                            });
+                            output.push(newModel);
+                        }
+                        return output;
+                    }
+
+                    const newModel = new field.instanceOf();
+                    await this.fromStorage({
+                        data: value,
+                        fields: newModel.getFields()
+                    });
+
+                    return newModel;
                 }
             ]
         };
@@ -63,7 +91,7 @@ class FieldsStorageAdapter {
                     await field.setStorageValue(value);
                 } else {
                     if (this.fields[field.type] && this.fields[field.type][1]) {
-                        value = await this.fields[field.type][1](value);
+                        value = await this.fields[field.type][1](field, value);
                     }
 
                     // Directly set the value and set "set" property as true.
