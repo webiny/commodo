@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.4](https://github.com/webiny/commodo/compare/@commodo/fields@0.2.3...@commodo/fields@0.2.4) (2019-09-23)
+
+
+### Bug Fixes
+
+* call construct before calling setValue ([074c56d](https://github.com/webiny/commodo/commit/074c56d))
+* handle "fromStorage" on "fields" field correctly ([e47caf7](https://github.com/webiny/commodo/commit/e47caf7))
+* rename filename ([7c62292](https://github.com/webiny/commodo/commit/7c62292))
+
+
+
+
+
 ## [0.2.3](https://github.com/webiny/commodo/compare/@commodo/fields@0.2.1...@commodo/fields@0.2.3) (2019-09-11)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.4](https://github.com/webiny/commodo/compare/@commodo/fields-storage@0.2.3...@commodo/fields-storage@0.2.4) (2019-09-23)
+
+
+### Bug Fixes
+
+* handle "fromStorage" on "fields" field correctly ([e47caf7](https://github.com/webiny/commodo/commit/e47caf7))
+
+
+
+
+
 ## [0.2.3](https://github.com/webiny/commodo/compare/@commodo/fields-storage@0.2.1...@commodo/fields-storage@0.2.3) (2019-09-11)
 
 

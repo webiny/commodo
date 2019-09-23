@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0](https://github.com/webiny/commodo/compare/@commodo/hooks@0.0.11...@commodo/hooks@0.1.0) (2019-09-23)
+
+
+### Features
+
+* registerHookCallback returns a callback for removing ([d1e2334](https://github.com/webiny/commodo/commit/d1e2334))
+
+
+
+
+
 ## [0.0.11](https://github.com/webiny/commodo/compare/@commodo/hooks@0.0.9...@commodo/hooks@0.0.11) (2019-09-11)
 
 
