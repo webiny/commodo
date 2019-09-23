@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.5](https://github.com/webiny/commodo/compare/@commodo/fields@0.2.4...@commodo/fields@0.2.5) (2019-09-23)
+
+
+### Bug Fixes
+
+* **fields-field:** "isDirty" and "clean" methods ([42e94c0](https://github.com/webiny/commodo/commit/42e94c0))
+
+
+
+
+
 ## [0.2.4](https://github.com/webiny/commodo/compare/@commodo/fields@0.2.3...@commodo/fields@0.2.4) (2019-09-23)
 
 
