@@ -25,6 +25,100 @@ describe("toStorage test", () => {
         expect(data["enabled"]).toBe(true);
     });
 
+    test("populating simple model directly should merge values, not overwrite", async () => {
+        const SomeClass = compose(
+            withFields({
+                data: fields({
+                    instanceOf: withFields({
+                        name: string(),
+                        slug: string(),
+                        fields1: fields({
+                            instanceOf: withFields({
+                                field1A: string(),
+                                field1B: string()
+                            })()
+                        }),
+                        fields2: fields({
+                            instanceOf: withFields({
+                                field2A: string(),
+                                field2B: string()
+                            })()
+                        })
+                    })()
+                })
+            }),
+            withName("SomeClass")
+        )(createModel());
+
+        const someInstance = new SomeClass();
+        someInstance.data = {};
+        someInstance.data.populate({
+            name: "test-name-1",
+            slug: "test-slug-1",
+            fields1: {
+                field1A: "test-field-1-A",
+                field1B: "test-field-1-B"
+            }
+        });
+
+        expect(someInstance.data.name).toBe("test-name-1");
+        expect(someInstance.data.slug).toBe("test-slug-1");
+        expect(someInstance.data.fields1.field1A).toBe("test-field-1-A");
+        expect(someInstance.data.fields1.field1B).toBe("test-field-1-B");
+
+        someInstance.data.populate({});
+
+        expect(someInstance.data.name).toBe("test-name-1");
+        expect(someInstance.data.slug).toBe("test-slug-1");
+        expect(someInstance.data.fields1.field1A).toBe("test-field-1-A");
+        expect(someInstance.data.fields1.field1B).toBe("test-field-1-B");
+
+        let toStorage = await someInstance.toStorage();
+        expect(toStorage).toEqual({
+            data: {
+                name: "test-name-1",
+                slug: "test-slug-1",
+                fields1: {
+                    field1A: "test-field-1-A",
+                    field1B: "test-field-1-B"
+                },
+                fields2: null
+            }
+        });
+
+        someInstance.clean();
+
+        someInstance.data.populate({
+            fields2: {
+                field2A: "test-field-2-A",
+                field2B: "test-field-2-B"
+            }
+        });
+
+        expect(someInstance.data.name).toBe("test-name-1");
+        expect(someInstance.data.slug).toBe("test-slug-1");
+        expect(someInstance.data.fields1.field1A).toBe("test-field-1-A");
+        expect(someInstance.data.fields1.field1B).toBe("test-field-1-B");
+        expect(someInstance.data.fields2.field2A).toBe("test-field-2-A");
+        expect(someInstance.data.fields2.field2B).toBe("test-field-2-B");
+
+        toStorage = await someInstance.toStorage();
+        expect(toStorage).toEqual({
+            data: {
+                name: "test-name-1",
+                slug: "test-slug-1",
+                fields1: {
+                    field1A: "test-field-1-A",
+                    field1B: "test-field-1-B"
+                },
+                fields2: {
+                    field2A: "test-field-2-A",
+                    field2B: "test-field-2-B"
+                }
+            }
+        });
+    });
+
     test("should return the same values, except dynamic attribute (including nested models)", async () => {
         const C = compose(
             withFields({
@@ -114,12 +208,13 @@ describe("toStorage test", () => {
             attr1: "attr1",
             attr2: "attr2",
             attr4: {
+                id: null,
                 attr1: "attr1",
                 attr2: "attr2",
-                attr4: { attr1: "attr1", attr2: "attr2" },
+                attr4: { attr1: "attr1", attr2: "attr2", id: null },
                 attr5: [
-                    { attr1: "0.attr1", attr2: "0.attr2" },
-                    { attr1: "1.attr1", attr2: "1.attr2" }
+                    { attr1: "0.attr1", attr2: "0.attr2", id: null },
+                    { attr1: "1.attr1", attr2: "1.attr2", id: null }
                 ]
             }
         });

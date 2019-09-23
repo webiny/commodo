@@ -12,12 +12,18 @@ class FieldsStorageAdapter {
                         const output = [];
                         for (let i = 0; i < value.length; i++) {
                             let valueElement = value[i];
-                            output[i] = await this.toStorage({ fields: valueElement.getFields() });
+                            output[i] = await this.toStorage({
+                                fields: valueElement.getFields(),
+                                skipDifferenceCheck: true
+                            });
                         }
                         return output;
                     }
 
-                    return await this.toStorage({ fields: value.getFields() });
+                    return await this.toStorage({
+                        fields: value.getFields(),
+                        skipDifferenceCheck: true
+                    });
                 },
                 async (field, value) => {
                     if (value === null) {
@@ -50,7 +56,7 @@ class FieldsStorageAdapter {
         };
     }
 
-    async toStorage({ fields }) {
+    async toStorage({ fields, skipDifferenceCheck }) {
         const output = {};
         for (let name in fields) {
             const field = fields[name];
@@ -58,8 +64,10 @@ class FieldsStorageAdapter {
                 continue;
             }
 
-            if (!field.isDirty()) {
-                continue;
+            if (!(skipDifferenceCheck === true)) {
+                if (!field.isDirty()) {
+                    continue;
+                }
             }
 
             if (typeof field.getStorageValue === "function") {
