@@ -91,7 +91,7 @@ await user.save();
 | [commodo-fields-date](https://github.com/doitadrian/commodo-fields-date) | Provides `date` field, for saving dates. | [![](https://img.shields.io/npm/v/commodo-fields-date.svg)](https://www.npmjs.com/package/commodo-fields-date) |
 | [commodo-fields-object](https://github.com/doitadrian/commodo-fields-object) | Provides `object` field, for saving plain objects. | [![](https://img.shields.io/npm/v/commodo-fields-object.svg)](https://www.npmjs.com/package/commodo-fields-object) |
 | [commodo-fields-storage-crud-logs](https://github.com/doitadrian/commodo-fields-storage-crud-logs) | Adds and automatically manages `createdOn`, `updatedOn`, `savedOn` fields. | [![](https://img.shields.io/npm/v/commodo-fields-storage-crud-logs.svg)](https://www.npmjs.com/package/commodo-fields-storage-crud-logs) |
-| [commodo-fields-storage-soft-delete](https://github.com/doitadrian/commodo-fields-storage-soft-delete) | Introduces "deleted" boolean field to mark whether a model was deleted or not, instead of physically deleting the entry in storage. | [![](https://img.shields.io/npm/v/commodo-fields-storage-soft-delete.svg)](https://www.npmjs.com/package/commodo-fields-storage-soft-delete) |
+| [commodo-fields-storage-soft-delete](https://github.com/doitadrian/commodo-fields-storage-soft-delete) | Introduces `deleted` boolean field to mark whether a model was deleted or not, instead of physically deleting the entry in the storage. | [![](https://img.shields.io/npm/v/commodo-fields-storage-soft-delete.svg)](https://www.npmjs.com/package/commodo-fields-storage-soft-delete) |
 
 ## Contributing
 Please see our [Contributing Guideline](/CONTRIBUTING.md) which explains repo organization, linting, testing, and other steps.
