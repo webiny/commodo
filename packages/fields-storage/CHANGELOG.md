@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.5](https://github.com/webiny/commodo/compare/@commodo/fields-storage@0.2.4...@commodo/fields-storage@0.2.5) (2019-09-23)
+
+
+### Bug Fixes
+
+* **fields-storage-adapter:** fields must always return all fields' values ([6a94731](https://github.com/webiny/commodo/commit/6a94731))
+
+
+
+
+
 ## [0.2.4](https://github.com/webiny/commodo/compare/@commodo/fields-storage@0.2.3...@commodo/fields-storage@0.2.4) (2019-09-23)
 
 
