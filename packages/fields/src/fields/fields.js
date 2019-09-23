@@ -46,11 +46,54 @@ const fields: FieldFactory = ({ list, instanceOf, ...rest }: Object) => {
             }
             return false;
         }),
-        withProps(props => {
-            const { setValue, validate } = props;
+        withProps(instance => {
+            const { setValue, validate, isDirty, clean } = instance;
 
             return {
                 instanceOf,
+                isDirty() {
+                    if (isDirty.call(this)) {
+                        return true;
+                    }
+
+                    if (instance.current === null) {
+                        return false;
+                    }
+
+                    if (instance.list) {
+                        for (let i = 0; i < instance.current.length; i++) {
+                            let currentElement = instance.current[i];
+                            if (currentElement.isDirty()) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+
+                    return hasFields(instance.current) && instance.current.isDirty();
+                },
+                clean() {
+                    clean.call(this);
+                    if (instance.current === null) {
+                        return this;
+                    }
+
+                    if (instance.list) {
+                        for (let i = 0; i < instance.current.length; i++) {
+                            let currentElement = instance.current[i];
+                            if (currentElement.isDirty()) {
+                                currentElement.clean();
+                            }
+                        }
+                        return this;
+                    }
+
+                    if (instance.current.isDirty()) {
+                        instance.current.clean();
+                    }
+
+                    return this;
+                },
                 setValue(value) {
                     if (value === null) {
                         return setValue.call(this, null);
