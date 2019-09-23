@@ -95,7 +95,7 @@ test(`"withHooks" must not do anything if no hooks were passed`, async () => {
     )();
 
     const model = new TestModel();
-    expect(model.__hooks).toEqual({});
+    expect(model.__withHooks).toEqual({});
 });
 
 test(`thrown errors`, async () => {

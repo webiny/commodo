@@ -26,8 +26,8 @@ test(`applying additional hooks MUST ALSO (unfortunately) apply them also to the
     const testModel1 = new TestModel1();
     const testModel2 = new TestModel2();
 
-    expect(Object.keys(testModel1.__hooks)).toEqual(["hook1", "hook2"]);
-    expect(Object.keys(testModel2.__hooks)).toEqual(["hook1", "hook2"]);
+    expect(Object.keys(testModel1.__withHooks)).toEqual(["hook1", "hook2"]);
+    expect(Object.keys(testModel2.__withHooks)).toEqual(["hook1", "hook2"]);
 });
 
 test(`applying extracted hooks MUST NOT apply them also to the base function`, async () => {
@@ -62,6 +62,6 @@ test(`applying extracted hooks MUST NOT apply them also to the base function`, a
     const testModel1 = new TestModel1();
     const testModel2 = new TestModel2();
 
-    expect(Object.keys(testModel1.__hooks)).toEqual(["hook1"]);
-    expect(Object.keys(testModel2.__hooks)).toEqual(["hook1", "hook2"]);
+    expect(Object.keys(testModel1.__withHooks)).toEqual(["hook1"]);
+    expect(Object.keys(testModel2.__withHooks)).toEqual(["hook1", "hook2"]);
 });
