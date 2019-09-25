@@ -15,7 +15,7 @@ const withFields = (fields: Object) => {
 
             for (let newFieldName in fieldsList) {
                 const valueFactory = fieldsList[newFieldName];
-                instance.__withFields.fields[newFieldName] = new valueFactory();
+                instance.__withFields.fields[newFieldName] = new valueFactory(newFieldName, instance);
 
                 Object.defineProperty(instance, newFieldName, {
                     get() {
@@ -39,12 +39,6 @@ const withFields = (fields: Object) => {
                         }
                     }
                 });
-
-                instance.__withFields.fields[newFieldName].name = newFieldName;
-                instance.__withFields.fields[newFieldName].parent = instance;
-                if (typeof instance.__withFields.fields[newFieldName].init === "function") {
-                    instance.__withFields.fields[newFieldName].init();
-                }
             }
 
             return {};
@@ -57,9 +51,9 @@ const withFields = (fields: Object) => {
             return {
                 __withFields: {
                     fields: {},
-                    processing: { validation: false, dirty: false },
+                    processing: { validation: false, dirty: false }
                 },
-                
+
                 getFields() {
                     return this.__withFields.fields;
                 },
