@@ -25,19 +25,19 @@ const defaults = {
     }
 };
 
-const hook = async (name, { params, model }) => {
-    if (params.hooks[name] === false) {
+const hook = async (name, { options, model }) => {
+    if (options.hooks[name] === false) {
         return;
     }
-    await model.hook(name, { model, params });
+    await model.hook(name, { model, options });
 };
 
-const registerSaveUpdateCreateHooks = async (prefix, { existing, model, params }) => {
-    await hook(prefix + "Save", { model, params });
+const registerSaveUpdateCreateHooks = async (prefix, { existing, model, options }) => {
+    await hook(prefix + "Save", { model, options });
     if (existing) {
-        await hook(prefix + "Update", { model, params });
+        await hook(prefix + "Update", { model, options });
     } else {
-        await hook(prefix + "Create", { model, params });
+        await hook(prefix + "Create", { model, options });
     }
 };
 
@@ -75,8 +75,8 @@ const withStorage = (configuration: Configuration) => {
                 this.__withStorage.existing = existing;
                 return this;
             },
-            async save(params: ?SaveParams): Promise<void> {
-                params = { ...params, ...defaults.save };
+            async save(options: ?SaveParams): Promise<void> {
+                options = { ...options, ...defaults.save };
 
                 if (this.__withStorage.processing) {
                     return;
@@ -86,22 +86,22 @@ const withStorage = (configuration: Configuration) => {
 
                 const existing = this.isExisting();
 
-                await registerSaveUpdateCreateHooks("before", { existing, model: this, params });
+                await registerSaveUpdateCreateHooks("before", { existing, model: this, options });
 
                 try {
-                    await hook("__save", { model: this, params });
+                    await hook("__save", { model: this, options });
                     if (existing) {
-                        await hook("__update", { model: this, params });
+                        await hook("__update", { model: this, options });
                     } else {
-                        await hook("__create", { model: this, params });
+                        await hook("__create", { model: this, options });
                     }
 
-                    params.validation !== false && (await this.validate());
+                    options.validation !== false && (await this.validate());
 
                     await registerSaveUpdateCreateHooks("__before", {
                         existing,
                         model: this,
-                        params
+                        options
                     });
 
                     if (this.isDirty()) {
@@ -115,7 +115,7 @@ const withStorage = (configuration: Configuration) => {
                     await registerSaveUpdateCreateHooks("__after", {
                         existing,
                         model: this,
-                        params
+                        options
                     });
 
                     this.setExisting();
@@ -128,30 +128,30 @@ const withStorage = (configuration: Configuration) => {
                     this.__withStorage.processing = null;
                 }
 
-                await registerSaveUpdateCreateHooks("after", { existing, model: this, params });
+                await registerSaveUpdateCreateHooks("after", { existing, model: this, options });
             },
             /**
              * Deletes current and all linked models (if autoDelete on the attribute was enabled).
-             * @param params
+             * @param options
              */
-            async delete(params: ?Object) {
+            async delete(options: ?Object) {
                 if (this.__withStorage.processing) {
                     return;
                 }
 
                 this.__withStorage.processing = "delete";
 
-                params = { ...params, ...defaults.delete };
+                options = { ...options, ...defaults.delete };
 
                 try {
-                    await this.hook("delete", { params, model: this });
+                    await this.hook("delete", { options, model: this });
 
-                    params.validation !== false && (await this.validate());
+                    options.validation !== false && (await this.validate());
 
-                    await this.hook("beforeDelete", { params, model: this });
+                    await this.hook("beforeDelete", { options, model: this });
 
-                    await this.getStorageDriver().delete({ model: this, params });
-                    await this.hook("afterDelete", { params, model: this });
+                    await this.getStorageDriver().delete({ model: this, options });
+                    await this.hook("afterDelete", { options, model: this });
 
                     this.constructor.getStoragePool().remove(this);
                 } catch (e) {
@@ -224,7 +224,7 @@ const withStorage = (configuration: Configuration) => {
 
                     const prepared = { ...options };
 
-                    // Prepare find-specific params: perPage and page.
+                    // Prepare find-specific options: perPage and page.
                     prepared.page = Number(prepared.page);
                     if (!Number.isInteger(prepared.page) || (prepared.page && prepared.page <= 1)) {
                         prepared.page = 1;
@@ -274,9 +274,9 @@ const withStorage = (configuration: Configuration) => {
                 /**
                  * Finds a single model matched by given ID.
                  * @param id
-                 * @param params
+                 * @param options
                  */
-                async findById(id: mixed, params: ?Object): Promise<null | Entity> {
+                async findById(id: mixed, options: ?Object): Promise<null | Entity> {
                     if (!id || !this.isId(id)) {
                         return null;
                     }
@@ -286,23 +286,23 @@ const withStorage = (configuration: Configuration) => {
                         return pooled;
                     }
 
-                    if (!params) {
-                        params = {};
+                    if (!options) {
+                        options = {};
                     }
 
-                    const newParams = { ...params, query: { id } };
+                    const newParams = { ...options, query: { id } };
                     return await this.findOne(newParams);
                 },
 
                 /**
                  * Finds one or more models matched by given IDs.
                  * @param ids
-                 * @param params
+                 * @param options
                  */
-                async findByIds(ids: Array<mixed>, params: ?Object): Promise<Array<Entity>> {
+                async findByIds(ids: Array<mixed>, options: ?Object): Promise<Array<Entity>> {
                     const output = [];
                     for (let i = 0; i < ids.length; i++) {
-                        const model = await this.findById(ids[i], params);
+                        const model = await this.findById(ids[i], options);
                         if (model) {
                             output.push(model);
                         }
@@ -313,14 +313,14 @@ const withStorage = (configuration: Configuration) => {
 
                 /**
                  * Finds one model matched by given query parameters.
-                 * @param params
+                 * @param options
                  */
-                async findOne(params: ?Object): Promise<null | $Subtype<Entity>> {
-                    if (!params) {
-                        params = {};
+                async findOne(options: ?Object): Promise<null | $Subtype<Entity>> {
+                    if (!options) {
+                        options = {};
                     }
 
-                    const prepared = { ...params };
+                    const prepared = { ...options };
 
                     const result = await this.getStorageDriver().findOne({
                         model: this,
@@ -344,14 +344,14 @@ const withStorage = (configuration: Configuration) => {
 
                 /**
                  * Counts total number of models matched by given query parameters.
-                 * @param params
+                 * @param options
                  */
-                async count(params: ?Object): Promise<number> {
-                    if (!params) {
-                        params = {};
+                async count(options: ?Object): Promise<number> {
+                    if (!options) {
+                        options = {};
                     }
 
-                    const prepared = { ...params };
+                    const prepared = { ...options };
 
                     return await this.getStorageDriver().count({
                         model: this,
