@@ -1,18 +1,9 @@
 // @flow
-import { compose } from "ramda";
 import { withProps } from "repropose";
 
 const withHooks = (hooks: ?{ [string]: Function }) => {
-    return compose(
-        withProps(props => {
-            if (hooks) {
-                Object.keys(hooks).forEach((name: string) => {
-                    hooks && hooks[name] && props.registerHookCallback(name, hooks[name]);
-                });
-            }
-            return {};
-        }),
-        withProps(props => {
+    return baseFn => {
+        let fn = withProps(props => {
             if (props.__withHooks) {
                 return {};
             }
@@ -52,8 +43,19 @@ const withHooks = (hooks: ?{ [string]: Function }) => {
                     }
                 }
             };
-        })
-    );
+        })(baseFn);
+
+        fn = withProps(props => {
+            if (hooks) {
+                Object.keys(hooks).forEach((name: string) => {
+                    hooks && hooks[name] && props.registerHookCallback(name, hooks[name]);
+                });
+            }
+            return {};
+        })(fn);
+
+        return fn;
+    };
 };
 
 export default withHooks;
