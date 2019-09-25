@@ -3,47 +3,8 @@ import { WithFieldsError } from "@commodo/fields";
 import { compose } from "ramda";
 
 const withFields = (fields: Object) => {
-    return compose(
-        withStaticProps({
-            __withFields: true // For satisfying hasFields helper function.
-        }),
-        withProps(instance => {
-            let fieldsList = fields;
-            if (typeof fields === "function") {
-                fieldsList = fields(instance);
-            }
-
-            for (let newFieldName in fieldsList) {
-                const valueFactory = fieldsList[newFieldName];
-                instance.__withFields.fields[newFieldName] = new valueFactory(newFieldName, instance);
-
-                Object.defineProperty(instance, newFieldName, {
-                    get() {
-                        if (this.__withFields.fields[newFieldName].get) {
-                            return this.__withFields.fields[newFieldName].get.call(
-                                this,
-                                this.__withFields.fields[newFieldName]
-                            );
-                        }
-                        return this.__withFields.fields[newFieldName].getValue();
-                    },
-                    set(value) {
-                        if (this.__withFields.fields[newFieldName].set) {
-                            this.__withFields.fields[newFieldName].set.call(
-                                this,
-                                this.__withFields.fields[newFieldName],
-                                value
-                            );
-                        } else {
-                            this.__withFields.fields[newFieldName].setValue(value);
-                        }
-                    }
-                });
-            }
-
-            return {};
-        }),
-        withProps(props => {
+    return baseFn => {
+        let fn = withProps(props => {
             if (props.__withFields) {
                 return {};
             }
@@ -139,8 +100,54 @@ const withFields = (fields: Object) => {
                     return false;
                 }
             };
-        })
-    );
+        })(baseFn);
+
+        fn = withProps(instance => {
+            let fieldsList = fields;
+            if (typeof fields === "function") {
+                fieldsList = fields(instance);
+            }
+
+            for (let newFieldName in fieldsList) {
+                const valueFactory = fieldsList[newFieldName];
+                instance.__withFields.fields[newFieldName] = new valueFactory(
+                    newFieldName,
+                    instance
+                );
+
+                Object.defineProperty(instance, newFieldName, {
+                    get() {
+                        if (this.__withFields.fields[newFieldName].get) {
+                            return this.__withFields.fields[newFieldName].get.call(
+                                this,
+                                this.__withFields.fields[newFieldName]
+                            );
+                        }
+                        return this.__withFields.fields[newFieldName].getValue();
+                    },
+                    set(value) {
+                        if (this.__withFields.fields[newFieldName].set) {
+                            this.__withFields.fields[newFieldName].set.call(
+                                this,
+                                this.__withFields.fields[newFieldName],
+                                value
+                            );
+                        } else {
+                            this.__withFields.fields[newFieldName].setValue(value);
+                        }
+                    }
+                });
+            }
+
+            return {};
+        })(fn);
+
+        fn = withStaticProps({
+            __withFields: true // For satisfying hasFields helper function.
+        })(fn);
+
+        return fn;
+    };
 };
 
 export default withFields;

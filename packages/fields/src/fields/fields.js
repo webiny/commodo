@@ -4,7 +4,6 @@ import WithFieldsError from "./../WithFieldsError";
 import { withProps } from "repropose";
 import { hasFields } from "@commodo/fields";
 import withFieldDataTypeValidation from "./withFieldDataTypeValidation";
-import { compose } from "ramda";
 import createField from "./createField";
 
 const prepareValue = ({ value, instanceOf }) => {
@@ -36,100 +35,102 @@ const fields: FieldFactory = ({ list, instanceOf, ...rest }: Object) => {
         );
     }
 
-    return compose(
-        withFieldDataTypeValidation(value => {
-            if (typeof value === "object") {
-                if (hasFields(value)) {
-                    return value instanceof instanceOf;
+    const field = createField({ ...rest, list, type: "fields" });
+    withProps(instance => {
+        const { setValue, validate, isDirty, clean } = instance;
+
+        return {
+            instanceOf,
+            isDirty() {
+                if (isDirty.call(this)) {
+                    return true;
                 }
-                return true;
-            }
-            return false;
-        }),
-        withProps(instance => {
-            const { setValue, validate, isDirty, clean } = instance;
 
-            return {
-                instanceOf,
-                isDirty() {
-                    if (isDirty.call(this)) {
-                        return true;
-                    }
+                if (instance.current === null) {
+                    return false;
+                }
 
-                    if (instance.current === null) {
-                        return false;
-                    }
-
-                    if (instance.list) {
-                        for (let i = 0; i < instance.current.length; i++) {
-                            let currentElement = instance.current[i];
-                            if (currentElement.isDirty()) {
-                                return true;
-                            }
+                if (instance.list) {
+                    for (let i = 0; i < instance.current.length; i++) {
+                        let currentElement = instance.current[i];
+                        if (currentElement.isDirty()) {
+                            return true;
                         }
-                        return false;
                     }
+                    return false;
+                }
 
-                    return hasFields(instance.current) && instance.current.isDirty();
-                },
-                clean() {
-                    clean.call(this);
-                    if (instance.current === null) {
-                        return this;
-                    }
-
-                    if (instance.list) {
-                        for (let i = 0; i < instance.current.length; i++) {
-                            let currentElement = instance.current[i];
-                            if (currentElement.isDirty()) {
-                                currentElement.clean();
-                            }
-                        }
-                        return this;
-                    }
-
-                    if (instance.current.isDirty()) {
-                        instance.current.clean();
-                    }
-
+                return hasFields(instance.current) && instance.current.isDirty();
+            },
+            clean() {
+                clean.call(this);
+                if (instance.current === null) {
                     return this;
-                },
-                setValue(value) {
-                    if (value === null) {
-                        return setValue.call(this, null);
-                    }
-
-                    if (this.list) {
-                        const preparedValues = [];
-                        value.forEach(item =>
-                            preparedValues.push(prepareValue({ value: item, instanceOf }))
-                        );
-                        return setValue.call(this, preparedValues);
-                    }
-
-                    const preparedValue = prepareValue({ value, instanceOf });
-                    return setValue.call(this, preparedValue);
-                },
-                async validate() {
-                    await validate.call(this);
-
-                    if (this.current === null) {
-                        return;
-                    }
-
-                    if (this.list) {
-                        for (let i = 0; i < this.current.length; i++) {
-                            const current = this.current[i];
-                            current && (await current.validate());
-                        }
-                        return;
-                    }
-
-                    this.current && (await this.current.validate());
                 }
-            };
-        })
-    )(createField({ ...rest, list, type: "fields" }));
+
+                if (instance.list) {
+                    for (let i = 0; i < instance.current.length; i++) {
+                        let currentElement = instance.current[i];
+                        if (currentElement.isDirty()) {
+                            currentElement.clean();
+                        }
+                    }
+                    return this;
+                }
+
+                if (instance.current.isDirty()) {
+                    instance.current.clean();
+                }
+
+                return this;
+            },
+            setValue(value) {
+                if (value === null) {
+                    return setValue.call(this, null);
+                }
+
+                if (this.list) {
+                    const preparedValues = [];
+                    value.forEach(item =>
+                        preparedValues.push(prepareValue({ value: item, instanceOf }))
+                    );
+                    return setValue.call(this, preparedValues);
+                }
+
+                const preparedValue = prepareValue({ value, instanceOf });
+                return setValue.call(this, preparedValue);
+            },
+            async validate() {
+                await validate.call(this);
+
+                if (this.current === null) {
+                    return;
+                }
+
+                if (this.list) {
+                    for (let i = 0; i < this.current.length; i++) {
+                        const current = this.current[i];
+                        current && (await current.validate());
+                    }
+                    return;
+                }
+
+                this.current && (await this.current.validate());
+            }
+        };
+    })(field);
+
+    withFieldDataTypeValidation(value => {
+        if (typeof value === "object") {
+            if (hasFields(value)) {
+                return value instanceof instanceOf;
+            }
+            return true;
+        }
+        return false;
+    })(field);
+
+    return field;
 };
 
 export default fields;
