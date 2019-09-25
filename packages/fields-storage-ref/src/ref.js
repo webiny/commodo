@@ -1,6 +1,6 @@
 // @flow
 import type { FieldFactory } from "@commodo/fields/types";
-import { getName, hasName } from "@commodo/name";
+import { getName } from "@commodo/name";
 import { withProps } from "repropose";
 import { compose } from "ramda";
 import { Collection } from "@commodo/fields-storage";
@@ -12,74 +12,13 @@ import {
     WithFieldsError
 } from "@commodo/fields";
 
-const __getIdFromValue = value => {
-    if (!value) {
-        return null;
-    }
-
-    if (typeof value === "string") {
-        return value;
-    }
-
-    return value.id;
-};
-
-const __instanceOf = (instance, instanceOf) => {
-    if (Array.isArray(instanceOf)) {
-        for (let i = 0; i < instanceOf.length; i++) {
-            let instanceOfElement = instanceOf[i];
-            if (getName(instance) === getName(instanceOfElement)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    return getName(instance) === getName(instanceOf);
-};
-
-function __validateArguments({ instanceOf, list, using }) {
-    if (!instanceOf) {
-        throw new WithFieldsError(
-            `When defining a "ref" field, "instanceOf" argument must be set.`,
-            WithFieldsError.MODEL_FIELD_INSTANCEOF_NOT_SET
-        );
-    }
-
-    if (!hasFields(instanceOf)) {
-        if (!Array.isArray(instanceOf)) {
-            throw new WithFieldsError(
-                `When defining a "ref" field, "instanceOf" must represent an object with fields.`,
-                WithFieldsError.MODEL_FIELD_INSTANCEOF_NOT_SET
-            );
-        }
-
-        // Deciding between `instanceOf: [A, B, C]` and `instanceOf: [[A, B, C], "fieldName"]`
-        const instancesOf = typeof instanceOf[1] === "string" ? instanceOf[0] : instanceOf;
-
-        for (let i = 0; i < instancesOf.length; i++) {
-            let instanceOfElement = instanceOf[i];
-            if (!hasFields(instanceOfElement)) {
-                throw new WithFieldsError(
-                    `When defining a "ref" field, an "instanceOf" array must contain refs with fields.`,
-                    WithFieldsError.MODEL_FIELD_INSTANCEOF_NOT_SET
-                );
-            }
-        }
-    }
-
-    if (list && using) {
-        const usingInstanceOf = Array.isArray(using) ? using[0] : using;
-        if (!hasFields(usingInstanceOf))
-            throw new WithFieldsError(
-                `When defining a "ref" field with "using" ref, and, "using" must represent an object with fields.`,
-                WithFieldsError.MODEL_FIELD_INSTANCEOF_NOT_SET
-            );
-    }
-}
-
-function __firstCharacterToLower(string) {
-    return string.charAt(0).toLowerCase() + string.slice(1);
-}
+import {
+    firstCharacterToLower,
+    getIdFromValue,
+    instanceOf as isInstanceOf,
+    validateArguments,
+    checkParent
+} from "./functions";
 
 const ref: FieldFactory = ({
     list,
@@ -88,9 +27,10 @@ const ref: FieldFactory = ({
     autoDelete,
     autoSave,
     refNameField,
+    parent,
     ...rest
 }: Object) => {
-    __validateArguments({ instanceOf, list, using });
+    validateArguments({ instanceOf, list, using });
 
     return compose(
         withFieldDataTypeValidation(value => {
@@ -101,7 +41,7 @@ const ref: FieldFactory = ({
 
             if (typeOf === "object") {
                 if (hasFields(value)) {
-                    return __instanceOf(value, instanceOf);
+                    return isInstanceOf(value, instanceOf);
                 }
                 return true;
             }
@@ -113,7 +53,6 @@ const ref: FieldFactory = ({
             return {
                 list,
                 using,
-                parent: null,
                 options: {
                     refNameField
                 },
@@ -125,11 +64,13 @@ const ref: FieldFactory = ({
                 classes: null,
                 auto: null,
                 init() {
-                    if (list) {
-                        if (!hasName(this.parent)) {
-                            throw Error("Parent model has no name assigned.");
-                        }
+                    if (parent) {
+                        this.parent = parent;
+                    }
 
+                    checkParent(this);
+
+                    if (list) {
                         this.current = new Collection();
                         this.initial = new Collection();
 
@@ -159,9 +100,7 @@ const ref: FieldFactory = ({
 
                         // We will use the same value here to (when loading models without a middle aggregation model).
                         if (!this.classes.models.field) {
-                            this.classes.models.field = __firstCharacterToLower(
-                                this.classes.parent
-                            );
+                            this.classes.models.field = firstCharacterToLower(this.classes.parent);
                         }
 
                         if (using) {
@@ -263,7 +202,7 @@ const ref: FieldFactory = ({
                                     class: this.getUsingClass() || this.getEntitiesClass()
                                 };
                                 for (let i = 0; i < models.current.length; i++) {
-                                    if (__instanceOf(models.current[i], models.class)) {
+                                    if (isInstanceOf(models.current[i], models.class)) {
                                         await models.current[i].hook("delete");
                                     }
                                 }
@@ -281,7 +220,7 @@ const ref: FieldFactory = ({
                                 };
 
                                 for (let i = 0; i < models.current.length; i++) {
-                                    if (__instanceOf(models.current[i], models.class)) {
+                                    if (isInstanceOf(models.current[i], models.class)) {
                                         await models.current[i].delete({
                                             events: { delete: false }
                                         });
@@ -343,7 +282,7 @@ const ref: FieldFactory = ({
                             if (this.getAutoDelete()) {
                                 await this.load();
                                 const model = this.initial;
-                                if (__instanceOf(model, instanceOf)) {
+                                if (isInstanceOf(model, instanceOf)) {
                                     await model.hook("delete");
                                 }
                             }
@@ -353,7 +292,7 @@ const ref: FieldFactory = ({
                             if (this.getAutoDelete()) {
                                 await this.load();
                                 const model = this.initial;
-                                if (__instanceOf(model, instanceOf)) {
+                                if (isInstanceOf(model, instanceOf)) {
                                     // We don't want to fire the "delete" event because its handlers were already executed by upper 'delete' listener.
                                     // That listener ensured that all callbacks that might've had blocked the deleted process were executed.
                                     await model.delete({
@@ -491,7 +430,7 @@ const ref: FieldFactory = ({
                         return this.current;
                     }
 
-                    const id = __getIdFromValue(this.current);
+                    const id = getIdFromValue(this.current);
 
                     if (this.parent.isId(id)) {
                         const model = await modelClass.findById(id);
@@ -532,7 +471,7 @@ const ref: FieldFactory = ({
                         current = await this.load();
                     }
 
-                    const id = __getIdFromValue(current);
+                    const id = getIdFromValue(current);
                     return this.parent.isId(id) ? id : null;
                 },
 
@@ -563,7 +502,7 @@ const ref: FieldFactory = ({
 
                     for (let i = 0; i < value.length; i++) {
                         const currentEntity = value[i];
-                        if (!__instanceOf(currentEntity, correctClass)) {
+                        if (!isInstanceOf(currentEntity, correctClass)) {
                             errors.push({
                                 code: WithFieldsError.VALIDATION_FAILED_INVALID_FIELD,
                                 data: {
@@ -695,7 +634,7 @@ const ref: FieldFactory = ({
                         return hasFields(instance);
                     }
 
-                    return __instanceOf(instance, instanceOf);
+                    return isInstanceOf(instance, instanceOf);
                 },
 
                 async load() {
@@ -820,7 +759,7 @@ const ref: FieldFactory = ({
 
                     if (this.list) {
                         const initial = this.initial,
-                            currentEntitiesIds = this.current.map(model => __getIdFromValue(model));
+                            currentEntitiesIds = this.current.map(model => getIdFromValue(model));
 
                         for (let i = 0; i < initial.length; i++) {
                             const currentInitial: mixed = initial[i];
@@ -837,7 +776,7 @@ const ref: FieldFactory = ({
                     const initial = this.initial;
                     if (
                         hasFields(initial) &&
-                        __getIdFromValue(initial) !== __getIdFromValue(this.current)
+                        getIdFromValue(initial) !== getIdFromValue(this.current)
                     ) {
                         await initial.delete(options);
                     }
@@ -856,7 +795,7 @@ const ref: FieldFactory = ({
                     if (this.list) {
                         return this.initial.length > 0;
                     }
-                    return __instanceOf(this.initial, this.getEntityClass());
+                    return isInstanceOf(this.initial, this.getEntityClass());
                 },
 
                 isDirty(): boolean {
@@ -896,7 +835,7 @@ const ref: FieldFactory = ({
                  * Value cannot be set as clean if there is no ID present.
                  */
                 clean(): EntityFieldValue {
-                    if (__getIdFromValue(this.current)) {
+                    if (getIdFromValue(this.current)) {
                         clean.call(this);
                     }
 
@@ -904,7 +843,7 @@ const ref: FieldFactory = ({
                 },
 
                 isDifferentFrom(value: mixed): boolean {
-                    const currentId = __getIdFromValue(this.current);
+                    const currentId = getIdFromValue(this.current);
 
                     if (hasFields(value)) {
                         return !value.id || value.id !== currentId;
@@ -951,7 +890,7 @@ const ref: FieldFactory = ({
                             continue;
                         }
 
-                        const id = __getIdFromValue(current);
+                        const id = getIdFromValue(current);
                         if (this.parent.isId(id)) {
                             const model = await modelClass.findById(id);
                             if (model) {
@@ -1003,7 +942,7 @@ const ref: FieldFactory = ({
                 setUsing(modelClass: Class<Entity>, modelField: ?string) {
                     this.classes.using.class = modelClass;
                     if (typeof modelField === "undefined") {
-                        this.classes.using.field = __firstCharacterToLower(
+                        this.classes.using.field = firstCharacterToLower(
                             getName(this.classes.models.class)
                         );
                     } else {

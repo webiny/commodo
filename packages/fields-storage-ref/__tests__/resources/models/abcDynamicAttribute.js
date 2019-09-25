@@ -5,26 +5,26 @@ import { compose } from "ramda";
 import createModel from "./createModel";
 
 const ClassCDynamic = compose(
-    withName("ClassCDynamic"),
     withFields({
         name: string()
-    })
+    }),
+    withName("ClassCDynamic")
 )(createModel());
 
 const ClassBDynamic = compose(
-    withName("ClassBDynamic"),
     withFields({
         name: string(),
         classCDynamic: ref({ instanceOf: ClassCDynamic })
-    })
+    }),
+    withName("ClassBDynamic")
 )(createModel());
 
 const ClassADynamic = compose(
-    withName("ClassADynamic"),
     withFields({
         name: string(),
         classBDynamic: ref({ instanceOf: ClassBDynamic })
-    })
+    }),
+    withName("ClassADynamic")
 )(createModel());
 
 export { ClassADynamic, ClassBDynamic, ClassCDynamic };

@@ -175,14 +175,13 @@ describe("model attribute test", () => {
 
     test("should validate on attribute level and recursively on model level", async () => {
         const Two = compose(
-            withName("Two"),
             withFields({
                 name: string()
-            })
+            }),
+            withName("Two"),
         )(createModel());
 
         const One = compose(
-            withName("One"),
             withFields({
                 name: string(),
                 requiredEntity: ref({
@@ -193,7 +192,8 @@ describe("model attribute test", () => {
                         }
                     }
                 })
-            })
+            }),
+            withName("One"),
         )(createModel());
 
         let findById = sandbox

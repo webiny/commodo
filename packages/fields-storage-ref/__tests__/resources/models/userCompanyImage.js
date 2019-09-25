@@ -7,7 +7,6 @@ import createModel from "./createModel";
 import required from "./validators/required";
 
 const Image = compose(
-    withName("Image"),
     withHooks({
         delete() {
             if (this.markedAsCannotDelete) {
@@ -22,11 +21,11 @@ const Image = compose(
         size: number(),
         createdBy: ref({ instanceOf: User }),
         markedAsCannotDelete: boolean()
-    }))
+    })),
+    withName("Image")
 )(createModel());
 
 const Company = compose(
-    withName("Company"),
     withHooks({
         delete() {
             if (this.markedAsCannotDelete) {
@@ -40,11 +39,11 @@ const Company = compose(
         }),
         image: ref({ instanceOf: Image, autoDelete: true }),
         markedAsCannotDelete: boolean()
-    })
+    }),
+    withName("Company")
 )(createModel());
 
 const User = compose(
-    withName("User"),
     withHooks({
         delete() {
             if (this.markedAsCannotDelete) {
@@ -61,7 +60,8 @@ const User = compose(
         }),
         company: ref({ instanceOf: Company, autoDelete: true }),
         markedAsCannotDelete: boolean()
-    })
+    }),
+    withName("User")
 )(createModel());
 
 export { User, Company, Image };

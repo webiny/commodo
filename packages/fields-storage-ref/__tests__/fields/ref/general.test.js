@@ -82,11 +82,10 @@ describe("model attribute test", () => {
                         }
                     }
                 })
-            })
+            }),
         )(createModel());
 
         const Primary = compose(
-            withName("Primary"),
             withFields({
                 name: string({
                     validation: value => {
@@ -96,7 +95,8 @@ describe("model attribute test", () => {
                     }
                 }),
                 secondary: setOnce()(ref({ instanceOf: Secondary }))
-            })
+            }),
+            withName("Primary")
         )(createModel());
 
         const secondary1 = new Secondary();

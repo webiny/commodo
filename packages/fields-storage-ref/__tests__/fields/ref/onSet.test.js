@@ -13,11 +13,11 @@ describe("onSet test", () => {
         forcedTwo.id = "forced";
 
         const One = compose(
-            withName("One"),
             withFields({
                 name: string(),
                 two: onSet(() => forcedTwo)(ref({ instanceOf: Two, autoDelete: true }))
-            })
+            }),
+            withName("One")
         )(createModel());
 
         const one = new One();

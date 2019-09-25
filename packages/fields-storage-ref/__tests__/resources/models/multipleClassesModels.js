@@ -5,52 +5,52 @@ import { compose } from "ramda";
 import createModel from "./createModel";
 
 const A = compose(
-    withName("A"),
     withFields({
         name: string()
-    })
+    }),
+    withName("A")
 )(createModel());
 
 const B = compose(
-    withName("B"),
     withFields({
         name: string()
-    })
+    }),
+    withName("B")
 )(createModel());
 
 const C = compose(
-    withName("C"),
     withFields({
         name: string()
-    })
+    }),
+    withName("C")
 )(createModel());
 
 const Main = compose(
-    withName("Main"),
     withFields({
         assignedTo: ref({ instanceOf: [A, B, C], refNameField: "assignedToRefName" }),
         assignedToRefName: string()
-    })
+    }),
+    withName("Main")
 )(createModel());
 
 const MainMissingRefNameFieldOption = compose(
-    withName("MainMissingRefNameFieldOption"),
     withFields({
         assignedTo: ref({ instanceOf: [A, B, C] })
-    })
+    }),
+    withName("MainMissingRefNameFieldOption")
 )(createModel());
 
 const MainMissingRefNameField = compose(
-    withName("MainMissingRefNameField"),
     withFields({
         assignedTo: ref({ instanceOf: [A, B, C], refNameField: "assignedToRefName" }),
         assignedToRefNameEdited: string()
-    })
+    }),
+    withName("MainMissingRefNameField")
 )(createModel());
 
 const InvalidEntityClass = compose(
-    withName("InvalidEntityClass"),
-    withFields({})
+    withFields({}),
+    withName("InvalidEntityClass")
 )(createModel());
 
 export {
