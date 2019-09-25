@@ -16,11 +16,13 @@ module.file_ext=.jsx
 module.file_ext=.mjs
 module.file_ext=.md
 module.system.node.resolve_dirname=node_modules
-module.name_mapper='^@commodo/\(.*\)/types$' -> '<PROJECT_ROOT>/packages/@commodo/\1/types.js'
-module.name_mapper='^@commodo/helpers/?\(.*\)$' -> '<PROJECT_ROOT>/packages/@commodo/helpers/src/\1'
+
 module.name_mapper='^@commodo/fields/?\(.*\)$' -> '<PROJECT_ROOT>/packages/@commodo/fields/src/\1'
-module.name_mapper='^@commodo/fields-storage-mongodb/?\(.*\)$' -> '<PROJECT_ROOT>/packages/@commodo/fields-storage-mongodb/src/\1'
 module.name_mapper='^@commodo/fields-storage/?\(.*\)$' -> '<PROJECT_ROOT>/packages/@commodo/fields-storage/src/\1'
+module.name_mapper='^@commodo/fields-storage-mongodb/?\(.*\)$' -> '<PROJECT_ROOT>/packages/@commodo/fields-storage-mongodb/src/\1'
+module.name_mapper='^@commodo/fields-storage-ref/?\(.*\)$' -> '<PROJECT_ROOT>/packages/@commodo/fields-storage-ref/src/\1'
+module.name_mapper='^@commodo/hooks/?\(.*\)$' -> '<PROJECT_ROOT>/packages/@commodo/hooks/src/\1'
+module.name_mapper='^@commodo/name/?\(.*\)$' -> '<PROJECT_ROOT>/packages/@commodo/name/src/\1'
 
 [strict]
 
