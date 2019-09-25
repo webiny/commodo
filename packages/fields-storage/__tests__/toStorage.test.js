@@ -117,6 +117,35 @@ describe("toStorage test", () => {
                 }
             }
         });
+
+        someInstance.clean();
+
+        // Data sent is not merged, but assigned, meaning a new instance of assigned "instanceOf" will be created.
+        // Should we create a new feature - populateMerge? That might be nice.
+        someInstance.data.populate({
+            fields2: {
+                field2A: "test-field-2-A-123",
+            }
+        });
+
+        expect(someInstance.data.fields2.field2A).toBe("test-field-2-A-123");
+        expect(someInstance.data.fields2.field2B).toBe(null);
+
+        toStorage = await someInstance.toStorage();
+        expect(toStorage).toEqual({
+            data: {
+                name: "test-name-1",
+                slug: "test-slug-1",
+                fields1: {
+                    field1A: "test-field-1-A",
+                    field1B: "test-field-1-B"
+                },
+                fields2: {
+                    field2A: "test-field-2-A-123",
+                    field2B: null
+                }
+            }
+        });
     });
 
     test("should return the same values, except dynamic attribute (including nested models)", async () => {
