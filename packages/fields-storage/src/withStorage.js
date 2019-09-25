@@ -8,9 +8,6 @@ import Collection from "./Collection";
 import StoragePool from "./StoragePool";
 import FieldsStorageAdapter from "./FieldsStorageAdapter";
 
-// TODO: remove this dependency!!!
-import { compose } from "ramda";
-
 interface IStorageDriver {}
 
 type Configuration = {
@@ -50,8 +47,8 @@ type FindParams = Object & {
 };
 
 const withStorage = (configuration: Configuration) => {
-    return compose(
-        withHooks({
+    return baseFn => {
+        let fn = withHooks({
             delete() {
                 if (!this.id) {
                     throw new WithStorageError(
@@ -60,8 +57,9 @@ const withStorage = (configuration: Configuration) => {
                     );
                 }
             }
-        }),
-        withProps(props => ({
+        })(baseFn);
+
+        fn = withProps(props => ({
             __withStorage: {
                 existing: false,
                 processing: false,
@@ -176,10 +174,13 @@ const withStorage = (configuration: Configuration) => {
             },
 
             async toStorage() {
-                return this.__withStorage.fieldsStorageAdapter.toStorage({ fields: this.getFields() });
+                return this.__withStorage.fieldsStorageAdapter.toStorage({
+                    fields: this.getFields()
+                });
             }
-        })),
-        withStaticProps(() => {
+        }))(fn);
+
+        fn = withStaticProps(() => {
             const __withStorage = {
                 ...configuration
             };
@@ -192,11 +193,15 @@ const withStorage = (configuration: Configuration) => {
             }
 
             __withStorage.driver =
-                typeof __withStorage.driver === "function" ? __withStorage.driver(this) : __withStorage.driver;
+                typeof __withStorage.driver === "function"
+                    ? __withStorage.driver(this)
+                    : __withStorage.driver;
 
             if (configuration.pool) {
                 __withStorage.storagePool =
-                    typeof __withStorage.pool === "function" ? __withStorage.pool(this) : __withStorage.pool;
+                    typeof __withStorage.pool === "function"
+                        ? __withStorage.pool(this)
+                        : __withStorage.pool;
             } else {
                 __withStorage.storagePool = new StoragePool();
             }
@@ -354,8 +359,10 @@ const withStorage = (configuration: Configuration) => {
                     });
                 }
             };
-        })
-    );
+        })(fn);
+
+        return fn;
+    };
 };
 
 export default withStorage;
