@@ -15,7 +15,7 @@
     "@commodo/fields-storage": "^0.3.0",
     "mdbid": "^1.0.0",
     "mongodb": "^3.1.13",
-    "repropose": "^1.0.0"
+    "repropose": "^1.0.2"
   },
   "publishConfig": {
     "access": "public"

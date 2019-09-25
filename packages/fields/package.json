@@ -14,7 +14,7 @@
     "jest": "^23.6.0"
   },
   "dependencies": {
-    "repropose": "^1.0.0"
+    "repropose": "^1.0.2"
   },
   "publishConfig": {
     "access": "public"
