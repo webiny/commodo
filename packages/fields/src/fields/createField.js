@@ -1,6 +1,6 @@
 import { type FieldFactory } from "@commodo/fields/types";
 
-const createField: FieldFactory = ({ type, list, validation, get, set, ...rest }) => {
+const createField: FieldFactory = ({ type, list, validation, get, set, value }) => {
     return function(name, parent) {
         this.get = get;
         this.set = set;
@@ -74,8 +74,8 @@ const createField: FieldFactory = ({ type, list, validation, get, set, ...rest }
         typeof this.construct === "function" && this.construct();
         typeof this.init === "function" && this.init();
 
-        if ("value" in rest) {
-            this.setValue(rest.value);
+        if (typeof value !== undefined) {
+            this.setValue(value);
         }
     };
 };
