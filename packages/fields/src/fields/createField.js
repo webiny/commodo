@@ -74,7 +74,7 @@ const createField: FieldFactory = ({ type, list, validation, get, set, value }) 
         typeof this.construct === "function" && this.construct();
         typeof this.init === "function" && this.init();
 
-        if (typeof value !== undefined) {
+        if (typeof value !== "undefined") {
             this.setValue(value);
         }
     };
