@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage@0.2.5...@commodo/fields-storage@0.3.0) (2019-09-25)
+
+
+### Features
+
+* add hasWithStorage helper function ([c23325c](https://github.com/webiny/commodo/commit/c23325c))
+
+
+
+
+
 ## [0.2.5](https://github.com/webiny/commodo/compare/@commodo/fields-storage@0.2.4...@commodo/fields-storage@0.2.5) (2019-09-23)
 
 

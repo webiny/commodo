@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@0.2.5...@commodo/fields-storage-ref@0.3.0) (2019-09-25)
+
+
+### Bug Fixes
+
+* extract logic into withRefProps and remove ramda ([a3defab](https://github.com/webiny/commodo/commit/a3defab))
+
+
+### Features
+
+* allow setting a custom parent ([e48fabf](https://github.com/webiny/commodo/commit/e48fabf))
+
+
+
+
+
 ## [0.2.5](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@0.2.4...@commodo/fields-storage-ref@0.2.5) (2019-09-23)
 
 **Note:** Version bump only for package @commodo/fields-storage-ref
