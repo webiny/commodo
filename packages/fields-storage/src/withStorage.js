@@ -52,7 +52,7 @@ const withStorage = (configuration: Configuration) => {
             delete() {
                 if (!this.id) {
                     throw new WithStorageError(
-                        "Entity cannot be deleted because it was not previously saved.",
+                        "Cannot delete before saving to storage.",
                         WithStorageError.CANNOT_DELETE_NO_ID
                     );
                 }
@@ -130,6 +130,7 @@ const withStorage = (configuration: Configuration) => {
 
                 await registerSaveUpdateCreateHooks("after", { existing, model: this, options });
             },
+
             /**
              * Deletes current and all linked models (if autoDelete on the attribute was enabled).
              * @param options
