@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.1](https://github.com/webiny/commodo/compare/@commodo/hooks@0.1.0...@commodo/hooks@0.1.1) (2019-09-26)
+
+
+### Bug Fixes
+
+* remove ramda ([427edf4](https://github.com/webiny/commodo/commit/427edf4))
+* update dependency versions ([2a30863](https://github.com/webiny/commodo/commit/2a30863))
+
+
+
+
+
 # [0.1.0](https://github.com/webiny/commodo/compare/@commodo/hooks@0.0.11...@commodo/hooks@0.1.0) (2019-09-23)
 
 

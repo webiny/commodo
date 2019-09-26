@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.7](https://github.com/webiny/commodo/compare/@commodo/fields@0.2.6...@commodo/fields@0.2.7) (2019-09-26)
+
+
+### Bug Fixes
+
+* remove ramda ([095f84a](https://github.com/webiny/commodo/commit/095f84a))
+* update dependency versions ([2a30863](https://github.com/webiny/commodo/commit/2a30863))
+
+
+
+
+
 ## [0.2.6](https://github.com/webiny/commodo/compare/@commodo/fields@0.2.5...@commodo/fields@0.2.6) (2019-09-25)
 
 

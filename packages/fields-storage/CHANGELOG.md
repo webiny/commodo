@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.1](https://github.com/webiny/commodo/compare/@commodo/fields-storage@0.3.0...@commodo/fields-storage@0.3.1) (2019-09-26)
+
+
+### Bug Fixes
+
+* error message ([0e0e226](https://github.com/webiny/commodo/commit/0e0e226))
+* remove ramda ([11f445f](https://github.com/webiny/commodo/commit/11f445f))
+* update dependency versions ([2a30863](https://github.com/webiny/commodo/commit/2a30863))
+
+
+
+
+
 # [0.3.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage@0.2.5...@commodo/fields-storage@0.3.0) (2019-09-25)
 
 
