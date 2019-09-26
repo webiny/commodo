@@ -1,0 +1,28 @@
+{
+  "name": "@commodo/fields-storage-soft-delete",
+  "version": "0.1.0",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webiny/commodo.git"
+  },
+  "contributors": [
+    "Adrian Smijulj <adrian@webiny.com>"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "repropose": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "commodo",
+    "composeable",
+    "models",
+    "hooks"
+  ],
+  "scripts": {
+    "build": "babel src --ignore src/__tests__ --out-dir dist --source-maps"
+  }
+}
