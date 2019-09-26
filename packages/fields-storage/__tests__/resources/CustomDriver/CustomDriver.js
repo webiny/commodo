@@ -27,12 +27,13 @@ class CustomDriver {
     }
 
     async update({ model }) {
+        const namespace = getName(model);
         // Check if table exists.
-        if (!this.data[model.classId]) {
-            this.data[model.classId] = {};
+        if (!this.data[namespace]) {
+            this.data[namespace] = {};
         }
 
-        this.data[model.classId][model.id] = await model.toStorage();
+        this.data[namespace][model.id] = await model.toStorage();
     }
 
     async delete({ model }) {
