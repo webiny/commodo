@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.2](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@0.3.1...@commodo/fields-storage-ref@0.3.2) (2019-10-14)
+
+
+### Bug Fixes
+
+* ref field must accept array of plain objects ([13d3f90](https://github.com/webiny/commodo/commit/13d3f90))
+
+
+
+
+
 ## [0.3.1](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@0.3.0...@commodo/fields-storage-ref@0.3.1) (2019-09-26)
 
 
