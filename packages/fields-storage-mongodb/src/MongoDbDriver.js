@@ -37,7 +37,7 @@ class MongoDbDriver {
                 .insertOne(data);
             return true;
         } catch (e) {
-            model.id && model.getAttribute("id").reset();
+            model.id && model.getField("id").reset();
             throw e;
         }
     }
