@@ -1,6 +1,6 @@
 {
   "name": "@commodo/fields-storage-mongodb",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "main": "index.js",
   "repository": {
     "type": "git",

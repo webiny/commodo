@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.15](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@0.2.14...@commodo/fields-storage-mongodb@0.2.15) (2019-10-26)
+
+
+### Bug Fixes
+
+* replace getAttribute with getField ([b0c3aec](https://github.com/webiny/commodo/commit/b0c3aec))
+
+
+
+
+
 ## [0.2.14](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@0.2.13...@commodo/fields-storage-mongodb@0.2.14) (2019-10-20)
 
 **Note:** Version bump only for package @commodo/fields-storage-mongodb
