@@ -296,23 +296,6 @@ const withStorage = (configuration: Configuration) => {
                 },
 
                 /**
-                 * Finds one or more models matched by given IDs.
-                 * @param ids
-                 * @param options
-                 */
-                async findByIds(ids: Array<mixed>, options: ?Object): Promise<Array<Entity>> {
-                    const output = [];
-                    for (let i = 0; i < ids.length; i++) {
-                        const model = await this.findById(ids[i], options);
-                        if (model) {
-                            output.push(model);
-                        }
-                    }
-
-                    return output;
-                },
-
-                /**
                  * Finds one model matched by given query parameters.
                  * @param options
                  */

@@ -30,11 +30,6 @@ describe("default driver test", () => {
         expect(user).toBeNull();
     });
 
-    test("findByIds method should return null", async () => {
-        const users = await User.findByIds([1, 2, 3]);
-        expect(users.length).toBe(0);
-    });
-
     test("findOne method should return null", async () => {
         const user = await User.findOne({ query: { id: 12345 } });
         expect(user).toBeNull();

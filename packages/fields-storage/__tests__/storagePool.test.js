@@ -87,61 +87,6 @@ describe("model pool test", () => {
         expect(users1).toEqual(users2);
     });
 
-    test("findByIds must add to the pool and consequent finds must utilize it", async () => {
-        let modelFindByIds = sandbox
-            .stub(User.getStorageDriver(), "findOne")
-            .onCall(0)
-            .callsFake(() => {
-                return { id: "A" };
-            })
-            .onCall(1)
-            .callsFake(() => {
-                return { id: "B" };
-            })
-            .onCall(2)
-            .callsFake(() => {
-                return { id: "C" };
-            });
-
-        expect(User.getStoragePool().has(User, "A")).toEqual(false);
-        expect(User.getStoragePool().has(User, "B")).toEqual(false);
-        expect(User.getStoragePool().has(User, "C")).toEqual(false);
-        await User.findByIds(["A", "B", "C"]);
-        expect(User.getStoragePool().has(User, "A")).toEqual(true);
-        expect(User.getStoragePool().has(User, "B")).toEqual(true);
-        expect(User.getStoragePool().has(User, "C")).toEqual(true);
-        expect(modelFindByIds.callCount).toEqual(3);
-
-        modelFindByIds.restore();
-
-        modelFindByIds = sandbox
-            .stub(User.getStorageDriver(), "findOne")
-            .onCall(0)
-            .callsFake(() => ({ id: "D" }))
-            .onCall(1)
-            .callsFake(() => ({ id: "E" }));
-
-        expect(User.getStoragePool().has(User, "D")).toEqual(false);
-        expect(User.getStoragePool().has(User, "E")).toEqual(false);
-        await User.findByIds(["A", "B", "C", "D", "E"]);
-        modelFindByIds.restore();
-        expect(User.getStoragePool().has(User, "A")).toEqual(true);
-        expect(User.getStoragePool().has(User, "B")).toEqual(true);
-        expect(User.getStoragePool().has(User, "C")).toEqual(true);
-        expect(User.getStoragePool().has(User, "D")).toEqual(true);
-        expect(User.getStoragePool().has(User, "E")).toEqual(true);
-
-        modelFindByIds = sandbox
-            .stub(User.getStorageDriver(), "find")
-            .callsFake(() => [{ id: "A" }, { id: "B" }, { id: "C" }, { id: "D" }, { id: "E" }]);
-
-        // No calls to the storage must be made.
-        await User.findByIds(["A", "B", "C", "D", "E"]);
-        modelFindByIds.restore();
-
-        expect(modelFindByIds.callCount).toEqual(0);
-    });
-
     test("remove method must exist if class was not inserted before", async () => {
         expect(User.getStoragePool().pool).toBeEmpty;
         User.getStoragePool().remove(new User());
@@ -164,7 +109,9 @@ describe("model pool test", () => {
                 return { id: "C" };
             });
 
-        await User.findByIds(["A", "B", "C"]);
+        await User.findById("A");
+        await User.findById("B");
+        await User.findById("C");
         expect(User.getStoragePool().has(User, "A")).toEqual(true);
         expect(User.getStoragePool().has(User, "B")).toEqual(true);
         expect(User.getStoragePool().has(User, "C")).toEqual(true);
