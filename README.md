@@ -5,7 +5,7 @@
 [![SemVer](http://img.shields.io/:semver-2.0.0-brightgreen.svg)](http://semver.org)
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
-[![Join the community on Spectrum][spectrum-badge]][spectrum]
+[![Gitter](https://img.shields.io/gitter/room/webiny/webiny-js.svg?style=flat-square)](https://gitter.im/webiny/webiny-js)
 
 Commodo is a set of [higher order functions](https://en.wikipedia.org/wiki/Higher-order_function) that let you define and **com**pose rich data **mod**el **o**bjects.
 
