@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/webiny/commodo/compare/@commodo/name@1.0.2...@commodo/name@1.1.0) (2019-12-17)
+
+
+### Features
+
+* remove findByIds ([4c3e7df](https://github.com/webiny/commodo/commit/4c3e7df))
+
+
+
+
+
 ## [1.0.2](https://github.com/webiny/commodo/compare/@commodo/name@1.0.1...@commodo/name@1.0.2) (2019-09-26)
 
 

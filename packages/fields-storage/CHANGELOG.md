@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage@0.3.2...@commodo/fields-storage@0.4.0) (2019-12-17)
+
+
+### Features
+
+* remove findByIds ([4c3e7df](https://github.com/webiny/commodo/commit/4c3e7df))
+
+
+
+
+
 ## [0.3.2](https://github.com/webiny/commodo/compare/@commodo/fields-storage@0.3.1...@commodo/fields-storage@0.3.2) (2019-10-20)
 
 

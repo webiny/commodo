@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@0.2.15...@commodo/fields-storage-mongodb@0.3.0) (2019-12-17)
+
+
+### Features
+
+* add option to skip totalCount query ([e257dab](https://github.com/webiny/commodo/commit/e257dab))
+* remove findByIds ([4c3e7df](https://github.com/webiny/commodo/commit/4c3e7df))
+
+
+
+
+
 ## [0.2.15](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@0.2.14...@commodo/fields-storage-mongodb@0.2.15) (2019-10-26)
 
 
