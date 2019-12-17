@@ -76,6 +76,10 @@ class MongoDbDriver {
             .sort(clonedOptions.sort)
             .toArray();
 
+        if (options.meta === false) {
+            return [results, {}];
+        }
+
         const totalCount = await this.getDatabase()
             .collection(this.getCollectionName(model))
             .countDocuments(clonedOptions.query);

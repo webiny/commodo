@@ -92,4 +92,21 @@ describe("find test", function() {
         expect(collectionSpy.getCall(0).args[0]).toEqual("SimpleModel");
         expect(findSpy.getCall(0).args[0]).toEqual({ age: 30 });
     });
+
+    it("find - must NOT calculate meta if it was set to false via options", async () => {
+        const countDocumentSpy = sandbox.spy(collection, "countDocuments");
+
+        await SimpleModel.find({});
+        await SimpleModel.find({});
+        await SimpleModel.find({});
+        await SimpleModel.find({});
+        await SimpleModel.find({ meta: false });
+        await SimpleModel.find({ meta: false });
+        await SimpleModel.find({ meta: false });
+        await SimpleModel.find({ meta: false });
+        await SimpleModel.find({});
+        await SimpleModel.find({});
+
+        expect(countDocumentSpy.callCount).toBe(6);
+    });
 });
