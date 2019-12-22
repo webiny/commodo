@@ -8,7 +8,8 @@ const createModel = base =>
         withId(),
         withStorage({
             driver: new MongoDbDriver({
-                database
+                database,
+                aggregateTotalCount: false
             })
         })
     )(base);
