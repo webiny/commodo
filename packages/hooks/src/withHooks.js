@@ -1,9 +1,9 @@
 // @flow
 import { withProps } from "repropose";
 
-const executeHookCallbacks = async (callbacks, args) => {
+const executeHookCallbacks = async (callbacks, args, instance) => {
     for (let i = 0; i < callbacks.length; i++) {
-        await callbacks[i].apply(this, args);
+        await callbacks[i].apply(instance, args);
     }
 };
 
@@ -57,7 +57,7 @@ const withHooks = (hooks: ?{ [string]: Function }) => {
                             // thus creating errors while looping over them. That's why we first reassign all callbacks
                             // into a new array.
                             const callbacks = [...this.__withHooks[name]];
-                            return executeHookCallbacks(callbacks, rest);
+                            return executeHookCallbacks(callbacks, rest, this);
                         }
                     }
                 }
