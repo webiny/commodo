@@ -8,8 +8,10 @@ import { getName } from "@commodo/name";
 class MongoDbDriver {
     collections: Object;
     database: Object;
+    aggregateTotalCount: ?boolean;
 
-    constructor({ database, collections } = {}) {
+    constructor({ database, collections, aggregateTotalCount } = {}) {
+        this.aggregateTotalCount = aggregateTotalCount;
         this.database = database;
         this.collections = {
             prefix: "",
@@ -67,7 +69,38 @@ class MongoDbDriver {
         MongoDbDriver.__preparePageOption(clonedOptions);
         MongoDbDriver.__prepareSearchOption(clonedOptions);
 
-        // Get first documents from cursor using each
+        if (this.aggregateTotalCount !== false) {
+            const $facet = {
+                results: [
+                    { sort: clonedOptions.sort },
+                    { skip: clonedOptions.skip },
+                    { limit: clonedOptions.limit }
+                ]
+            };
+
+            if (options.meta !== false) {
+                $facet.totalCount = [{ $count: "value" }];
+            }
+
+            const pipeline = [
+                { $match: clonedOptions.query },
+                {
+                    $facet
+                }
+            ];
+
+            const [results] = await this.getDatabase()
+                .collection(this.getCollectionName(model))
+                .aggregate(pipeline)
+                .toArray();
+
+            if (options.meta === false) {
+                return [results.results, {}];
+            }
+
+            return [results.results, results.totalCount[0] ? results.totalCount[0].value : 0];
+        }
+
         const results = await this.getDatabase()
             .collection(this.getCollectionName(model))
             .find(clonedOptions.query)
