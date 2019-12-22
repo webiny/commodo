@@ -14,11 +14,11 @@ test(`hook callback must be removed after once execution`, async () => {
     )();
 
     const testModel1 = new TestModel1();
-    const removeCallback1 = testModel1.registerHookCallback("onA", value => {
+    const removeCallback1 = testModel1.hook("onA", value => {
         testModel1.b += value;
         removeCallback1();
     });
-    const removeCallback2 = testModel1.registerHookCallback("onA", value => {
+    const removeCallback2 = testModel1.hook("onA", value => {
         testModel1.b += value * 2;
         removeCallback2();
     });

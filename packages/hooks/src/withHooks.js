@@ -1,6 +1,12 @@
 // @flow
 import { withProps } from "repropose";
 
+const executeHookCallbacks = async (callbacks, args) => {
+    for (let i = 0; i < callbacks.length; i++) {
+        await callbacks[i].apply(this, args);
+    }
+};
+
 const withHooks = (hooks: ?{ [string]: Function }) => {
     return baseFn => {
         let fn = withProps(props => {
@@ -10,12 +16,13 @@ const withHooks = (hooks: ?{ [string]: Function }) => {
 
             return {
                 __withHooks: {},
-                registerHookCallback(name, cb) {
+                __registerHookCallback(name, cb) {
                     if (!this.__withHooks[name]) {
                         this.__withHooks[name] = [];
                     }
 
                     this.__withHooks[name].push(cb);
+
                     return () => {
                         if (!this.__withHooks[name]) {
                             return;
@@ -30,15 +37,27 @@ const withHooks = (hooks: ?{ [string]: Function }) => {
                         }
                     };
                 },
-                async hook(...args) {
+                registerHookCallback(...args) {
+                    // eslint-disable-next-line
+                    console.warn(
+                        `DEPRECATION WARNING: this will be removed in next major release, use "this.hook" instead, where 2nd argument is a callback.`
+                    );
+                    return this.__registerHookCallback(...args);
+                },
+                hook(...args) {
                     const [name, ...rest] = args;
-                    if (Array.isArray(this.__withHooks[name])) {
-                        // This step is important because callbacks can remove themselves from the array of callbacks,
-                        // thus creating errors while looping over them. That's why we first reassign all callbacks
-                        // into a new array.
-                        const callbacks = [...this.__withHooks[name]];
-                        for (let i = 0; i < callbacks.length; i++) {
-                            await callbacks[i].apply(this, rest);
+
+                    // If first argument is a function, that means we are registering a new hook callback.
+                    if (typeof rest[0] === "function") {
+                        return this.__registerHookCallback(name, rest[0]);
+                    } else {
+                        // Otherwise, we are just triggering a hook.
+                        if (Array.isArray(this.__withHooks[name])) {
+                            // This step is important because callbacks can remove themselves from the array of callbacks,
+                            // thus creating errors while looping over them. That's why we first reassign all callbacks
+                            // into a new array.
+                            const callbacks = [...this.__withHooks[name]];
+                            return executeHookCallbacks(callbacks, rest);
                         }
                     }
                 }
@@ -48,7 +67,7 @@ const withHooks = (hooks: ?{ [string]: Function }) => {
         fn = withProps(props => {
             if (hooks) {
                 Object.keys(hooks).forEach((name: string) => {
-                    hooks && hooks[name] && props.registerHookCallback(name, hooks[name]);
+                    hooks && hooks[name] && props.__registerHookCallback(name, hooks[name]);
                 });
             }
             return {};

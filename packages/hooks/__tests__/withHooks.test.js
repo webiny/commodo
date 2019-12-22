@@ -43,12 +43,12 @@ test(`"withHooks" must assign hooks correctly`, async () => {
                 await this.hook("afterSave");
 
                 // Just testing inline "afterSave" hook registration.
-                this.registerHookCallback("afterSave", () => {
+                this.hook("afterSave", () => {
                     counts.beforeSave++;
                     ++this.internalCounts.beforeSave;
                 });
 
-                this.registerHookCallback("afterSave", () => {
+                this.hook("afterSave", () => {
                     counts.beforeSave--;
                     --this.internalCounts.beforeSave;
                 });
