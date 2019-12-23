@@ -71,12 +71,12 @@ class MongoDbDriver {
 
         if (this.aggregateTotalCount !== false) {
             const $facet = {
-                results: [
-                    { sort: clonedOptions.sort },
-                    { skip: clonedOptions.skip },
-                    { limit: clonedOptions.limit }
-                ]
+                results: [{ $skip: clonedOptions.offset }, { $limit: clonedOptions.limit }]
             };
+
+            if (clonedOptions.sort) {
+                $facet.results.unshift({ $sort: clonedOptions.sort });
+            }
 
             if (options.meta !== false) {
                 $facet.totalCount = [{ $count: "value" }];
@@ -89,16 +89,31 @@ class MongoDbDriver {
                 }
             ];
 
-            const [results] = await this.getDatabase()
+            const [results = {}] = await this.getDatabase()
                 .collection(this.getCollectionName(model))
                 .aggregate(pipeline)
                 .toArray();
+
+            if (!Array.isArray(results.results)) {
+                results.results = [];
+            }
+
+            if (!Array.isArray(results.totalCount)) {
+                results.totalCount = [];
+            }
 
             if (options.meta === false) {
                 return [results.results, {}];
             }
 
-            return [results.results, results.totalCount[0] ? results.totalCount[0].value : 0];
+            return [
+                results.results,
+                createPaginationMeta({
+                    totalCount: results.totalCount[0] ? results.totalCount[0].value : 0,
+                    page: options.page,
+                    perPage: options.perPage
+                })
+            ];
         }
 
         const results = await this.getDatabase()
