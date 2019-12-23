@@ -1,6 +1,11 @@
 import sinon from "sinon";
 import SimpleModel from "./models/simpleModel";
 import { collection, findCursor, database } from "./database";
+import { compose } from "ramda";
+import { withName } from "@commodo/name";
+import { withFields, string } from "@commodo/fields";
+import { withStorage } from "@commodo/fields-storage";
+import { MongoDbDriver, withId } from "@commodo/fields-storage-mongodb";
 
 const sandbox = sinon.createSandbox();
 
@@ -108,5 +113,83 @@ describe("find test", function() {
         await SimpleModel.find({});
 
         expect(countDocumentSpy.callCount).toBe(6);
+    });
+
+    it(`find - must use $facet if "aggregateTotalCount" is not set to false (default behaviour)`, async () => {
+        const SimpleModel = compose(
+            withName("SimpleModel"),
+            withFields({
+                name: string()
+            }),
+            withId(),
+            withStorage({
+                driver: new MongoDbDriver({
+                    database
+                })
+            })
+        )();
+
+        const aggregateSpy = sandbox.spy(collection, "aggregate");
+
+        await SimpleModel.find({});
+        expect(aggregateSpy.getCall(0).args[0]).toEqual([
+            {},
+            {
+                $facet: {
+                    results: [
+                        {
+                            $skip: 0
+                        },
+                        {
+                            $limit: 10
+                        }
+                    ],
+                    totalCount: [
+                        {
+                            $count: "value"
+                        }
+                    ]
+                }
+            }
+        ]);
+
+        await SimpleModel.find({
+            query: { age: { $gt: 10 } },
+            sort: { age: -1 },
+            page: 3,
+            perPage: 5
+        });
+
+        expect(aggregateSpy.getCall(1).args[0]).toEqual([
+            {
+                $match: {
+                    age: {
+                        $gt: 10
+                    }
+                }
+            },
+            {
+                $facet: {
+                    results: [
+                        {
+                            $sort: {
+                                age: -1
+                            }
+                        },
+                        {
+                            $skip: 10
+                        },
+                        {
+                            $limit: 5
+                        }
+                    ],
+                    totalCount: [
+                        {
+                            $count: "value"
+                        }
+                    ]
+                }
+            }
+        ]);
     });
 });
