@@ -32,14 +32,6 @@ const SimpleModel = compose(
     })
 )(createModel());
 
-const ComplexModels2SimpleModels = compose(
-    withName("ComplexModels2SimpleModels"),
-    withFields({
-        complexModel: id(),
-        simpleModel: id()
-    })
-)(createModel());
-
 const ComplexModel = compose(
     withFields({
         firstName: string(),
@@ -52,4 +44,4 @@ const ComplexModel = compose(
     withName("ComplexModel")
 )(createModel());
 
-export { VerificationModel, TagModel, ComplexModel, SimpleModel, ComplexModels2SimpleModels };
+export { VerificationModel, TagModel, ComplexModel, SimpleModel  };
