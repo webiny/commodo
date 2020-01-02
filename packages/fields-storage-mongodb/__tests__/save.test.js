@@ -1,46 +1,32 @@
-import sinon from "sinon";
-import SimpleModel from "./models/simpleModel";
-import { collection } from "./database";
-import mongodb from "mongodb";
-
-const sandbox = sinon.createSandbox();
+import useModels from "./models/useModels";
 
 describe("save test", function() {
-    afterEach(() => sandbox.restore());
+    const { models, getCollection } = useModels();
 
     it("must generate correct query", async () => {
-        const insertOneSpy = sandbox.stub(collection, "insertOne");
-
+        const { SimpleModel } = models;
         const simpleModel = new SimpleModel();
         await simpleModel.save();
 
-        const saveData = insertOneSpy.getCall(0).args[0];
-        expect(saveData).toEqual({
-            id: simpleModel.id,
-            enabled: true,
-            _id: saveData._id
-        });
+        let items = await getCollection("SimpleModel")
+            .find()
+            .toSimpleArray();
 
-        expect(saveData._id instanceof mongodb.ObjectID).toBe(true);
-
-        insertOneSpy.restore();
+        expect(items).toEqual([{ _id: simpleModel.id, id: simpleModel.id, enabled: true }]);
 
         simpleModel.name = "test2";
-        const updateOneSpy = sandbox.stub(collection, "updateOne");
         await simpleModel.save();
 
-        expect(updateOneSpy.getCall(0).args[0]).toEqual({ id: simpleModel.id });
-        expect(updateOneSpy.getCall(0).args[1]).toEqual({
-            $set: {
-                name: "test2",
-                slug: "test2"
-            }
-        });
-
-        updateOneSpy.restore();
+        items = await getCollection("SimpleModel")
+            .find()
+            .toSimpleArray();
+        expect(items).toEqual([
+            { _id: simpleModel.id, id: simpleModel.id, enabled: true, name: "test2", slug: "test2" }
+        ]);
     });
 
     it("should save new model into database and model should receive a new ID", async () => {
+        const { SimpleModel } = models;
         const simpleModel = new SimpleModel();
         await simpleModel.save();
 
@@ -49,6 +35,7 @@ describe("save test", function() {
     });
 
     it("should update existing model", async () => {
+        const { SimpleModel } = models;
         const simpleModel = new SimpleModel();
         await simpleModel.save();
 
