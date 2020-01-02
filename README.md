@@ -10,6 +10,7 @@
 Commodo is a set of [higher order functions](https://en.wikipedia.org/wiki/Higher-order_function) that let you define and **com**pose rich data **mod**el **o**bjects.
 
 ## Quick example
+
 ```javascript
 // Import needed higher order functions.
 import { withFields, string, number, boolean, object, onSet } from "@commodo/fields";
@@ -25,7 +26,7 @@ const Verification = compose(
     verified: boolean(),
     verifiedOn: string()
   })
-)(function() {});
+)();
 
 const User = compose(
   withFields({
@@ -51,7 +52,7 @@ const User = compose(
   withStorage({
     driver: new MongoDbDriver({ database })
   })
-)(function() {});
+)();
 
 const user = new User();
 user.populate({
@@ -73,10 +74,10 @@ await user.save();
 
 | Package | Short Description | Version |
 | :--- | :---: | :---: |
-| [@commodo/fields](./packages/fields) | The starting point of every model. Provides base `string`, `number`, `boolean` and `model` fields. | [![](https://img.shields.io/npm/v/@commodo/fields.svg)](https://www.npmjs.com/package/repropose) |
-| [@commodo/name](./packages/name) | Assign a name to your models. | [![](https://img.shields.io/npm/v/@commodo/name.svg)](https://www.npmjs.com/package/repropose) |
-| [@commodo/hooks](./packages/hooks) | Provides methods for defining and triggering hooks on your models. | [![](https://img.shields.io/npm/v/@commodo/hooks.svg)](https://www.npmjs.com/package/repropose) |
-| [@commodo/fields-storage](./packages/fields-storage) | Enables saving models, for example to a MongoDB or MySQL database. | [![](https://img.shields.io/npm/v/@commodo/fields-storage.svg)](https://www.npmjs.com/package/repropose) |
+| [@commodo/fields](./packages/fields) | The starting point of every model. Provides base `string`, `number`, `boolean` and `model` fields. | [![](https://img.shields.io/npm/v/@commodo/fields.svg)](https://www.npmjs.com/package/@commodo/fields) |
+| [@commodo/name](./packages/name) | Assign a name to your models. | [![](https://img.shields.io/npm/v/@commodo/name.svg)](https://www.npmjs.com/package/@commodo/name) |
+| [@commodo/hooks](./packages/hooks) | Provides methods for defining and triggering hooks on your models. | [![](https://img.shields.io/npm/v/@commodo/hooks.svg)](https://www.npmjs.com/package/@commodo/hooks) |
+| [@commodo/fields-storage](./packages/fields-storage) | Enables saving models to a database (with an appropriate driver, e.g. MySQL). | [![](https://img.shields.io/npm/v/@commodo/fields-storage.svg)](https://www.npmjs.com/package/@commodo/fields-storage) |
 
 ## Additional packages:
 
