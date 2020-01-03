@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import mongodb, { MongoClient } from "mongodb";
 import { withStorage } from "@commodo/fields-storage";
 import { MongoDbDriver, withId } from "@commodo/fields-storage-mongodb";
 import { compose, pick } from "ramda";
@@ -42,6 +42,7 @@ export default ({ init = true } = {}) => {
                 useNewUrlParser: true
             });
             self.db = await self.connection.db(global.__MONGO_DB_NAME__);
+            self.getDatabase().dropDatabase();
 
             const base = () =>
                 compose(
@@ -55,9 +56,6 @@ export default ({ init = true } = {}) => {
 
             Object.assign(self.models, { SimpleModel: simpleModel(base) });
         },
-        beforeEach: async () => {
-            self.getDatabase().dropDatabase();
-        },
         afterAll: async () => {
             await self.getCollection().close();
             await self.getDatabase().close();
@@ -66,7 +64,6 @@ export default ({ init = true } = {}) => {
 
     if (init !== false) {
         beforeAll(self.beforeAll);
-        beforeEach(self.beforeEach);
         afterAll(self.afterAll);
     }
 
