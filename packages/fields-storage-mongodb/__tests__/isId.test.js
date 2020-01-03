@@ -1,6 +1,6 @@
 import SimpleModel from "./models/simpleModel";
 
-describe("driver override test", function() {
+describe("isId test", function() {
     it("should validate given ID correctly (static call)", async () => {
         expect(SimpleModel.isId(123)).toBe(false);
         expect(SimpleModel.isId("01234567890123456789adee")).toBe(true);

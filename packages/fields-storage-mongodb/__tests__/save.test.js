@@ -3,7 +3,7 @@ import useModels from "./models/useModels";
 describe("save test", function() {
     const { models, getCollection } = useModels();
 
-    it("must generate correct query", async () => {
+    it("must save", async () => {
         const { SimpleModel } = models;
         const simpleModel = new SimpleModel();
         await simpleModel.save();
@@ -25,7 +25,7 @@ describe("save test", function() {
         ]);
     });
 
-    it("should save new model into database and model should receive a new ID", async () => {
+    it("should save a new model and it should receive a new ID", async () => {
         const { SimpleModel } = models;
         const simpleModel = new SimpleModel();
         await simpleModel.save();
@@ -34,7 +34,7 @@ describe("save test", function() {
         expect(SimpleModel.isId(simpleModel.id)).toBe(true);
     });
 
-    it("should update existing model", async () => {
+    it(`"id" should be the same after update`, async () => {
         const { SimpleModel } = models;
         const simpleModel = new SimpleModel();
         await simpleModel.save();
@@ -45,3 +45,5 @@ describe("save test", function() {
         expect(simpleModel.id).toBe(newId);
     });
 });
+
+

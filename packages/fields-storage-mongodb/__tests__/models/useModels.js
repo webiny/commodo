@@ -55,6 +55,9 @@ export default ({ init = true } = {}) => {
 
             Object.assign(self.models, { SimpleModel: simpleModel(base) });
         },
+        beforeEach: async () => {
+            self.getDatabase().dropDatabase();
+        },
         afterAll: async () => {
             await self.getCollection().close();
             await self.getDatabase().close();
@@ -63,6 +66,7 @@ export default ({ init = true } = {}) => {
 
     if (init !== false) {
         beforeAll(self.beforeAll);
+        beforeEach(self.beforeEach);
         afterAll(self.afterAll);
     }
 
