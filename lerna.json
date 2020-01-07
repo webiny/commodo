@@ -9,5 +9,8 @@
     "publish": {
       "message": "chore(release): New release :tada: :rocket:"
     }
+  },
+  "publish": {
+    "conventionalCommits": true
   }
 }
