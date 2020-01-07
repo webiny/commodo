@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-next.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@0.3.0...@commodo/fields-storage-mongodb@0.4.0-next.0) (2020-01-07)
+
+
+### Bug Fixes
+
+* check results received from aggregate ([d1a5313](https://github.com/webiny/commodo/commit/d1a5313))
+
+
+### Features
+
+* use $facet to count totalCount, allow old approach too (optional) ([2e81f19](https://github.com/webiny/commodo/commit/2e81f19))
+
+
+
+
+
 # [0.3.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@0.2.15...@commodo/fields-storage-mongodb@0.3.0) (2019-12-17)
 
 

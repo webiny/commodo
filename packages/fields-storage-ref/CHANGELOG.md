@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.5-next.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@0.3.4...@commodo/fields-storage-ref@0.3.5-next.0) (2020-01-07)
+
+
+### Bug Fixes
+
+* replace "registerHookCallback" with "hook" ([94d8d49](https://github.com/webiny/commodo/commit/94d8d49))
+
+
+
+
+
 ## [0.3.4](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@0.3.3...@commodo/fields-storage-ref@0.3.4) (2019-12-17)
 
 **Note:** Version bump only for package @commodo/fields-storage-ref
