@@ -24,7 +24,9 @@
       "excludeDependents": true
     },
     "publish": {
-      "message": "chore(release): New release :tada: :rocket:"
+      "conventionalCommits": true,
+      "message": "chore(release): New release :tada: :rocket:",
+      "contents": "dist"
     }
   },
   "publish": {
