@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.3](https://github.com/webiny/commodo/compare/@commodo/fields-storage-soft-delete@1.0.1...@commodo/fields-storage-soft-delete@1.0.3) (2020-01-17)
+
+
+### Bug Fixes
+
+* update versions ([e5b4c61](https://github.com/webiny/commodo/commit/e5b4c61))
+* update versions ([95852d7](https://github.com/webiny/commodo/commit/95852d7))
+
+
+
+
+
 ## [1.0.1](https://github.com/webiny/commodo/compare/@commodo/fields-storage-soft-delete@1.0.1...@commodo/fields-storage-soft-delete@1.0.1) (2020-01-17)
 
 
