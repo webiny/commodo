@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.1](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@1.0.1...@commodo/fields-storage-ref@1.0.1) (2020-01-17)
+
+
+### Bug Fixes
+
+* update versions ([95852d7](https://github.com/webiny/commodo/commit/95852d7))
+
+
+
+
+
 ## [1.0.1](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@0.3.5...@commodo/fields-storage-ref@1.0.1) (2020-01-17)
 
 **Note:** Version bump only for package @commodo/fields-storage-ref
