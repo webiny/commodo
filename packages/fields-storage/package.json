@@ -10,7 +10,7 @@
     "Adrian Smijulj <adrian@webiny.com>"
   ],
   "dependencies": {
-    "@commodo/hooks": "^0.2.0",
+    "@commodo/hooks": "^1.0.0",
     "@commodo/name": "^1.1.0",
     "repropose": "^1.0.2"
   },
