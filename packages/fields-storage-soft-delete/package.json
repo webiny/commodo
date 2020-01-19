@@ -1,6 +1,6 @@
 {
   "name": "@commodo/fields-storage-soft-delete",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -11,7 +11,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@commodo/fields": "^1.0.0",
+    "@commodo/fields": "^1.0.1",
     "repropose": "^1.0.0"
   },
   "publishConfig": {
