@@ -93,6 +93,8 @@ await user.save();
 | :--- | :---: | :---: |
 | [commodo-fields-date](https://github.com/doitadrian/commodo-fields-date) | Provides `date` field, for saving dates. | [![](https://img.shields.io/npm/v/commodo-fields-date.svg)](https://www.npmjs.com/package/commodo-fields-date) |
 | [commodo-fields-object](https://github.com/doitadrian/commodo-fields-object) | Provides `object` field, for saving plain objects. | [![](https://img.shields.io/npm/v/commodo-fields-object.svg)](https://www.npmjs.com/package/commodo-fields-object) |
+| [commodo-fields-int](https://github.com/doitadrian/commodo-fields-int) | Provides `int` field, for saving integer numbers. | [![](https://img.shields.io/npm/v/commodo-fields-int.svg)](https://www.npmjs.com/package/commodo-fields-int) |
+| [commodo-fields-float](https://github.com/doitadrian/commodo-fields-float) | Provides `float` field, for saving float numbers. | [![](https://img.shields.io/npm/v/commodo-fields-float.svg)](https://www.npmjs.com/package/commodo-fields-float) |
 | [commodo-fields-storage-crud-logs](https://github.com/doitadrian/commodo-fields-storage-crud-logs) | Adds and automatically manages `createdOn`, `updatedOn`, `savedOn` fields. | [![](https://img.shields.io/npm/v/commodo-fields-storage-crud-logs.svg)](https://www.npmjs.com/package/commodo-fields-storage-crud-logs) |
 
 ## Contributing
