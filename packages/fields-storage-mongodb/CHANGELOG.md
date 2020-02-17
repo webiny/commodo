@@ -3,6 +3,91 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.3](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@1.0.2...@commodo/fields-storage-mongodb@1.0.3) (2020-01-21)
+
+**Note:** Version bump only for package @commodo/fields-storage-mongodb
+
+
+
+
+
+## [1.0.2](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@1.0.3...@commodo/fields-storage-mongodb@1.0.2) (2020-01-19)
+
+
+### Bug Fixes
+
+* update package versions ([aa1831e](https://github.com/webiny/commodo/commit/aa1831e))
+
+
+
+
+
+## [1.0.1](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@1.0.3...@commodo/fields-storage-mongodb@1.0.1) (2020-01-19)
+
+
+### Bug Fixes
+
+* update package versions ([aa1831e](https://github.com/webiny/commodo/commit/aa1831e))
+
+
+
+
+
+## [1.0.3](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@1.0.1...@commodo/fields-storage-mongodb@1.0.3) (2020-01-17)
+
+
+### Bug Fixes
+
+* update versions ([e5b4c61](https://github.com/webiny/commodo/commit/e5b4c61))
+* update versions ([95852d7](https://github.com/webiny/commodo/commit/95852d7))
+
+
+
+
+
+## [1.0.1](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@1.0.1...@commodo/fields-storage-mongodb@1.0.1) (2020-01-17)
+
+
+### Bug Fixes
+
+* update versions ([95852d7](https://github.com/webiny/commodo/commit/95852d7))
+
+
+
+
+
+## [1.0.1](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@0.4.0...@commodo/fields-storage-mongodb@1.0.1) (2020-01-17)
+
+**Note:** Version bump only for package @commodo/fields-storage-mongodb
+
+
+
+
+
+# [0.4.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@0.4.0-next.0...@commodo/fields-storage-mongodb@0.4.0) (2020-01-10)
+
+**Note:** Version bump only for package @commodo/fields-storage-mongodb
+
+
+
+
+
+# [0.4.0-next.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@0.3.0...@commodo/fields-storage-mongodb@0.4.0-next.0) (2020-01-07)
+
+
+### Bug Fixes
+
+* check results received from aggregate ([d1a5313](https://github.com/webiny/commodo/commit/d1a5313))
+
+
+### Features
+
+* use $facet to count totalCount, allow old approach too (optional) ([2e81f19](https://github.com/webiny/commodo/commit/2e81f19))
+
+
+
+
+
 # [0.3.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@0.2.15...@commodo/fields-storage-mongodb@0.3.0) (2019-12-17)
 
 

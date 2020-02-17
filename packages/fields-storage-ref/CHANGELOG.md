@@ -3,6 +3,78 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.2](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@1.0.3...@commodo/fields-storage-ref@1.0.2) (2020-01-19)
+
+
+### Bug Fixes
+
+* update package versions ([aa1831e](https://github.com/webiny/commodo/commit/aa1831e))
+
+
+
+
+
+## [1.0.1](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@1.0.3...@commodo/fields-storage-ref@1.0.1) (2020-01-19)
+
+
+### Bug Fixes
+
+* update package versions ([aa1831e](https://github.com/webiny/commodo/commit/aa1831e))
+
+
+
+
+
+## [1.0.3](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@1.0.1...@commodo/fields-storage-ref@1.0.3) (2020-01-17)
+
+
+### Bug Fixes
+
+* update versions ([e5b4c61](https://github.com/webiny/commodo/commit/e5b4c61))
+* update versions ([95852d7](https://github.com/webiny/commodo/commit/95852d7))
+
+
+
+
+
+## [1.0.1](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@1.0.1...@commodo/fields-storage-ref@1.0.1) (2020-01-17)
+
+
+### Bug Fixes
+
+* update versions ([95852d7](https://github.com/webiny/commodo/commit/95852d7))
+
+
+
+
+
+## [1.0.1](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@0.3.5...@commodo/fields-storage-ref@1.0.1) (2020-01-17)
+
+**Note:** Version bump only for package @commodo/fields-storage-ref
+
+
+
+
+
+## [0.3.5](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@0.3.5-next.0...@commodo/fields-storage-ref@0.3.5) (2020-01-10)
+
+**Note:** Version bump only for package @commodo/fields-storage-ref
+
+
+
+
+
+## [0.3.5-next.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@0.3.4...@commodo/fields-storage-ref@0.3.5-next.0) (2020-01-07)
+
+
+### Bug Fixes
+
+* replace "registerHookCallback" with "hook" ([94d8d49](https://github.com/webiny/commodo/commit/94d8d49))
+
+
+
+
+
 ## [0.3.4](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@0.3.3...@commodo/fields-storage-ref@0.3.4) (2019-12-17)
 
 **Note:** Version bump only for package @commodo/fields-storage-ref

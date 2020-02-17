@@ -42,7 +42,8 @@
     "lint-staged": "lint-staged",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
-    "lerna:publish": "lerna publish --conventional-commits --yes --contents dist",
+    "lerna:version": "lerna version --yes",
+    "lerna:publish": "lerna publish --yes",
     "lerna:rm-dist": "lerna exec -- rm -rf dist",
     "prepack": "node scripts/prepack.js",
     "cz": "git-cz"

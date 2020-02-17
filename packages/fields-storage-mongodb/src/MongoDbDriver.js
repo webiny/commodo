@@ -74,7 +74,7 @@ class MongoDbDriver {
                 results: [{ $skip: clonedOptions.offset }, { $limit: clonedOptions.limit }]
             };
 
-            if (clonedOptions.sort) {
+            if (clonedOptions.sort && Object.keys(clonedOptions.sort).length > 0) {
                 $facet.results.unshift({ $sort: clonedOptions.sort });
             }
 
@@ -83,11 +83,14 @@ class MongoDbDriver {
             }
 
             const pipeline = [
-                { $match: clonedOptions.query },
                 {
                     $facet
                 }
             ];
+
+            if (clonedOptions.query && Object.keys(clonedOptions.query).length > 0) {
+                pipeline.unshift({ $match: clonedOptions.query });
+            }
 
             const [results = {}] = await this.getDatabase()
                 .collection(this.getCollectionName(model))
@@ -116,13 +119,17 @@ class MongoDbDriver {
             ];
         }
 
-        const results = await this.getDatabase()
+        const database = await this.getDatabase()
             .collection(this.getCollectionName(model))
             .find(clonedOptions.query)
             .limit(clonedOptions.limit)
-            .skip(clonedOptions.offset)
-            .sort(clonedOptions.sort)
-            .toArray();
+            .skip(clonedOptions.offset);
+
+        if (clonedOptions.sort && Object.keys(clonedOptions.sort).length > 0) {
+            database.sort(clonedOptions.sort);
+        }
+
+        const results = await database.toArray();
 
         if (options.meta === false) {
             return [results, {}];
