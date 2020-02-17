@@ -133,7 +133,6 @@ describe("find test", function() {
 
         await SimpleModel.find({});
         expect(aggregateSpy.getCall(0).args[0]).toEqual([
-            {},
             {
                 $facet: {
                     results: [
@@ -181,6 +180,45 @@ describe("find test", function() {
                         },
                         {
                             $limit: 5
+                        }
+                    ],
+                    totalCount: [
+                        {
+                            $count: "value"
+                        }
+                    ]
+                }
+            }
+        ]);
+    });
+
+    it(`find - passing empty keys must not add an item to the aggregation pipeline`, async () => {
+        const SimpleModel = compose(
+            withName("SimpleModel"),
+            withFields({
+                name: string()
+            }),
+            withId(),
+            withStorage({
+                driver: new MongoDbDriver({
+                    database
+                })
+            })
+        )();
+
+        const aggregateSpy = sandbox.spy(collection, "aggregate");
+
+        await SimpleModel.find({});
+
+        expect(aggregateSpy.getCall(0).args[0]).toEqual([
+            {
+                $facet: {
+                    results: [
+                        {
+                            $skip: 0
+                        },
+                        {
+                            $limit: 10
                         }
                     ],
                     totalCount: [
