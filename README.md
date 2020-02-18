@@ -110,7 +110,7 @@ await user.save();
 ## Is Commodo ORM/ODM?
 Fundamentally, Commodo is not an ORM/ODM, but can very quickly become one, by utilizing a simple `withStorage` HOF. 
 
-Using HOFs is a very flexible approach for defining your data models, because you only utilize the functionality you actuall need.
+Using HOFs is a very flexible approach for defining your data models, because you only utilize the functionality you actually need.
 
 ## Core packages:
 
