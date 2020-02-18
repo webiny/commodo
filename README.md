@@ -7,13 +7,50 @@
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Gitter](https://img.shields.io/gitter/room/webiny/webiny-js.svg?style=flat-square)](https://gitter.im/webiny/webiny-js)
 
-Commodo is a set of [higher order functions](https://en.wikipedia.org/wiki/Higher-order_function) that let you define and **com**pose rich data **mod**el **o**bjects.
+Commodo is a set of [higher order functions (HOFs)](https://en.wikipedia.org/wiki/Higher-order_function) that let you define and **com**pose rich data **mod**el **o**bjects.
 
 ## Quick example
 
+##### A simple model
+The following example shows how to create a simple data model, which you can later use to validate data (e.g. data received as body of an HTTP request):
+
 ```javascript
-// Import needed higher order functions.
-import { withFields, string, number, boolean, object, onSet } from "@commodo/fields";
+import { withFields, string, number, boolean } from "@commodo/fields";
+
+const Animal = withFields({
+    name: string({
+        validate: value => {
+            if (!value) {
+                throw Error("A pet must have a name!");
+            }
+        }
+    }),
+    age: number(),
+    isAwesome: boolean(),
+    about: fields({
+        value: {},
+        instanceOf: withFields({
+            type: string({ value: "cat" }),
+            dangerous: boolean({ value: true })
+        })()
+    })
+})();
+
+const animal = new Animal();
+animal.populate({ age: "7" }); // Throws data type error, cannot populate a string with number.
+
+animal.populate({ age: 7 });
+await animal.validate(); // Throws a validation error - name must be defined.
+
+animal.name = "Garfield";
+await animal.validate(); // All good.
+```
+
+##### More complex model
+Using other HOFs, you can create more complex models, that have a name, attached hooks, and even storage layer, so that you can easily save the data to the database:
+
+```javascript
+import { withFields, string, number, boolean, fields, onSet } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { withHooks } from "@commodo/hooks";
 import { withStorage } from "@commodo/fields-storage";
@@ -70,7 +107,14 @@ user.populate({
 await user.save();
 ```
 
+## Is Commodo ORM/ODM?
+Fundamentally, Commodo is not an ORM/ODM, but can very quickly become one, by utilizing a simple `withStorage` HOF. 
+
+Using HOFs is a very flexible approach for defining your data models, because you only utilize the functionality you actuall need.
+
 ## Core packages:
+
+In the following section, we show all of the useful HOFs that are available.
 
 | Package | Short Description | Version |
 | :--- | :---: | :---: |
@@ -114,6 +158,3 @@ Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind welcome!
-
-[spectrum-badge]: https://withspectrum.github.io/badge/badge.svg
-[spectrum]: https://spectrum.chat/webiny
