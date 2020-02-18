@@ -107,14 +107,14 @@ user.populate({
 await user.save();
 ```
 
-## Is Commodo ORM/ODM?
-Fundamentally, Commodo is not an ORM/ODM, but can very quickly become one, by utilizing a simple `withStorage` HOF. 
+## Is Commodo an ORM/ODM?
+Fundamentally, Commodo is not an ORM/ODM, but can very quickly become one, by utilizing an additional HOF. You can use the already provided [@commodo/fields-storage](https://github.com/webiny/commodo/tree/master/packages/fields-storage) or even create your own if you don't like the existing one.
 
-Using HOFs is a very flexible approach for defining your data models, because you only utilize the functionality you actually need.
+Using HOFs is a very flexible approach for defining your data models, because you can append only the functionality you actually need and will use.
 
 ## Core packages:
 
-In the following section, we show all of the useful HOFs that are available.
+The following section shows all of the useful higher order functions that you can use right now.
 
 | Package | Short Description | Version |
 | :--- | :---: | :---: |
