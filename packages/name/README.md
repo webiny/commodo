@@ -7,7 +7,6 @@ Decorates a function with a given name.
 import { withName } from "@commodo/name";
 import { compose } from "ramda";
 
-// Create two functions with a name assigned to them.
 const User = compose(
   withName("User"),
   (...)
@@ -19,7 +18,7 @@ const Company = compose(
 )();
 ```
 
-Use `hasName` or `getName` on a function to determine if it has a name or to get the value, respectively.
+Use `hasName` or `getName` on a function to determine if it has a name or to get the actual value, respectively.
 
 ```js
 import { withName, hasName, getName } from "@commodo/name";
