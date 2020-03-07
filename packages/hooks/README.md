@@ -1,14 +1,14 @@
 # @commodo/hooks
-Hooks are points in code on which you can hook on to and execute one or more callbacks. 
+Hooks are points in code on which you can "hook" on to and execute one or more callbacks. 
 
-This is where the `withHooks` higher order function comes in. It creates a new function, whose instances are decorated with methods for defining custom hooks and registration of hook callbacks.
+This is where the `withHooks` higher order function comes in. It decorates a function with a simple method for defining custom hooks and registration of hook callbacks.
 
-A good example where hooks are efficiently utilized is the [withStorage](../fields-storage) higher order function. Once applied, it registers a set of hooks like `beforeCreate`, `afterCreate`, `beforeUpdate` and so on. Please check the documention of the package for more information.
+A good example where hooks are efficiently utilized is the [withStorage](../fields-storage) higher order function. Once applied, it registers a set of hooks like `beforeCreate`, `afterCreate`, `beforeUpdate`, `afterUpdate`, and so on. Please check the package documentation for more details.
 
 ## Usage
-In the following example, an "emailSent" hook is defined in the `sendEmail` method. Note that the `await` keyword is prepended, since registered hook callbacks can contain async code. But this is not a requirement - in some cases making a call without the `await` keyword could also suffice.
+In the following example, an `emailSent` hook is defined in the `sendEmail` method. Note that the `await` keyword is prepended, since registered hook callbacks can contain async code. But this is not a requirement - in some cases making a call without the `await` keyword could also suffice.
 
-At the very end, the `withHooks` higher order function is applied, and conveniently a callback for the "emailSent" hook is provided.
+After `withProps`, we utilize the `withHooks` higher order function, where we register the `emailSent` hook callback.
 
 ```js
 import { withHooks } from "@commodo/hooks";
@@ -29,30 +29,31 @@ const User = compose(
     }),
    withHooks({
         emailSent: () => {
-            // Do the necessary sync or async actions.
+            console.log("E-mail was sent!")
         }
     })
-)(function() {});
+)();
 
-const Company = compose(
-  withName("Company"),
-  ...
-)(function() {});
+const user = new User();
+
+// This will do whatever was stated in the method, and also log "E-mail was sent!" 
+// message because of the hook callback we've registered inside of the `withHooks` call.
+await user.sendEmail();
 ```
 Note: for more information about the `withProps` higher order function, please check the docs of the [repropose](https://github.com/doitadrian/repropose) package.
 
 ## Reference
 
-#### `withHooks(callbacks: ?{[string]: Function}): WithHooksFunction`
-Creates a new function, whose instances are decorated with methods for defining hooks and registering hook callbacks. 
-Optionally, one or more hook callbacks can be passed as the first argument - an object that contains names of the hooks as keys, and callbacks as values.
+#### `withHooks(callbacks: {[string]: Function}): WithHooksFunction`
+Decorates a function with methods for defining hooks and registering hook callbacks. 
+Optionally, one or more hook callbacks can be directly passed as the first argument - an object that contains names of the hooks as keys, and callbacks as values.
 
 ### `WithHooksFunction`
 
-Instances of `WithHooksFunction` are decorated with `hook` and `registerHookCallback` methods.
+Instances of `WithHooksFunction` are decorated with the `hook` method, which enables both hook registration and execution of hook callbacks. 
 
-#### `hook(name: string): Promise<void>`
-Calls a hook or in other words, executes all registered hook callbacks.
+#### `hook(name: string, callback: Function)`
+If the second argument is a function, the `hook` method assumes a new hook callback is being registered.
 
-#### `registerHookCallback(name: string, callback: Function)`
-Registers a callback for given hook. Useful when registering hooks inside of custom methods.
+#### `hook(name: string, ...args): Promise<void>`
+If there is no second argument, or the argument is not a function, the `hook` method assumes it needs to execute all hook callbacks. Note that the method can take unlimited amount of arguments, which will all be forwarded to the hook callback.
