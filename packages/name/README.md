@@ -1,4 +1,4 @@
-# @commodo/name
+# @commodo/name [![](https://img.shields.io/npm/v/@commodo/name.svg)](https://www.npmjs.com/package/@commodo/name)
 Decorates a function (and its instances) with a name, that can be used for various purposes. 
 
 For example, the [`@commodo/fields-storage`](../fields-storage) package relies on the name in order to determine the database table in which the data will be saved.

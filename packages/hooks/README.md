@@ -1,4 +1,5 @@
-# @commodo/hooks
+# @commodo/hooks [![](https://img.shields.io/npm/v/@commodo/hooks.svg)](https://www.npmjs.com/package/@commodo/hooks)
+
 Hooks are points in code on which you can "hook" on to and execute one or more callbacks. 
 
 This is where the `withHooks` higher order function comes in. It decorates a function with a simple method for defining custom hooks and registration of hook callbacks.
