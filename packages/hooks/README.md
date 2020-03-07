@@ -17,6 +17,7 @@ import { withProps } from "repropose";
 
 const User = compose(
     withProps({
+        email: "some-assigned@email.com",
         async sendEmail() {
             (...)
             
@@ -28,8 +29,12 @@ const User = compose(
         }
     }),
    withHooks({
-        emailSent: () => {
-            console.log("E-mail was sent!")
+        emailSent()  {
+            console.log("E-mail was sent!");
+            
+            // You can use "this" keyword to access other properties in the function instance!
+            // Note that this won't work if you've defined the hook callback using arrow function.
+            console.log("E-mail address: " + this.email);
         }
     })
 )();
