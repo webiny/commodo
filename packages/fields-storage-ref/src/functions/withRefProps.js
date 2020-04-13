@@ -396,7 +396,9 @@ export default ({ list, instanceOf, using, autoDelete, autoSave, refNameField, p
                         if (current instanceof Object) {
                             model.populate(current);
                         }
-                        this.setValue(model);
+
+                        this.state.set = true;
+                        this.current = model;
                     }
                     return this.current;
                 }
@@ -404,7 +406,8 @@ export default ({ list, instanceOf, using, autoDelete, autoSave, refNameField, p
                 const current = this.current;
                 if (current instanceof Object) {
                     const model = new modelClass().populate(current);
-                    this.setValue(model);
+                    this.state.set = true;
+                    this.current = model;
                 }
 
                 // If valid value was not returned until this point, we return recently set value.
@@ -630,30 +633,15 @@ export default ({ list, instanceOf, using, autoDelete, autoSave, refNameField, p
                         });
                     }
 
-                    /*if (this.isClean()) {
-                        const initial = this.getInitial();
-                        const initialLinks = this.getInitialLinks();
-                        if (Array.isArray(initial) && Array.isArray(initialLinks)) {
-                            this.setCurrent(new EntityCollection(initial), { skipDifferenceCheck: true });
-                            if (classes.using.class) {
-                                this.setCurrentLinks(new EntityCollection(initialLinks), {
-                                    skipDifferenceCheck: true
-                                });
-                            }
-                        }
-                    }
-                    */
                     if (!this.isDirty()) {
                         const initial = this.initial;
                         const initialLinks = this.links.initial;
                         if (Array.isArray(initial) && Array.isArray(initialLinks)) {
-                            this.setValue(new Collection(initial), {
-                                skipDifferenceCheck: true
-                            });
+                            this.state.set = true;
+                            this.current = new Collection(initial);
                             if (classes.using.class) {
-                                this.setCurrentLinks(new Collection(initialLinks), {
-                                    skipDifferenceCheck: true
-                                });
+                                this.links.set = true;
+                                this.links.current = new Collection(initialLinks);
                             }
                         }
                     }
@@ -694,7 +682,8 @@ export default ({ list, instanceOf, using, autoDelete, autoSave, refNameField, p
                         // If current value is not dirty, than we can set initial value as current, otherwise we
                         // assume that something else was set as current value like a new entity.
                         if (!this.isDirty()) {
-                            this.setValue(entity, { skipDifferenceCheck: true });
+                            this.state.set = true;
+                            this.current = entity;
                         }
                     }
                 }
@@ -907,19 +896,6 @@ export default ({ list, instanceOf, using, autoDelete, autoSave, refNameField, p
                 return this;
             },
 
-            setCurrentLinks(value: mixed, options: Object = {}): this {
-                this.links.set = true;
-
-                if (!options.skipDifferenceCheck) {
-                    if (this.isDifferentFrom(value)) {
-                        this.links.dirty = true;
-                    }
-                }
-
-                this.links.current = value;
-                return this;
-            },
-
             async deleteInitialLinks(): Promise<void> {
                 // If initial is empty, that means nothing was ever loaded (attribute was not accessed) and there is nothing to do.
                 // Otherwise, deleteInitial method will internally delete only models that are not needed anymore.
@@ -1015,7 +991,12 @@ export default ({ list, instanceOf, using, autoDelete, autoSave, refNameField, p
                     }
                 }
 
-                this.setCurrentLinks(links);
+                this.links.set = true;
+                if (this.isDifferentFrom(links)) {
+                    this.links.dirty = true;
+                }
+
+                this.links.current = links;
             }
         };
     });
