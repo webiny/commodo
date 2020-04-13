@@ -64,4 +64,17 @@ const User = compose(
     withName("User")
 )(createModel());
 
-export { User, Company, Image };
+/**
+ * Used for testing making references with the same model class.
+ */
+const CompanyWithSisterCompany = compose(
+    withFields(() => ({
+        name: string({
+            validation: required
+        }),
+        sister: ref({ instanceOf: CompanyWithSisterCompany })
+    })),
+    withName("CompanyWithSisterCompany")
+)(createModel());
+
+export { User, Company, Image, CompanyWithSisterCompany };
