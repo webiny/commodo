@@ -33,6 +33,7 @@
     "verdaccio": "^3.11.6"
   },
   "scripts": {
+    "build": "lerna exec -- rm -rf dist && lerna run build",
     "test": "npm run test:src",
     "test:src:coverage": "yarn jest --config ./scripts/jest/config.src.js --coverage",
     "test:src:coverage:coveralls": "npm run test:src:coverage && cat ./coverage/lcov.info | coveralls",
