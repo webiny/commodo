@@ -8,7 +8,7 @@ import createModel from "../../resources/models/createModel";
 describe("nested ref field test", () => {
     beforeEach(() => Two.getStoragePool().flush());
 
-    test("if ref is not a direct child of withStorage model, it should still now when to save itself", async () => {
+    test("if ref is not a direct child of withStorage model, it should still know when to save itself", async () => {
         // In this case we need to provide parent that has withStorage applied. This is how it is for now,
         // we can try to think of a smarter solution in the future.
         const SomeRef = compose(

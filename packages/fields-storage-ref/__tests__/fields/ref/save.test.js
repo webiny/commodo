@@ -1,4 +1,4 @@
-import { User, Company } from "../../resources/models/userCompanyImage";
+import { User, Company, CompanyWithSisterCompany } from "../../resources/models/userCompanyImage";
 import { One } from "../../resources/models/oneTwoThree";
 import sinon from "sinon";
 import mdbid from "mdbid";
@@ -54,6 +54,30 @@ describe("model attribute test", () => {
         expect(await model.getField("company").getStorageValue()).toEqual(null);
 
         findById.restore();
+    });
+
+    test("should be able to make links to the same model class", async () => {
+        const ids = { A: mdbid(), one: mdbid(), five: mdbid() };
+        const model = new CompanyWithSisterCompany();
+        model.populate({
+            name: "company1"
+        });
+
+        let save = sandbox.stub(model.getStorageDriver(), "save").callsFake(({ model }) => {
+            model.id = ids.A;
+            return true;
+        });
+
+        await model.save();
+
+        const model2 = new CompanyWithSisterCompany();
+        model2.populate({
+            name: "company2",
+            sister: model.id
+        });
+        await model2.save();
+
+        save.restore();
     });
 
     test("it should auto save linked model only if it is enabled", async () => {
