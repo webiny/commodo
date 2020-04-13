@@ -17,6 +17,9 @@
     "mongodb": "^3.1.13",
     "repropose": "^1.0.2"
   },
+  "devDependencies": {
+    "@shelf/jest-mongodb": "^1.1.5"
+  },
   "publishConfig": {
     "access": "public"
   },
