@@ -1,5 +1,6 @@
 // @flow
 import { withStaticProps, withProps } from "repropose";
+import cloneDeep from "lodash.clonedeep";
 import { withHooks } from "@commodo/hooks";
 import type { SaveParams } from "@commodo/fields-storage/types";
 import WithStorageError from "./WithStorageError";
@@ -7,6 +8,7 @@ import createPaginationMeta from "./createPaginationMeta";
 import Collection from "./Collection";
 import StoragePool from "./StoragePool";
 import FieldsStorageAdapter from "./FieldsStorageAdapter";
+import { decodeCursor } from "./cursor";
 
 interface IStorageDriver {}
 
@@ -42,10 +44,12 @@ const registerSaveUpdateCreateHooks = async (prefix, { existing, model, options 
 };
 
 type FindParams = Object & {
-    limit: ?number,
+    query: ?{ [string]: number },
     sort: ?{ [string]: number },
+    limit: ?number,
+    before: ?string,
     after: ?string,
-    before: ?string
+    totalCount: ?boolean
 };
 
 const withStorage = (configuration: Configuration) => {
@@ -227,38 +231,84 @@ const withStorage = (configuration: Configuration) => {
 
                     const maxPerPage = this.__withStorage.maxPerPage || 100;
 
-                    const { before, after, ...prepared } = options;
+                    let {
+                        query = {},
+                        sort = {},
+                        limit,
+                        before,
+                        after,
+                        totalCount: countTotal = false,
+                        ...other
+                    } = options;
 
-                    prepared.limit = Number.isInteger(prepared.limit) ? prepared.limit : maxPerPage;
+                    limit = Number.isInteger(limit) && limit > 0 ? limit : maxPerPage;
 
-                    if (prepared.limit && prepared.limit > 0) {
-                        if (Number.isInteger(maxPerPage) && prepared.limit > maxPerPage) {
-                            throw new WithStorageError(
-                                `Cannot query for more than ${maxPerPage} models per page.`,
-                                WithStorageError.MAX_PER_PAGE_EXCEEDED
-                            );
-                        }
-                    } else {
-                        prepared.limit = maxPerPage;
+                    if (limit > maxPerPage) {
+                        throw new WithStorageError(
+                            `Cannot query for more than ${maxPerPage} models per page.`,
+                            WithStorageError.MAX_PER_PAGE_EXCEEDED
+                        );
                     }
 
-                    // Increase limit by 1 to detect if there is `next page`
-                    prepared.limit++;
+                    // Keep a backup of query for optional total count
+                    const originalQuery = cloneDeep(query);
 
+                    if (after || before) {
+                        if (!query.hasOwnProperty("$and")) {
+                            query["$and"] = [];
+                        }
+                    }
+
+                    let sortDir = -1;
+                    if (after) {
+                        query["$and"].push({ id: { $lt: decodeCursor(after) } });
+                    } else if (before) {
+                        sortDir = 1;
+                        query["$and"].push({ id: { $gt: decodeCursor(before) } });
+                    }
+
+                    if (!Object.keys(sort).length) {
+                        sort["id"] = sortDir;
+                    }
+
+                    const params = { query, sort, limit: limit + 1, ...other };
                     let [results, meta] = await this.getStorageDriver().find({
                         model: this,
-                        options: prepared
+                        options: params
                     });
 
-                    const hasNextPage = results.length > prepared.limit - 1;
-                    hasNextPage && results.pop();
+                    // Have we reached the last record?
+                    const hasMore = results.length > limit;
 
-                    const collection = new Collection().setParams(prepared).setMeta(
+                    if (hasMore) {
+                        results.pop();
+                    }
+
+                    const hasPreviousPage = !!after || !!(before && hasMore);
+                    const hasNextPage = !!before || hasMore;
+
+                    if (before) {
+                        results = results.reverse();
+                    }
+
+                    let totalCount = null;
+                    if (countTotal) {
+                        totalCount = await this.getStorageDriver().count({
+                            model: this,
+                            options: {
+                                query: originalQuery,
+                                ...other
+                            }
+                        });
+                    }
+
+                    const collection = new Collection().setParams(params).setMeta(
                         createPaginationMeta({
                             ...meta,
                             collection: results,
-                            hasPreviousPage: !!after,
-                            hasNextPage
+                            hasPreviousPage,
+                            hasNextPage,
+                            totalCount
                         })
                     );
 

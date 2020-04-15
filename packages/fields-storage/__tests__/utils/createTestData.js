@@ -1,51 +1,51 @@
 const data = [
     {
         price: 100.0,
-        name: "Name A"
+        name: "Name 01"
     },
     {
         price: 200.0,
-        name: "Name F"
+        name: "Name 02"
     },
     {
         price: 300.0,
-        name: "Name C"
+        name: "Name 03"
     },
     {
         price: 400.0,
-        name: "Name D"
+        name: "Name 04"
     },
     {
         price: 200.0,
-        name: "Name B"
+        name: "Name 05"
     },
     {
         price: 250.0,
-        name: "Name E"
+        name: "Name 06"
     },
     {
         price: 700.0,
-        name: "Name G"
+        name: "Name 07"
     },
     {
         price: 320.0,
-        name: "Name H"
+        name: "Name 08"
     },
     {
         price: 50.0,
-        name: "Name I"
+        name: "Name 09"
     },
     {
         price: 1200.0,
-        name: "Name J"
+        name: "Name 10"
     },
     {
         price: 620.0,
-        name: "Name K"
+        name: "Name 11"
     },
     {
         price: 80.0,
-        name: "Name L"
+        name: "Name 12"
     }
 ];
 
