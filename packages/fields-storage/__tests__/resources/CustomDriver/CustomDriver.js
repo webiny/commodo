@@ -84,9 +84,7 @@ class CustomDriver {
         const records = this.data[namespace];
         if (!records) {
             const meta = createPaginationMeta({
-                totalCount: 0,
-                page: options.page,
-                perPage: options.perPage
+                totalCount: 0
             });
 
             return [[], meta];
@@ -107,9 +105,7 @@ class CustomDriver {
         }
 
         const meta = createPaginationMeta({
-            totalCount: collection.length,
-            page: options.page,
-            perPage: options.perPage
+            totalCount: collection.length
         });
 
         return [collection, meta];

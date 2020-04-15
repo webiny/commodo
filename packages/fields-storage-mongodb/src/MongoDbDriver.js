@@ -2,7 +2,6 @@
 import mongodb from "mongodb";
 import isMongoDbId from "./isMongoDbId";
 import generateMongoDbId from "./generateMongoDbId";
-import { createPaginationMeta } from "@commodo/fields-storage";
 import { getName } from "@commodo/name";
 
 class MongoDbDriver {
@@ -109,14 +108,9 @@ class MongoDbDriver {
                 return [results.results, {}];
             }
 
-            return [
-                results.results,
-                createPaginationMeta({
-                    totalCount: results.totalCount[0] ? results.totalCount[0].value : 0,
-                    page: options.page,
-                    perPage: options.perPage
-                })
-            ];
+            const totalCount = results.totalCount[0] ? results.totalCount[0].value : 0;
+
+            return [results.results, { totalCount }];
         }
 
         const database = await this.getDatabase()
@@ -139,13 +133,7 @@ class MongoDbDriver {
             .collection(this.getCollectionName(model))
             .countDocuments(clonedOptions.query);
 
-        const meta = createPaginationMeta({
-            totalCount,
-            page: options.page,
-            perPage: options.perPage
-        });
-
-        return [results, meta];
+        return [results, { totalCount }];
     }
 
     async findOne({ model, options }) {

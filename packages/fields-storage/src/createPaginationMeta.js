@@ -1,52 +1,50 @@
 // @flow
-type PaginationMeta = {
-    page: number,
-    perPage: number,
-    totalCount: number,
+import { Collection } from "@commodo/fields-storage";
 
-    totalPages: ?number,
-    from: ?number,
-    to: ?number,
-    nextPage: ?number,
-    previousPage: ?number
+type PaginationMeta = {
+    cursors: {
+        next: string | null,
+        previous: string | null
+    },
+    hasNextPage: boolean,
+    hasPreviousPage: boolean,
+    totalCount?: number
 };
 
 type Params = {
-    page: number,
-    perPage: number,
-    totalCount: number
+    collection: Collection,
+    hasPreviousPage: boolean,
+    hasNextPage: boolean,
+    totalCount?: number
+};
+
+export const encodeCursor = cursor => {
+    if (typeof cursor === "string") {
+        return Buffer.from(cursor).toString("base64");
+    }
+
+    return null;
 };
 
 export default (params: ?Params): PaginationMeta => {
-    const meta: PaginationMeta = {
-        page: 0,
-        perPage: 0,
-        totalCount: 0,
-        totalPages: null,
-        from: null,
-        to: null,
-        nextPage: null,
-        previousPage: null,
-        ...params
-    };
+    const { collection, hasNextPage, hasPreviousPage, ...rest } = params;
+    let next = null;
+    let previous = null;
 
-    if (meta.page && meta.perPage) {
-        meta.totalPages = Math.ceil(meta.totalCount / meta.perPage);
-
-        if (meta.totalCount) {
-            meta.from = 1 + meta.perPage * (meta.page - 1);
-        } else {
-            meta.from = 0;
-        }
-
-        meta.to = meta.perPage * meta.page;
-        if (meta.to > meta.totalCount) {
-            meta.to = meta.totalCount;
-        }
-
-        meta.nextPage = meta.page < meta.totalPages ? meta.page + 1 : null;
-        meta.previousPage = meta.page === 1 ? null : meta.page - 1;
+    if (collection.length) {
+        next = hasNextPage ? collection[collection.length - 1].id : null;
+        previous = hasPreviousPage ? collection[0].id : null;
     }
+
+    const meta: PaginationMeta = {
+        ...rest,
+        hasNextPage,
+        hasPreviousPage,
+        cursors: {
+            next: encodeCursor(next),
+            previous: encodeCursor(previous)
+        }
+    };
 
     return meta;
 };

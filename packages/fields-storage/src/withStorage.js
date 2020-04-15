@@ -42,8 +42,10 @@ const registerSaveUpdateCreateHooks = async (prefix, { existing, model, options 
 };
 
 type FindParams = Object & {
-    perPage: ?number,
-    page: ?number
+    limit: ?number,
+    sort: ?{ [string]: number },
+    after: ?string,
+    before: ?string
 };
 
 const withStorage = (configuration: Configuration) => {
@@ -223,36 +225,42 @@ const withStorage = (configuration: Configuration) => {
                         options = {};
                     }
 
-                    const prepared = { ...options };
+                    const maxPerPage = this.__withStorage.maxPerPage || 100;
 
-                    // Prepare find-specific options: perPage and page.
-                    prepared.page = Number(prepared.page);
-                    if (!Number.isInteger(prepared.page) || (prepared.page && prepared.page <= 1)) {
-                        prepared.page = 1;
-                    }
+                    const { before, after, ...prepared } = options;
 
-                    prepared.perPage = Number.isInteger(prepared.perPage) ? prepared.perPage : 10;
+                    prepared.limit = Number.isInteger(prepared.limit) ? prepared.limit : maxPerPage;
 
-                    if (prepared.perPage && prepared.perPage > 0) {
-                        const maxPerPage = this.__withStorage.maxPerPage || 100;
-                        if (Number.isInteger(maxPerPage) && prepared.perPage > maxPerPage) {
+                    if (prepared.limit && prepared.limit > 0) {
+                        if (Number.isInteger(maxPerPage) && prepared.limit > maxPerPage) {
                             throw new WithStorageError(
                                 `Cannot query for more than ${maxPerPage} models per page.`,
                                 WithStorageError.MAX_PER_PAGE_EXCEEDED
                             );
                         }
                     } else {
-                        prepared.perPage = 10;
+                        prepared.limit = maxPerPage;
                     }
 
-                    const [results, meta] = await this.getStorageDriver().find({
+                    // Increase limit by 1 to detect if there is `next page`
+                    prepared.limit++;
+
+                    let [results, meta] = await this.getStorageDriver().find({
                         model: this,
                         options: prepared
                     });
 
-                    const collection = new Collection()
-                        .setParams(prepared)
-                        .setMeta({ ...createPaginationMeta(), ...meta });
+                    const hasNextPage = results.length > prepared.limit - 1;
+                    hasNextPage && results.pop();
+
+                    const collection = new Collection().setParams(prepared).setMeta(
+                        createPaginationMeta({
+                            ...meta,
+                            collection: results,
+                            hasPreviousPage: !!after,
+                            hasNextPage
+                        })
+                    );
 
                     const result: ?Array<Object> = results;
                     if (result instanceof Array) {

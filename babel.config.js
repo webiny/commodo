@@ -3,13 +3,15 @@ module.exports = {
         [
             "@babel/preset-env",
             {
-                debug: false,
                 targets: {
-                    browsers: ["last 3 versions"]
+                    node: "8.10"
                 }
             }
         ],
-        ["@babel/preset-flow"]
+        "@babel/preset-flow"
     ],
-    plugins: ["@babel/plugin-transform-runtime"]
+    plugins: [
+        ["@babel/plugin-proposal-object-rest-spread", { useBuiltIns: true }],
+        ["@babel/plugin-transform-runtime", { useESModules: false }]
+    ]
 };

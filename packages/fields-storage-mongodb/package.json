@@ -31,6 +31,7 @@
     "mongodb"
   ],
   "scripts": {
-    "build": "babel src --ignore src/__tests__ --out-dir dist --source-maps"
+    "build": "babel src --ignore src/__tests__ --out-dir dist --source-maps",
+    "watch": "yarn build --watch"
   }
 }
