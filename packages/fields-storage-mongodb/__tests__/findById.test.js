@@ -1,51 +1,28 @@
-import sinon from "sinon";
-import SimpleModel from "./models/simpleModel";
-const sandbox = sinon.createSandbox();
-import { collection, findCursor } from "./database";
-import mdbid from "mdbid";
+import useModels from "./models/useModels";
+import createSimpleModelsMock from "./mocks/createSimpleModelsMock";
 
 describe("findById test", function() {
-    afterEach(() => {
-        sandbox.restore();
-        findCursor.data = [];
-    });
-    beforeEach(() => SimpleModel.getStoragePool().flush());
+    const { models, getCollection } = useModels();
+    const { simpleModelsMock, ids } = createSimpleModelsMock();
+    const [id1, id2, id3, id4] = ids;
 
-    it("must generate correct query", async () => {
-        const findOneSpy = sandbox.spy(collection, "find");
+    beforeAll(() => getCollection("SimpleModel").insertMany(simpleModelsMock));
 
-        const id = mdbid();
-        await SimpleModel.findById(id);
+    it("must find by provided ID correctly", async () => {
+        const { SimpleModel } = models;
+        let model = await SimpleModel.findById(String(id1));
+        expect(model.name).toBe(simpleModelsMock[0].name);
 
-        expect(findOneSpy.getCall(0).args[0]).toEqual({
-            id
-        });
+        model = await SimpleModel.findById(String(id2));
+        expect(model.name).toBe(simpleModelsMock[1].name);
 
-        findOneSpy.restore();
-    });
+        model = await SimpleModel.findById(String(id3));
+        expect(model.name).toBe(simpleModelsMock[2].name);
 
-    it("findById - should find previously inserted model", async () => {
-        const xyz = mdbid();
+        model = await SimpleModel.findById(String(id4));
+        expect(model.name).toBe(simpleModelsMock[3].name);
 
-        const findOneStub = sandbox.stub(collection, "find").callsFake(() => {
-            findCursor.data = [
-                {
-                    id: xyz,
-                    name: "This is a test",
-                    slug: "thisIsATest",
-                    enabled: true
-                }
-            ];
-
-            return findCursor;
-        });
-
-        const simpleModel = await SimpleModel.findById(xyz);
-        findOneStub.restore();
-
-        expect(simpleModel.id).toBe(xyz);
-        expect(simpleModel.name).toBe("This is a test");
-        expect(simpleModel.slug).toBe("thisIsATest");
-        expect(simpleModel.enabled).toBe(true);
+        model = await SimpleModel.findById('xyz');
+        expect(model).toBe(null);
     });
 });
