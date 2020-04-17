@@ -1,5 +1,5 @@
 import { useDatabase, createModel, createTestData } from "./utils";
-import { encodeCursor } from "@commodo/fields-storage/cursor";
+import { encodeCursor, decodeCursor } from "@commodo/fields-storage/cursor";
 
 describe("Cursor based pagination", () => {
     const db = useDatabase();
@@ -23,7 +23,7 @@ describe("Cursor based pagination", () => {
         expect(models.length).toBe(5);
         expect(models.getMeta()).toMatchObject({
             cursors: {
-                next: encodeCursor(data[data.length - 5].id),
+                next: encodeCursor({ id: data[data.length - 5].id }),
                 previous: null
             },
             hasNextPage: true,
@@ -37,7 +37,7 @@ describe("Cursor based pagination", () => {
         expect(models.length).toBe(5);
         expect(models.getMeta()).toMatchObject({
             cursors: {
-                next: encodeCursor(data[data.length - 5].id),
+                next: encodeCursor({ id: data[data.length - 5].id }),
                 previous: null
             },
             hasNextPage: true,
@@ -53,13 +53,13 @@ describe("Cursor based pagination", () => {
 
         const page2Args = { ...page1Args, after: page1Meta.cursors.next };
         const page2 = await Model.find(page2Args);
-        const page2Meta = page2.getMeta()
+        const page2Meta = page2.getMeta();
 
         expect(page2.length).toBe(5);
         expect(page2Meta).toMatchObject({
             cursors: {
-                next: encodeCursor(data[2].id),
-                previous: encodeCursor(data[6].id)
+                next: encodeCursor({ id: data[2].id }),
+                previous: encodeCursor({ id: data[6].id })
             },
             hasNextPage: true,
             hasPreviousPage: true
@@ -72,7 +72,7 @@ describe("Cursor based pagination", () => {
         expect(page3.getMeta()).toMatchObject({
             cursors: {
                 next: null,
-                previous: encodeCursor(data[1].id)
+                previous: encodeCursor({ id: data[1].id })
             },
             hasNextPage: false,
             hasPreviousPage: true
@@ -80,15 +80,60 @@ describe("Cursor based pagination", () => {
     });
 
     test(`should return correct data using "before" cursor`, async () => {
-        const cursor = encodeCursor(data[8].id);
+        const cursor = encodeCursor({ id: data[8].id });
         const page1Args = { limit: 5, before: cursor };
         const page1 = await Model.find(page1Args);
         const page1Meta = page1.getMeta();
 
         expect(page1.length).toBe(3);
+        expect(page1[0].id).toBe(data[11].id);
+        expect(page1[2].id).toBe(data[9].id);
         expect(page1Meta).toMatchObject({
             cursors: {
-                next: encodeCursor(data[9].id),
+                next: encodeCursor({ id: data[9].id }),
+                previous: null
+            },
+            hasNextPage: true,
+            hasPreviousPage: false
+        });
+    });
+
+    test(`should return correct data using a sort field`, async () => {
+        const page1Args = { limit: 8, sort: { price: -1 } };
+        const page1 = await Model.find(page1Args);
+        const page1Meta = page1.getMeta();
+
+        expect(page1.length).toBe(8);
+        expect(page1Meta).toMatchObject({
+            cursors: {
+                next: encodeCursor({ id: data[4].id, price: data[4].price }),
+                previous: null
+            },
+            hasNextPage: true,
+            hasPreviousPage: false
+        });
+
+        const page2Args = { ...page1Args, after: page1Meta.cursors.next };
+        const page2 = await Model.find(page2Args);
+        const page2Meta = page2.getMeta();
+
+        expect(page2.length).toBe(4);
+        expect(page2Meta).toMatchObject({
+            cursors: {
+                next: null,
+                previous: encodeCursor({ id: data[1].id, price: data[1].price })
+            },
+            hasNextPage: false,
+            hasPreviousPage: true
+        });
+
+        const page3Args = { ...page1Args, before: page2Meta.cursors.previous };
+        const page3 = await Model.find(page3Args);
+
+        expect(page3.length).toBe(8);
+        expect(page3.getMeta()).toMatchObject({
+            cursors: {
+                next: encodeCursor({ id: data[4].id, price: data[4].price }),
                 previous: null
             },
             hasNextPage: true,

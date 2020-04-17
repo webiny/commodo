@@ -1,15 +1,15 @@
 export const encodeCursor = cursor => {
-    if (typeof cursor === "string") {
-        return Buffer.from(cursor).toString("base64");
+    if (!cursor) {
+        return null;
     }
 
-    return null;
+    return Buffer.from(JSON.stringify(cursor)).toString("base64");
 };
 
 export const decodeCursor = cursor => {
-    if (typeof cursor === "string") {
-        return Buffer.from(cursor, "base64").toString("ascii");
+    if (!cursor) {
+        return null;
     }
 
-    return null;
+    return JSON.parse(Buffer.from(cursor, "base64").toString("ascii"));
 };

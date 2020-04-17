@@ -1,5 +1,4 @@
 // @flow
-import { Collection } from "@commodo/fields-storage";
 import { encodeCursor } from "./cursor";
 
 type PaginationMeta = {
@@ -13,29 +12,23 @@ type PaginationMeta = {
 };
 
 type Params = {
-    collection: Collection,
+    nextCursor: Object,
+    previousCursor: Object,
     hasPreviousPage: boolean,
     hasNextPage: boolean,
     totalCount?: number
 };
 
 export default (params: ?Params): PaginationMeta => {
-    const { collection, hasNextPage, hasPreviousPage, ...rest } = params;
-    let next = null;
-    let previous = null;
-
-    if (collection.length) {
-        next = hasNextPage ? collection[collection.length - 1].id : null;
-        previous = hasPreviousPage ? collection[0].id : null;
-    }
+    const { nextCursor, previousCursor, hasNextPage, hasPreviousPage, ...rest } = params;
 
     const meta: PaginationMeta = {
         ...rest,
         hasNextPage,
         hasPreviousPage,
         cursors: {
-            next: encodeCursor(next),
-            previous: encodeCursor(previous)
+            next: encodeCursor(nextCursor),
+            previous: encodeCursor(previousCursor)
         }
     };
 

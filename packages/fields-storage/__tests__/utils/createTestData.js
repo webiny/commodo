@@ -56,6 +56,7 @@ export default async Model => {
         model.slug = data[i].name.toLowerCase().replace(/ +/g, "-");
         await model.save();
         data[i].id = model.id;
+        data[i].slug = model.slug;
     }
 
     return data;

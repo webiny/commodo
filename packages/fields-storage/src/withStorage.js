@@ -4,11 +4,10 @@ import cloneDeep from "lodash.clonedeep";
 import { withHooks } from "@commodo/hooks";
 import type { SaveParams } from "@commodo/fields-storage/types";
 import WithStorageError from "./WithStorageError";
-import createPaginationMeta from "./createPaginationMeta";
 import Collection from "./Collection";
 import StoragePool from "./StoragePool";
 import FieldsStorageAdapter from "./FieldsStorageAdapter";
-import { decodeCursor } from "./cursor";
+import { decodeCursor, encodeCursor } from "./cursor";
 
 interface IStorageDriver {}
 
@@ -51,6 +50,22 @@ type FindParams = Object & {
     after: ?string,
     totalCount: ?boolean
 };
+
+function cursorFrom(data, keys) {
+    return encodeCursor(
+        keys.reduce(
+            (acc, key) => {
+                if (key === "id") {
+                    return acc;
+                }
+
+                acc[key] = data[key];
+                return acc;
+            },
+            { id: data.id }
+        )
+    );
+}
 
 const withStorage = (configuration: Configuration) => {
     return baseFn => {
@@ -253,23 +268,50 @@ const withStorage = (configuration: Configuration) => {
                     // Keep a backup of query for optional total count
                     const originalQuery = cloneDeep(query);
 
-                    if (after || before) {
+                    let forward = Boolean(after || !before);
+                    const cursor = decodeCursor(after || before);
+
+                    const op = forward ? "$lt" : "$gt";
+
+                    if (cursor) {
                         if (!query.hasOwnProperty("$and")) {
                             query["$and"] = [];
                         }
+
+                        const { id, ...fields } = cursor;
+                        const sortFields = [Object.keys(fields).shift()];
+
+                        if (sortFields.length) {
+                            query["$and"].push({
+                                $or: [
+                                    // Build condition from cursor fields
+                                    sortFields.reduce((acc, key) => {
+                                        acc[key] = { [op]: fields[key] };
+                                        return acc;
+                                    }, {}),
+                                    // Add condition to handle "exact match" records
+                                    sortFields.reduce(
+                                        (acc, key) => {
+                                            acc[key] = fields[key];
+                                            return acc;
+                                        },
+                                        { id: { [op]: id } }
+                                    )
+                                ]
+                            });
+                        } else {
+                            query["$and"].push({ id: { [op]: id } });
+                        }
                     }
 
-                    let sortDir = -1;
-                    if (after) {
-                        query["$and"].push({ id: { $lt: decodeCursor(after) } });
-                    } else if (before) {
-                        sortDir = 1;
-                        query["$and"].push({ id: { $gt: decodeCursor(before) } });
+                    if (!forward) {
+                        Object.keys(sort).forEach(key => {
+                            sort[key] *= -1;
+                        });
                     }
 
-                    if (!Object.keys(sort).length) {
-                        sort["id"] = sortDir;
-                    }
+                    // Always add sort by "id"
+                    sort["id"] = forward ? -1 : 1;
 
                     const params = { query, sort, limit: limit + 1, ...other };
                     let [results, meta] = await this.getStorageDriver().find({
@@ -284,12 +326,8 @@ const withStorage = (configuration: Configuration) => {
                         results.pop();
                     }
 
-                    const hasPreviousPage = !!after || !!(before && hasMore);
                     const hasNextPage = !!before || hasMore;
-
-                    if (before) {
-                        results = results.reverse();
-                    }
+                    const hasPreviousPage = !!after || !!(before && hasMore);
 
                     let totalCount = null;
                     if (countTotal) {
@@ -302,15 +340,29 @@ const withStorage = (configuration: Configuration) => {
                         });
                     }
 
-                    const collection = new Collection().setParams(params).setMeta(
-                        createPaginationMeta({
-                            ...meta,
-                            collection: results,
-                            hasPreviousPage,
-                            hasNextPage,
-                            totalCount
-                        })
-                    );
+                    const lastIndex = results.length - 1;
+                    const nextCursor = hasNextPage
+                        ? cursorFrom(forward ? results[lastIndex] : results[0], Object.keys(sort))
+                        : null;
+
+                    const previousCursor = hasPreviousPage
+                        ? cursorFrom(forward ? results[0] : results[lastIndex], Object.keys(sort))
+                        : null;
+
+                    if (!forward) {
+                        results = results.reverse();
+                    }
+
+                    const collection = new Collection().setParams(params).setMeta({
+                        ...meta,
+                        cursors: {
+                            next: nextCursor,
+                            previous: previousCursor
+                        },
+                        hasPreviousPage,
+                        hasNextPage,
+                        totalCount
+                    });
 
                     const result: ?Array<Object> = results;
                     if (result instanceof Array) {

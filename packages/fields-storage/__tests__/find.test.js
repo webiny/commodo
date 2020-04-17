@@ -44,7 +44,7 @@ describe("find test", () => {
             ];
         });
 
-        const results = await User.find();
+        const results = await User.find({ totalCount: true });
         findStub.restore();
 
         expect(results.length).toBe(3);
@@ -53,8 +53,8 @@ describe("find test", () => {
                 next: null,
                 previous: null
             },
-            hasNextPage: null,
-            hasPreviousPage: null,
+            hasNextPage: false,
+            hasPreviousPage: false,
             totalCount: 3
         });
     });
