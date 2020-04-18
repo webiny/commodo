@@ -1,10 +1,11 @@
-import mongodb, { MongoClient } from "mongodb";
+import { MongoClient } from "mongodb";
 import { withStorage } from "@commodo/fields-storage";
 import { MongoDbDriver, withId } from "@commodo/fields-storage-mongodb";
 import { compose, pick } from "ramda";
 
 // Models.
 import simpleModel from "./SimpleModel";
+import complexModel from "./ComplexModel";
 
 export default ({ init = true } = {}) => {
     const self = {
@@ -39,9 +40,10 @@ export default ({ init = true } = {}) => {
         },
         beforeAll: async () => {
             self.connection = await MongoClient.connect(global.__MONGO_URI__, {
-                useNewUrlParser: true
+                useNewUrlParser: true,
+                useUnifiedTopology: true
             });
-            self.db = await self.connection.db(global.__MONGO_DB_NAME__);
+            self.db = await self.connection.db(global.__MONGO_DB_NAME__ + "_" + Date.now());
             self.getDatabase().dropDatabase();
 
             const base = () =>
@@ -54,7 +56,10 @@ export default ({ init = true } = {}) => {
                     })
                 )();
 
-            Object.assign(self.models, { SimpleModel: simpleModel(base) });
+            Object.assign(self.models, {
+                SimpleModel: simpleModel(base),
+                ...complexModel(base)
+            });
         },
         afterAll: async () => {
             await self.getCollection().close();

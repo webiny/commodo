@@ -10,8 +10,8 @@ export default () => {
             {
                 _id: id1,
                 id: String(id1),
-                name: "one",
-                slug: "one",
+                name: "Amazon Web Services",
+                slug: "amazon-web-services",
                 enabled: true,
                 tags: ["blue", "red"],
                 age: 10
@@ -19,8 +19,8 @@ export default () => {
             {
                 _id: id2,
                 id: String(id2),
-                name: "two",
-                slug: "two",
+                name: "Serverless Database",
+                slug: "database",
                 enabled: true,
                 tags: ["red"],
                 age: 20
@@ -28,8 +28,8 @@ export default () => {
             {
                 _id: id3,
                 id: String(id3),
-                name: "three",
-                slug: "three",
+                name: "Lambda",
+                slug: "serverless-function",
                 enabled: false,
                 tags: [],
                 age: 30
@@ -37,8 +37,8 @@ export default () => {
             {
                 _id: id4,
                 id: String(id4),
-                name: "four",
-                slug: "four",
+                name: "Cloud Infrastructure",
+                slug: "cloud-infrastructure",
                 enabled: true,
                 tags: ["blue", "purple"],
                 age: 40

@@ -15,7 +15,7 @@ describe("findOne test", function() {
         let model = await SimpleModel.findOne({ query: { id: String(id1) } });
         expect(model.id).toBe(String(id1));
 
-        model = await SimpleModel.findOne({ query: { name: "one" } });
+        model = await SimpleModel.findOne({ query: { name: "Amazon Web Services" } });
         expect(model.id).toBe(String(id1));
 
         model = await SimpleModel.findOne({ query: { name: "one-xyz" } });
@@ -32,7 +32,7 @@ describe("findOne test", function() {
             query: { tags: { $in: ["blue"] } },
             sort: { name: -1 }
         });
-        expect(model.id).toBe(String(id1));
+        expect(model.id).toBe(String(id4));
 
         // Query - search query should be passed.
         model = await SimpleModel.findOne({
@@ -64,7 +64,7 @@ describe("findOne test", function() {
                 age: { $gt: 25 }
             },
             search: {
-                query: "three",
+                query: "Lambda",
                 fields: ["name"]
             }
         });
@@ -91,7 +91,7 @@ describe("findOne test", function() {
         let model = await SimpleModel.findOne({ query: { id: String(id1) } });
         expect(model.id).toBe(String(id1));
 
-        model = await SimpleModel.findOne({ query: { name: "one" } });
+        model = await SimpleModel.findOne({ query: { name: "Amazon Web Services" } });
         expect(model.id).toBe(String(id1));
 
         model = await SimpleModel.findOne({ query: { name: "one-xyz" } });
@@ -108,7 +108,7 @@ describe("findOne test", function() {
             query: { tags: { $in: ["blue"] } },
             sort: { name: -1 }
         });
-        expect(model.id).toBe(String(id1));
+        expect(model.id).toBe(String(id4));
 
         // Query - search query should be passed.
         model = await SimpleModel.findOne({
@@ -140,7 +140,7 @@ describe("findOne test", function() {
                 age: { $gt: 25 }
             },
             search: {
-                query: "three",
+                query: "Lambda",
                 fields: ["name"]
             }
         });

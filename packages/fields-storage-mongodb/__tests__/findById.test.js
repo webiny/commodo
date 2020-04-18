@@ -22,7 +22,7 @@ describe("findById test", function() {
         model = await SimpleModel.findById(String(id4));
         expect(model.name).toBe(simpleModelsMock[3].name);
 
-        model = await SimpleModel.findById('xyz');
+        model = await SimpleModel.findById("xyz");
         expect(model).toBe(null);
     });
 });
