@@ -62,56 +62,9 @@ class MongoDbDriver {
     }
 
     async find({ model, options }) {
-        const clonedOptions = { limit: 10, offset: 0, ...options };
+        const clonedOptions = { limit: 0, offset: 0, ...options };
 
-        MongoDbDriver.__preparePerPageOption(clonedOptions);
-        MongoDbDriver.__preparePageOption(clonedOptions);
         MongoDbDriver.__prepareSearchOption(clonedOptions);
-
-        if (this.aggregateTotalCount !== false) {
-            const $facet = {
-                results: [{ $skip: clonedOptions.offset }, { $limit: clonedOptions.limit }]
-            };
-
-            if (clonedOptions.sort && Object.keys(clonedOptions.sort).length > 0) {
-                $facet.results.unshift({ $sort: clonedOptions.sort });
-            }
-
-            if (options.meta !== false) {
-                $facet.totalCount = [{ $count: "value" }];
-            }
-
-            const pipeline = [
-                {
-                    $facet
-                }
-            ];
-
-            if (clonedOptions.query && Object.keys(clonedOptions.query).length > 0) {
-                pipeline.unshift({ $match: clonedOptions.query });
-            }
-
-            const [results = {}] = await this.getDatabase()
-                .collection(this.getCollectionName(model))
-                .aggregate(pipeline)
-                .toArray();
-
-            if (!Array.isArray(results.results)) {
-                results.results = [];
-            }
-
-            if (!Array.isArray(results.totalCount)) {
-                results.totalCount = [];
-            }
-
-            if (options.meta === false) {
-                return [results.results, {}];
-            }
-
-            const totalCount = results.totalCount[0] ? results.totalCount[0].value : 0;
-
-            return [results.results, { totalCount }];
-        }
 
         const database = await this.getDatabase()
             .collection(this.getCollectionName(model))
@@ -123,23 +76,11 @@ class MongoDbDriver {
             database.sort(clonedOptions.sort);
         }
 
-        const results = await database.toArray();
-
-        if (options.meta === false) {
-            return [results, {}];
-        }
-
-        const totalCount = await this.getDatabase()
-            .collection(this.getCollectionName(model))
-            .countDocuments(clonedOptions.query);
-
-        return [results, { totalCount }];
+        return [await database.toArray(), {}];
     }
 
     async findOne({ model, options }) {
         const clonedOptions = { ...options };
-        MongoDbDriver.__preparePerPageOption(clonedOptions);
-        MongoDbDriver.__preparePageOption(clonedOptions);
         MongoDbDriver.__prepareSearchOption(clonedOptions);
 
         const results = await this.getDatabase()
@@ -194,20 +135,6 @@ class MongoDbDriver {
         }
 
         return this.collections.prefix + getName(model);
-    }
-
-    static __preparePerPageOption(options: Object) {
-        if ("perPage" in options) {
-            options.limit = options.perPage;
-            delete options.perPage;
-        }
-    }
-
-    static __preparePageOption(options: Object) {
-        if ("page" in options) {
-            options.offset = options.limit * (options.page - 1);
-            delete options.page;
-        }
     }
 
     static __prepareSearchOption(options: Object) {
