@@ -1,5 +1,5 @@
 import { useDatabase, createModel, createTestData } from "./utils";
-import { encodeCursor, decodeCursor } from "@commodo/fields-storage/cursor";
+import { encodeCursor } from "@commodo/fields-storage/cursor";
 
 describe("Cursor based pagination", () => {
     const db = useDatabase();
