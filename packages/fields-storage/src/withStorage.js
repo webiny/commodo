@@ -310,8 +310,9 @@ const withStorage = (configuration: Configuration) => {
                         });
                     }
 
-                    // Always add sort by "id"
-                    sort["id"] = forward ? -1 : 1;
+                    if (!sort.hasOwnProperty("id")) {
+                        sort["id"] = forward ? -1 : 1;
+                    }
 
                     const params = { query, sort, limit: limit + 1, ...other };
                     let [results, meta] = await this.getStorageDriver().find({
