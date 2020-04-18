@@ -60,38 +60,32 @@ describe("withSoftDelete test", () => {
         await Model.find({ sort: { age: -1 } });
 
         let call = findSpy.getCall(0);
-        expect(call.args[0].options).toEqual({
+        expect(call.args[0].options).toMatchObject({
             query: {
                 deleted: {
                     $ne: true
                 }
-            },
-            page: 1,
-            perPage: 10
+            }
         });
 
         call = findSpy.getCall(1);
-        expect(call.args[0].options).toEqual({
+        expect(call.args[0].options).toMatchObject({
             query: {
                 age: 25,
                 deleted: {
                     $ne: true
                 }
-            },
-            page: 1,
-            perPage: 10
+            }
         });
 
         call = findSpy.getCall(2);
-        expect(call.args[0].options).toEqual({
+        expect(call.args[0].options).toMatchObject({
             query: {
                 deleted: {
                     $ne: true
                 }
             },
-            sort: { age: -1 },
-            page: 1,
-            perPage: 10
+            sort: { age: -1 }
         });
     });
 

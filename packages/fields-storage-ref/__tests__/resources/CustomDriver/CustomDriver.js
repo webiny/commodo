@@ -16,7 +16,6 @@ class CustomDriver {
             model.id = mdbid();
         }
 
-
         const namespace = getName(model);
         // Check if table exists.
         if (!this.data[namespace]) {
@@ -50,8 +49,8 @@ class CustomDriver {
     }
 
     async count({ model, options }) {
-        const [results, totalCount] = await this.find({ model, options });
-        return totalCount || 0;
+        const [results] = await this.find({ model, options });
+        return results.length;
     }
 
     isId(value: any): boolean {
@@ -82,7 +81,7 @@ class CustomDriver {
         const namespace = getName(model);
         const records = this.data[namespace];
         if (!records) {
-            return [];
+            return [[], {}];
         }
 
         const collection = [];
@@ -99,7 +98,7 @@ class CustomDriver {
             collection.push(record);
         }
 
-        return [collection, collection.length];
+        return [collection, {}];
     }
 }
 
