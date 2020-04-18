@@ -4,7 +4,9 @@ Hooks are points in code on which you can "hook" on to and execute one or more c
 
 This is where the `withHooks` higher order function comes in. It decorates a function with a simple method for defining custom hooks and registration of hook callbacks.
 
-A good example where hooks are efficiently utilized is the [withStorage](../fields-storage) higher order function. Once applied, it registers a set of hooks like `beforeCreate`, `afterCreate`, `beforeUpdate`, `afterUpdate`, and so on. Please check the package documentation for more details.
+A good example where hooks are utilized efficiently is the [withStorage](../fields-storage) higher order function. Once applied, it registers a set of hooks like `beforeCreate`, `afterCreate`, `beforeUpdate`, and `afterUpdate`, which you can then utilize in order to add custom logic where needed.
+
+You can check the [@commodo/fields-storage](/webiny/commodo/tree/master/packages/fields-storage) package documentation for more details on those.
 
 ## Usage
 In the following example, an `emailSent` hook is defined in the `sendEmail` method. Note that the `await` keyword is prepended, since registered hook callbacks can contain async code. But this is not a requirement - in some cases making a call without the `await` keyword could also suffice.
