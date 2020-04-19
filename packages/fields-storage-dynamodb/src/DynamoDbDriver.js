@@ -4,7 +4,7 @@ import getName from '@commodo/name/getName';
 import isId from './isId';
 
 import { DynamoDB } from 'aws-sdk';
-import * as mdbid from 'mdbid';
+import mdbid from 'mdbid';
 
 import getIndexes from '../../fields-storage/dist/getIndexes';
 import hasIndex from '../../fields-storage/dist/hasIndex';
@@ -31,10 +31,8 @@ const emptyExpressionParams = {
 class DynamoDbDriver {
     collections: Object;
     database: DynamoDB.DocumentClient;
-    aggregateTotalCount;
 
-    constructor({ database, collections, aggregateTotalCount  }: any = {}) {
-        this.aggregateTotalCount = aggregateTotalCount;
+    constructor({ database, collections  } = {}) {
         this.database = database;
         this.collections = {
             prefix: "",

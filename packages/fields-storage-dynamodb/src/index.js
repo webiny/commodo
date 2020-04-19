@@ -1,5 +1,2 @@
-import { default as DynamoDbDriver } from "./DynamoDbDriver";
-
-export {
-  DynamoDbDriver
-};
+export { default as DynamoDbDriver } from "./DynamoDbDriver";
+export { default as withId } from "./withId";
