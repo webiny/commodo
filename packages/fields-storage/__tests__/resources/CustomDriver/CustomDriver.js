@@ -1,6 +1,5 @@
 import { getName } from "@commodo/name";
 import mdbid from "mdbid";
-import { createPaginationMeta } from "@commodo/fields-storage";
 
 class CustomDriver {
     constructor() {
@@ -51,7 +50,11 @@ class CustomDriver {
     }
 
     async count({ model, options }) {
-        const [results, meta] = await this.find({ model, options });
+        const [results, meta] = await this.find({
+            model,
+            options: { ...options, totalCount: true }
+        });
+
         return meta.totalCount;
     }
 
@@ -83,13 +86,7 @@ class CustomDriver {
         const namespace = getName(model);
         const records = this.data[namespace];
         if (!records) {
-            const meta = createPaginationMeta({
-                totalCount: 0,
-                page: options.page,
-                perPage: options.perPage
-            });
-
-            return [[], meta];
+            return [[], { totalCount: options.totalCount ? 0 : null }];
         }
 
         const collection = [];
@@ -106,11 +103,10 @@ class CustomDriver {
             collection.push(record);
         }
 
-        const meta = createPaginationMeta({
-            totalCount: collection.length,
-            page: options.page,
-            perPage: options.perPage
-        });
+        const meta = {};
+        if (options.totalCount) {
+            meta.totalCount = collection.length;
+        }
 
         return [collection, meta];
     }

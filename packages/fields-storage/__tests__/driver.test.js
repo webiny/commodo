@@ -42,6 +42,7 @@ describe("default driver test", () => {
     });
 
     test("count method should return zero", async () => {
-        expect(await User.count()).toEqual(0);
+        const count = await User.count();
+        expect(count).toEqual(0);
     });
 });

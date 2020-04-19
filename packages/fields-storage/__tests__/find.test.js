@@ -1,13 +1,13 @@
 import sinon from "sinon";
-import User from "./resources/models/User";
 import mdbid from "mdbid";
+import User from "./resources/models/User";
 
 const sandbox = sinon.createSandbox();
 
-describe("find test", function() {
+describe("find test", () => {
     afterEach(() => sandbox.restore());
 
-    it("find - must return a Collection / results with meta data", async () => {
+    test("find - must return a Collection / results with meta data", async () => {
         const A = mdbid();
         const B = mdbid();
         const C = mdbid();
@@ -33,37 +33,33 @@ describe("find test", function() {
                 ],
 
                 {
-                    page: 1,
-                    perPage: 10,
-                    totalCount: 3,
-                    totalPages: 1,
-                    from: 1,
-                    to: 3,
-                    nextPage: null,
-                    previousPage: null,
-                    meta: undefined
+                    cursors: {
+                        next: null,
+                        previous: null
+                    },
+                    hasNextPage: null,
+                    hasPreviousPage: null,
+                    totalCount: 3
                 }
             ];
         });
 
-        const results = await User.find();
+        const results = await User.find({ totalCount: true });
         findStub.restore();
 
         expect(results.length).toBe(3);
         expect(results.getMeta()).toEqual({
-            page: 1,
-            perPage: 10,
-            totalCount: 3,
-            totalPages: 1,
-            from: 1,
-            to: 3,
-            nextPage: null,
-            previousPage: null,
-            meta: undefined
+            cursors: {
+                next: null,
+                previous: null
+            },
+            hasNextPage: false,
+            hasPreviousPage: false,
+            totalCount: 3
         });
     });
 
-    it("find - must NOT throw an error if storage data is invalid", async () => {
+    test("find - must NOT throw an error if storage data is invalid", async () => {
         const findStub = sandbox.stub(User.getStorageDriver(), "find").callsFake(() => {
             return [
                 [

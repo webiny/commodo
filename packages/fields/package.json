@@ -10,9 +10,6 @@
     "Adrian Smijulj <adrian@webiny.com>"
   ],
   "license": "MIT",
-  "devDependencies": {
-    "jest": "^23.6.0"
-  },
   "dependencies": {
     "repropose": "^1.0.2"
   },

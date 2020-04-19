@@ -52,9 +52,7 @@ describe("save and delete models attribute test", () => {
         await user.groups;
 
         expect(findStub.getCall(0).args[0].model).toEqual(UsersGroups);
-        expect(findStub.getCall(0).args[0].options).toEqual({
-            page: 1,
-            perPage: 10,
+        expect(findStub.getCall(0).args[0].options).toMatchObject({
             query: {
                 user: A
             }

@@ -1,8 +1,11 @@
-import SimpleModel from "./models/simpleModel";
 import { getName } from "@commodo/name";
+import useModels from "./models/useModels";
 
 describe("collection name test", function() {
+    const { models } = useModels();
+
     it("it should return model name as collection name", async () => {
+        const { SimpleModel } = models;
         expect(SimpleModel.getStorageDriver().getCollectionName(SimpleModel)).toEqual(
             "SimpleModel"
         );
@@ -12,6 +15,7 @@ describe("collection name test", function() {
     });
 
     it("it should prepend prefix", async () => {
+        const { SimpleModel } = models;
         SimpleModel.getStorageDriver().setCollectionPrefix("webiny_");
         const model = new SimpleModel();
 
@@ -22,6 +26,7 @@ describe("collection name test", function() {
     });
 
     it("it should apply collection name naming function", async () => {
+        const { SimpleModel } = models;
         SimpleModel.getStorageDriver()
             .setCollectionPrefix("webiny_webiny_")
             .setCollectionNaming(({ model, driver }) => {
@@ -30,7 +35,11 @@ describe("collection name test", function() {
 
         const model = new SimpleModel();
         expect(typeof SimpleModel.getStorageDriver().getCollectionNaming()).toBe("function");
-        expect(SimpleModel.getStorageDriver().getCollectionName(SimpleModel)).toBe("webiny_webiny__xyz_SimpleModel");
-        expect(model.getStorageDriver().getCollectionName(SimpleModel)).toBe("webiny_webiny__xyz_SimpleModel");
+        expect(SimpleModel.getStorageDriver().getCollectionName(SimpleModel)).toBe(
+            "webiny_webiny__xyz_SimpleModel"
+        );
+        expect(model.getStorageDriver().getCollectionName(SimpleModel)).toBe(
+            "webiny_webiny__xyz_SimpleModel"
+        );
     });
 });

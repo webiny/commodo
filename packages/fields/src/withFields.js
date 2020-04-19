@@ -1,6 +1,5 @@
 import { withProps, withStaticProps } from "repropose";
 import { WithFieldsError } from "@commodo/fields";
-import { compose } from "ramda";
 
 const withFields = (fields: Object) => {
     return baseFn => {
