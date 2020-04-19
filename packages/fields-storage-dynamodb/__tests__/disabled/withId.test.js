@@ -1,7 +1,6 @@
 import { compose } from "ramda";
 import { withStorage } from "@commodo/fields-storage";
-import { MongoDbDriver, withId } from "@commodo/fields-storage-mongodb";
-import { database } from "./database";
+import { DynamoDbDriver, withId } from "@commodo/fields-storage-dynamodb";
 import { withProps } from "repropose";
 
 describe("withId test", function() {
@@ -10,8 +9,8 @@ describe("withId test", function() {
             compose(
                 withId(),
                 withStorage({
-                    driver: new MongoDbDriver({
-                        database
+                    driver: new DynamoDbDriver({
+                        database: {}
                     })
                 })
             )(base);
@@ -19,7 +18,7 @@ describe("withId test", function() {
         const Model = createModel();
         const model = new Model();
 
-        expect(model.getField('id').type).toBe('string')
+        expect(model.getField("id").type).toBe("string");
     });
 
     it(`should allow assigning additional HOFs before and after withStorage`, async () => {
@@ -29,8 +28,8 @@ describe("withId test", function() {
                 withId(),
                 withProps({ before: "before" }),
                 withStorage({
-                    driver: new MongoDbDriver({
-                        database
+                    driver: new DynamoDbDriver({
+                        database: {}
                     })
                 })
             )(base);

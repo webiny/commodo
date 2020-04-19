@@ -10,6 +10,7 @@ module.exports = ({ path }, presets = []) => {
             name: name,
             displayName: name,
             testRegex: `packages/.*/.*test.js$`,
+            testPathIgnorePatterns: ["/disabled/"],
             testEnvironment: "node",
             moduleDirectories: ["node_modules"],
             moduleNameMapper: {
