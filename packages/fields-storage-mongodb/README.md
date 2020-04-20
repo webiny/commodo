@@ -1,28 +1,16 @@
 # @commodo/fields-storage-mongodb
-A MongoDB driver for the [fields-storage](../fields-storage) package.
 
-## Usage
+We're working hard to get all the docs in order. New articles will be added daily.
 
-```js
-import { withStorage } from "@commodo/fields-storage";
-import { MongoDbDriver, withId } from "@commodo/fields-storage-mongodb";
-import { compose } from "ramda";
+In the meantime, take a look at our [Github repo](https://github.com/webiny/webiny-js), it contains tons of examples to get you on track. 
 
-// Create two functions with a name assigned to them.
-const User = compose(
-  withId(),
-  withStorage({ driver: new MongoDbDriver({ database }) })
-  (...)
-)(function() {});
-```
+For API examples, take a look at the packages that have an `api-` prefix. Some good packages to study:
 
-## Reference
+- [@webiny/api-i18n](https://github.com/webiny/webiny-js/tree/master/packages/api-i18n)
+- [@webiny/api-page-builder](https://github.com/webiny/webiny-js/tree/master/packages/api-page-builder)
+- [@webiny/api-security](https://github.com/webiny/webiny-js/tree/master/packages/api-security)
 
-#### `withName(name: string): Function`
-Creates a new function with a name assigned to it and passed to its instances.
+If you still can't find what you're looking for, please open an issue and we'll point you in the right direction.
 
-#### `hasName(value: any): boolean`
-Checks if passed value has a name assigned to it.
+Thank you for your patience!
 
-#### `getName(value: any): string`
-Returns a name assigned to the passed value. Returns empty string if none assigned.
