@@ -57,6 +57,7 @@ export default async Model => {
         await model.save();
         data[i].id = model.id;
         data[i].slug = model.slug;
+        data[i].savedOn = model.savedOn;
     }
 
     return data;

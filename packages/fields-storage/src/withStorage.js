@@ -52,6 +52,10 @@ type FindParams = Object & {
 };
 
 function cursorFrom(data, keys) {
+    if (!data) {
+        return null;
+    }
+
     return encodeCursor(
         keys.reduce(
             (acc, key) => {
@@ -247,14 +251,22 @@ const withStorage = (configuration: Configuration) => {
                     const maxPerPage = this.__withStorage.maxPerPage || 100;
 
                     let {
-                        query = {},
-                        sort = {},
+                        query,
+                        sort,
                         limit,
                         before,
                         after,
                         totalCount: countTotal = false,
                         ...other
                     } = options;
+
+                    if (!query) {
+                        query = {};
+                    }
+
+                    if (!sort) {
+                        sort = {};
+                    }
 
                     limit = Number.isInteger(limit) && limit > 0 ? limit : maxPerPage;
 
@@ -274,33 +286,23 @@ const withStorage = (configuration: Configuration) => {
                     const op = forward ? "$lt" : "$gt";
 
                     if (cursor) {
-                        if (!query.hasOwnProperty("$and")) {
-                            query["$and"] = [];
+                        if (!query.$and) {
+                            query.$and = [];
                         }
 
                         const { id, ...fields } = cursor;
-                        const sortFields = [Object.keys(fields).shift()];
+                        const sortField = Object.keys(fields).shift();
 
-                        if (sortFields.length) {
-                            query["$and"].push({
+                        if (sortField) {
+                            query.$and.push({
                                 $or: [
-                                    // Build condition from cursor fields
-                                    sortFields.reduce((acc, key) => {
-                                        acc[key] = { [op]: fields[key] };
-                                        return acc;
-                                    }, {}),
+                                    { [sortField]: { [op]: fields[sortField] } },
                                     // Add condition to handle "exact match" records
-                                    sortFields.reduce(
-                                        (acc, key) => {
-                                            acc[key] = fields[key];
-                                            return acc;
-                                        },
-                                        { id: { [op]: id } }
-                                    )
+                                    { [sortField]: fields[sortField], id: { [op]: id } }
                                 ]
                             });
                         } else {
-                            query["$and"].push({ id: { [op]: id } });
+                            query.$and.push({ id: { [op]: id } });
                         }
                     }
 
@@ -310,8 +312,8 @@ const withStorage = (configuration: Configuration) => {
                         });
                     }
 
-                    if (!sort.hasOwnProperty("id")) {
-                        sort["id"] = forward ? -1 : 1;
+                    if (!sort.id) {
+                        sort.id = forward ? -1 : 1;
                     }
 
                     const params = { query, sort, limit: limit + 1, ...other };

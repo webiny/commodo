@@ -140,4 +140,48 @@ describe("Cursor based pagination", () => {
             hasPreviousPage: false
         });
     });
+
+    test(`should return correct data using a date sort field`, async () => {
+        const page1Args = { limit: 8, sort: { savedOn: -1 } };
+        const page1 = await Model.find(page1Args);
+        const page1Meta = page1.getMeta();
+
+        expect(page1.length).toBe(8);
+        expect(page1Meta).toMatchObject({
+            cursors: {
+                next: encodeCursor({ id: data[4].id, savedOn: data[4].savedOn }),
+                previous: null
+            },
+            hasNextPage: true,
+            hasPreviousPage: false
+        });
+
+        const page2Args = { ...page1Args, after: page1Meta.cursors.next };
+        const page2 = await Model.find(page2Args);
+        const page2Meta = page2.getMeta();
+
+        expect(page2.length).toBe(4);
+        expect(page2Meta).toMatchObject({
+            cursors: {
+                next: null,
+                previous: encodeCursor({ id: data[3].id, savedOn: data[3].savedOn })
+            },
+            hasNextPage: false,
+            hasPreviousPage: true
+        });
+
+        const page3Args = { ...page1Args, before: page2Meta.cursors.previous };
+        const page3 = await Model.find(page3Args);
+
+        expect(page3.length).toBe(8);
+        expect(page3.getMeta()).toMatchObject({
+            cursors: {
+                next: encodeCursor({ id: data[4].id, savedOn: data[4].savedOn }),
+                previous: null
+            },
+            hasNextPage: true,
+            hasPreviousPage: false
+        });
+    });
+
 });
