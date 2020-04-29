@@ -248,13 +248,17 @@ const withStorage = (configuration: Configuration) => {
 
                     let {
                         query = {},
-                        sort = {},
+                        sort,
                         limit,
                         before,
                         after,
                         totalCount: countTotal = false,
                         ...other
                     } = options;
+
+                    if (!sort) {
+                        sort = {};
+                    }
 
                     limit = Number.isInteger(limit) && limit > 0 ? limit : maxPerPage;
 
