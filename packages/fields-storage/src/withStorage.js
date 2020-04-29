@@ -278,7 +278,7 @@ const withStorage = (configuration: Configuration) => {
                     const op = forward ? "$lt" : "$gt";
 
                     if (cursor) {
-                        if (!query.hasOwnProperty("$and")) {
+                        if (!query.$and) {
                             query["$and"] = [];
                         }
 
@@ -314,7 +314,7 @@ const withStorage = (configuration: Configuration) => {
                         });
                     }
 
-                    if (!sort.hasOwnProperty("id")) {
+                    if (sort && !sort.id) {
                         sort["id"] = forward ? -1 : 1;
                     }
 
