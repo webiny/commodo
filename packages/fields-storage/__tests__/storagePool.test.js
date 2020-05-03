@@ -12,8 +12,8 @@ describe("model pool test", () => {
         const A = mdbid();
         const user = new User();
         user.age = 30;
-        sandbox.stub(user.getStorageDriver(), "save").callsFake(({ model }) => {
-            model.id = A;
+        sandbox.stub(user.getStorageDriver(), "save").callsFake(({ data }) => {
+            data.id = A;
             return true;
         });
 
@@ -35,10 +35,7 @@ describe("model pool test", () => {
 
         const user = new User();
         user.age = 30;
-        sandbox.stub(user.getStorageDriver(), "save").callsFake(({ model }) => {
-            model.id = A;
-            return true;
-        });
+        user.id = A;
 
         expect(User.getStoragePool().has(user)).toEqual(false);
         expect(User.getStoragePool().has(User, A)).toEqual(false);

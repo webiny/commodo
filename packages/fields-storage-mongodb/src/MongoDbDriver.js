@@ -1,8 +1,6 @@
 // @flow
 import mongodb from "mongodb";
 import isMongoDbId from "./isMongoDbId";
-import generateMongoDbId from "./generateMongoDbId";
-import { getName } from "@commodo/name";
 
 class MongoDbDriver {
     collections: Object;
@@ -20,54 +18,43 @@ class MongoDbDriver {
     }
 
     // eslint-disable-next-line
-    async save({ model, isCreate }) {
-        return isCreate ? this.create({ model }) : this.update({ model });
+    async save({ name, data, isCreate }) {
+        return isCreate ? this.create({ name, data }) : this.update({ name, data });
     }
 
-    async create({ model }: Object) {
-        if (!model.id) {
-            model.id = generateMongoDbId();
-        }
-
-        const data = await model.toStorage();
-        data._id = new mongodb.ObjectID(model.id);
-
-        try {
-            await this.getDatabase()
-                .collection(this.getCollectionName(model))
-                .insertOne(data);
-            return true;
-        } catch (e) {
-            model.id && model.getField("id").reset();
-            throw e;
-        }
-    }
-
-    async update({ model }: Object) {
-        const data = await model.toStorage();
+    async create({ name, data }: Object) {
+        data._id = new mongodb.ObjectID(data.id);
 
         await this.getDatabase()
-            .collection(this.getCollectionName(model))
-            .updateOne({ id: model.id }, { $set: data });
+            .collection(this.getCollectionName(name))
+            .insertOne(data);
+        return true;
+    }
+
+    async update({ name, data }: Object) {
+        const collection = this.getCollectionName(name);
+        await this.getDatabase()
+            .collection(collection)
+            .updateOne({ id: data.id }, { $set: data });
 
         return true;
     }
 
     // eslint-disable-next-line
-    async delete({ model }) {
+    async delete({ name, data: { id } }) {
         await this.getDatabase()
-            .collection(this.getCollectionName(model))
-            .deleteOne({ id: model.id });
+            .collection(this.getCollectionName(name))
+            .deleteOne({ id });
         return true;
     }
 
-    async find({ model, options }) {
+    async find({ name, options }) {
         const clonedOptions = { limit: 0, offset: 0, ...options };
 
         MongoDbDriver.__prepareSearchOption(clonedOptions);
 
         const database = await this.getDatabase()
-            .collection(this.getCollectionName(model))
+            .collection(this.getCollectionName(name))
             .find(clonedOptions.query)
             .limit(clonedOptions.limit)
             .skip(clonedOptions.offset);
@@ -79,12 +66,12 @@ class MongoDbDriver {
         return [await database.toArray(), {}];
     }
 
-    async findOne({ model, options }) {
+    async findOne({ name, options }) {
         const clonedOptions = { ...options };
         MongoDbDriver.__prepareSearchOption(clonedOptions);
 
         const results = await this.getDatabase()
-            .collection(this.getCollectionName(model))
+            .collection(this.getCollectionName(name))
             .find(clonedOptions.query)
             .limit(1)
             .sort(clonedOptions.sort)
@@ -93,12 +80,12 @@ class MongoDbDriver {
         return results[0];
     }
 
-    async count({ model, options }) {
+    async count({ name, options }) {
         const clonedOptions = { ...options };
         MongoDbDriver.__prepareSearchOption(clonedOptions);
 
         return await this.getDatabase()
-            .collection(this.getCollectionName(model))
+            .collection(this.getCollectionName(name))
             .countDocuments(clonedOptions.query);
     }
 
@@ -128,13 +115,13 @@ class MongoDbDriver {
         return this.collections.naming;
     }
 
-    getCollectionName(model) {
+    getCollectionName(name) {
         const getCollectionName = this.getCollectionNaming();
         if (typeof getCollectionName === "function") {
-            return getCollectionName({ model, driver: this });
+            return getCollectionName({ name, driver: this });
         }
 
-        return this.collections.prefix + getName(model);
+        return this.collections.prefix + name;
     }
 
     static __prepareSearchOption(options: Object) {

@@ -1,6 +1,7 @@
 // @flow
 import { withProps, withStaticProps } from "repropose";
 import { withFields, skipOnPopulate, boolean } from "@commodo/fields";
+import { getName } from "@commodo/name";
 import applyDeletedFilter from "./functions/applyDeletedFilter";
 
 export default () => {
@@ -30,7 +31,14 @@ export default () => {
                     await this.hook("beforeDelete", { options, model: this });
 
                     this.deleted = true;
-                    await this.getStorageDriver().save({ model: this, options });
+                    await this.getStorageDriver().save({
+                        name: getName(this),
+                        data: {
+                            ...(await this.toStorage()),
+                            id: this.id
+                        },
+                        options
+                    });
 
                     await this.hook("afterDelete", { options, model: this });
 

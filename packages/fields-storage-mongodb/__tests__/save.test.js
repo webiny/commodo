@@ -20,6 +20,7 @@ describe("save test", function() {
         items = await getCollection("SimpleModel")
             .find()
             .toSimpleArray();
+        
         expect(items).toEqual([
             { _id: simpleModel.id, id: simpleModel.id, enabled: true, name: "test2", slug: "test2" }
         ]);
@@ -45,5 +46,3 @@ describe("save test", function() {
         expect(simpleModel.id).toBe(newId);
     });
 });
-
-

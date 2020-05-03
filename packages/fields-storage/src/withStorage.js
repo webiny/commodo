@@ -1,8 +1,10 @@
 // @flow
+import { getName } from "@commodo/name";
 import { withStaticProps, withProps } from "repropose";
 import cloneDeep from "lodash.clonedeep";
 import { withHooks } from "@commodo/hooks";
 import type { SaveParams } from "@commodo/fields-storage/types";
+import mdbid from "mdbid";
 import WithStorageError from "./WithStorageError";
 import Collection from "./Collection";
 import StoragePool from "./StoragePool";
@@ -86,8 +88,11 @@ const withStorage = (configuration: Configuration) => {
                 processing: false,
                 fieldsStorageAdapter: new FieldsStorageAdapter()
             },
+            generateId() {
+                return mdbid();
+            },
             isId(value) {
-                return this.constructor.getStorageDriver().isId(value);
+                return typeof value === "string" && !!value.match(/^[a-zA-Z0-9]*$/);
             },
             isExisting() {
                 return this.__withStorage.existing;
@@ -126,10 +131,18 @@ const withStorage = (configuration: Configuration) => {
                     });
 
                     if (this.isDirty()) {
+                        if (!this.id) {
+                            this.id = this.generateId();
+                        }
+
                         await this.getStorageDriver().save({
+                            name: getName(this),
                             isUpdate: existing,
                             isCreate: !existing,
-                            model: this
+                            data: {
+                                ...(await this.toStorage()),
+                                id: this.id
+                            }
                         });
                     }
 
@@ -144,6 +157,9 @@ const withStorage = (configuration: Configuration) => {
 
                     this.constructor.getStoragePool().add(this);
                 } catch (e) {
+                    if (!existing) {
+                        this.getField("id").reset();
+                    }
                     throw e;
                 } finally {
                     this.__withStorage.processing = null;
@@ -172,7 +188,12 @@ const withStorage = (configuration: Configuration) => {
 
                     await this.hook("beforeDelete", { options, model: this });
 
-                    await this.getStorageDriver().delete({ model: this, options });
+                    await this.getStorageDriver().delete({
+                        name: getName(this),
+                        data: { id: this.id },
+                        options
+                    });
+
                     await this.hook("afterDelete", { options, model: this });
 
                     this.constructor.getStoragePool().remove(this);
@@ -237,7 +258,7 @@ const withStorage = (configuration: Configuration) => {
                     return this.__withStorage.driver;
                 },
                 isId(value) {
-                    return this.getStorageDriver().isId(value);
+                    return typeof value === "string" && !!value.match(/^[a-zA-Z0-9]*$/);
                 },
                 async find(options: ?FindParams) {
                     if (!options) {
@@ -320,7 +341,7 @@ const withStorage = (configuration: Configuration) => {
 
                     const params = { query, sort, limit: limit + 1, ...other };
                     let [results, meta] = await this.getStorageDriver().find({
-                        model: this,
+                        name: getName(this),
                         options: params
                     });
 
@@ -337,7 +358,7 @@ const withStorage = (configuration: Configuration) => {
                     let totalCount = null;
                     if (countTotal) {
                         totalCount = await this.getStorageDriver().count({
-                            model: this,
+                            name: getName(this),
                             options: {
                                 query: originalQuery,
                                 ...other
@@ -443,7 +464,7 @@ const withStorage = (configuration: Configuration) => {
                     const prepared = { ...options };
 
                     const result = await this.getStorageDriver().findOne({
-                        model: this,
+                        name: getName(this),
                         options: prepared
                     });
 
@@ -474,7 +495,7 @@ const withStorage = (configuration: Configuration) => {
                     const prepared = { ...options };
 
                     return await this.getStorageDriver().count({
-                        model: this,
+                        name: getName(this),
                         options: prepared
                     });
                 }
