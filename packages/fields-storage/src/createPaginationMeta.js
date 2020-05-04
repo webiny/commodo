@@ -1,52 +1,36 @@
 // @flow
-type PaginationMeta = {
-    page: number,
-    perPage: number,
-    totalCount: number,
+import { encodeCursor } from "./cursor";
 
-    totalPages: ?number,
-    from: ?number,
-    to: ?number,
-    nextPage: ?number,
-    previousPage: ?number
+type PaginationMeta = {
+    cursors: {
+        next: string | null,
+        previous: string | null
+    },
+    hasNextPage: boolean,
+    hasPreviousPage: boolean,
+    totalCount?: number
 };
 
 type Params = {
-    page: number,
-    perPage: number,
-    totalCount: number
+    nextCursor: Object,
+    previousCursor: Object,
+    hasPreviousPage: boolean,
+    hasNextPage: boolean,
+    totalCount?: number
 };
 
 export default (params: ?Params): PaginationMeta => {
+    const { nextCursor, previousCursor, hasNextPage, hasPreviousPage, ...rest } = params;
+
     const meta: PaginationMeta = {
-        page: 0,
-        perPage: 0,
-        totalCount: 0,
-        totalPages: null,
-        from: null,
-        to: null,
-        nextPage: null,
-        previousPage: null,
-        ...params
+        ...rest,
+        hasNextPage,
+        hasPreviousPage,
+        cursors: {
+            next: encodeCursor(nextCursor),
+            previous: encodeCursor(previousCursor)
+        }
     };
-
-    if (meta.page && meta.perPage) {
-        meta.totalPages = Math.ceil(meta.totalCount / meta.perPage);
-
-        if (meta.totalCount) {
-            meta.from = 1 + meta.perPage * (meta.page - 1);
-        } else {
-            meta.from = 0;
-        }
-
-        meta.to = meta.perPage * meta.page;
-        if (meta.to > meta.totalCount) {
-            meta.to = meta.totalCount;
-        }
-
-        meta.nextPage = meta.page < meta.totalPages ? meta.page + 1 : null;
-        meta.previousPage = meta.page === 1 ? null : meta.page - 1;
-    }
 
     return meta;
 };

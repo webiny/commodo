@@ -1,7 +1,6 @@
 import { compose } from "ramda";
 import { withStorage } from "@commodo/fields-storage";
 import { MongoDbDriver, withId } from "@commodo/fields-storage-mongodb";
-import { database } from "./database";
 import { withProps } from "repropose";
 
 describe("withId test", function() {
@@ -11,7 +10,7 @@ describe("withId test", function() {
                 withId(),
                 withStorage({
                     driver: new MongoDbDriver({
-                        database
+                        database: {}
                     })
                 })
             )(base);
@@ -19,7 +18,7 @@ describe("withId test", function() {
         const Model = createModel();
         const model = new Model();
 
-        expect(model.getField('id').type).toBe('string')
+        expect(model.getField("id").type).toBe("string");
     });
 
     it(`should allow assigning additional HOFs before and after withStorage`, async () => {
@@ -30,7 +29,7 @@ describe("withId test", function() {
                 withProps({ before: "before" }),
                 withStorage({
                     driver: new MongoDbDriver({
-                        database
+                        database: {}
                     })
                 })
             )(base);

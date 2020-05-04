@@ -1,27 +1,25 @@
-import sinon from "sinon";
-import SimpleModel from "./models/simpleModel";
-import { collection } from "./database";
 import { WithStorageError } from "@commodo/fields-storage";
-const sandbox = sinon.createSandbox();
+import useModels from "./models/useModels";
+import createSimpleModelsMock from "./mocks/createSimpleModelsMock";
 
 describe("delete test", function() {
-    afterEach(() => sandbox.restore());
+    const { models, getCollection } = useModels();
+    const { simpleModelsMock, ids } = createSimpleModelsMock();
 
-    it("must generate correct query", async () => {
-        const deleteSpy = sandbox.spy(collection, "deleteOne");
+    beforeAll(() => getCollection("SimpleModel").insertMany(simpleModelsMock));
 
-        const simpleModel = new SimpleModel();
-        simpleModel.id = "507f1f77bcf86cd799439011";
-        await simpleModel.delete();
+    it("should delete a record", async () => {
+        const id = String(ids[0]);
+        let record = await models.SimpleModel.findById(id);
+        await record.delete();
 
-        expect(deleteSpy.getCall(0).args[0]).toEqual({ id: simpleModel.id });
-
-        deleteSpy.restore();
+        record = await models.SimpleModel.findById(id);
+        expect(record).toBeNull();
     });
 
     it("should throw an exception because model was not previously saved", async () => {
         try {
-            const simpleModel = new SimpleModel();
+            const simpleModel = new models.SimpleModel();
             await simpleModel.delete();
         } catch (e) {
             expect(e.code).toBe(WithStorageError.CANNOT_DELETE_NO_ID);

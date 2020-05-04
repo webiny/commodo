@@ -1,8 +1,10 @@
-import { ComplexModel, SimpleModel } from "./models/complexModel";
+import useModels from "./models/useModels";
 
 describe("toStorage test", function() {
+    const { models } = useModels();
+
     it("should correctly adapt the data for MongoDB", async () => {
-        const complexModel = new ComplexModel();
+        const complexModel = new models.ComplexModel();
         complexModel.populate({
             firstName: "test",
             lastName: "tester",
@@ -16,21 +18,21 @@ describe("toStorage test", function() {
             ]
         });
 
-        const simpleModel1 = new SimpleModel();
+        const simpleModel1 = new models.RefModel();
         simpleModel1.id = "000000000000000000000001";
         simpleModel1.name = "Test-1";
 
         complexModel.simpleModel = simpleModel1;
 
-        const simpleModel2 = new SimpleModel();
+        const simpleModel2 = new models.RefModel();
         simpleModel2.id = "54759eb3c090d83494e2d804";
         simpleModel2.name = "Test-2";
 
-        const simpleModel3 = new SimpleModel();
+        const simpleModel3 = new models.RefModel();
         simpleModel3.id = "54759eb3c090d83494e2d805";
         simpleModel3.name = "Test-3";
 
-        const simpleModel4 = new SimpleModel();
+        const simpleModel4 = new models.RefModel();
         simpleModel4.id = "54759eb3c090d83494e2d806";
         simpleModel4.name = "Test-4";
 

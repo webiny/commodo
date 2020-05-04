@@ -1,9 +1,6 @@
 // @flow
 import mongodb from "mongodb";
 import isMongoDbId from "./isMongoDbId";
-import generateMongoDbId from "./generateMongoDbId";
-import { createPaginationMeta } from "@commodo/fields-storage";
-import { getName } from "@commodo/name";
 
 class MongoDbDriver {
     collections: Object;
@@ -21,106 +18,43 @@ class MongoDbDriver {
     }
 
     // eslint-disable-next-line
-    async save({ model, isCreate }) {
-        return isCreate ? this.create({ model }) : this.update({ model });
+    async save({ name, data, isCreate }) {
+        return isCreate ? this.create({ name, data }) : this.update({ name, data });
     }
 
-    async create({ model }: Object) {
-        if (!model.id) {
-            model.id = generateMongoDbId();
-        }
-
-        const data = await model.toStorage();
-        data._id = new mongodb.ObjectID(model.id);
-
-        try {
-            await this.getDatabase()
-                .collection(this.getCollectionName(model))
-                .insertOne(data);
-            return true;
-        } catch (e) {
-            model.id && model.getField("id").reset();
-            throw e;
-        }
-    }
-
-    async update({ model }: Object) {
-        const data = await model.toStorage();
+    async create({ name, data }: Object) {
+        data._id = new mongodb.ObjectID(data.id);
 
         await this.getDatabase()
-            .collection(this.getCollectionName(model))
-            .updateOne({ id: model.id }, { $set: data });
+            .collection(this.getCollectionName(name))
+            .insertOne(data);
+        return true;
+    }
+
+    async update({ name, data }: Object) {
+        const collection = this.getCollectionName(name);
+        await this.getDatabase()
+            .collection(collection)
+            .updateOne({ id: data.id }, { $set: data });
 
         return true;
     }
 
     // eslint-disable-next-line
-    async delete({ model }) {
+    async delete({ name, data: { id } }) {
         await this.getDatabase()
-            .collection(this.getCollectionName(model))
-            .deleteOne({ id: model.id });
+            .collection(this.getCollectionName(name))
+            .deleteOne({ id });
         return true;
     }
 
-    async find({ model, options }) {
-        const clonedOptions = { limit: 10, offset: 0, ...options };
+    async find({ name, options }) {
+        const clonedOptions = { limit: 0, offset: 0, ...options };
 
-        MongoDbDriver.__preparePerPageOption(clonedOptions);
-        MongoDbDriver.__preparePageOption(clonedOptions);
         MongoDbDriver.__prepareSearchOption(clonedOptions);
 
-        if (this.aggregateTotalCount !== false) {
-            const $facet = {
-                results: [{ $skip: clonedOptions.offset }, { $limit: clonedOptions.limit }]
-            };
-
-            if (clonedOptions.sort && Object.keys(clonedOptions.sort).length > 0) {
-                $facet.results.unshift({ $sort: clonedOptions.sort });
-            }
-
-            if (options.meta !== false) {
-                $facet.totalCount = [{ $count: "value" }];
-            }
-
-            const pipeline = [
-                {
-                    $facet
-                }
-            ];
-
-            if (clonedOptions.query && Object.keys(clonedOptions.query).length > 0) {
-                pipeline.unshift({ $match: clonedOptions.query });
-            }
-
-            const [results = {}] = await this.getDatabase()
-                .collection(this.getCollectionName(model))
-                .aggregate(pipeline)
-                .toArray();
-
-            if (!Array.isArray(results.results)) {
-                results.results = [];
-            }
-
-            if (!Array.isArray(results.totalCount)) {
-                results.totalCount = [];
-            }
-
-            if (options.meta === false) {
-                return [results.results, {}];
-            }
-
-            return [
-                results.results,
-                createPaginationMeta({
-                    totalCount: results.totalCount[0] ? results.totalCount[0].value : 0,
-                    page: options.page,
-                    perPage: options.perPage
-                })
-            ];
-        }
-
         const database = await this.getDatabase()
-            .collection(this.getCollectionName(model))
+            .collection(this.getCollectionName(name))
             .find(clonedOptions.query)
             .limit(clonedOptions.limit)
             .skip(clonedOptions.offset);
@@ -129,33 +63,15 @@ class MongoDbDriver {
             database.sort(clonedOptions.sort);
         }
 
-        const results = await database.toArray();
-
-        if (options.meta === false) {
-            return [results, {}];
-        }
-
-        const totalCount = await this.getDatabase()
-            .collection(this.getCollectionName(model))
-            .countDocuments(clonedOptions.query);
-
-        const meta = createPaginationMeta({
-            totalCount,
-            page: options.page,
-            perPage: options.perPage
-        });
-
-        return [results, meta];
+        return [await database.toArray(), {}];
     }
 
-    async findOne({ model, options }) {
+    async findOne({ name, options }) {
         const clonedOptions = { ...options };
-        MongoDbDriver.__preparePerPageOption(clonedOptions);
-        MongoDbDriver.__preparePageOption(clonedOptions);
         MongoDbDriver.__prepareSearchOption(clonedOptions);
 
         const results = await this.getDatabase()
-            .collection(this.getCollectionName(model))
+            .collection(this.getCollectionName(name))
             .find(clonedOptions.query)
             .limit(1)
             .sort(clonedOptions.sort)
@@ -164,12 +80,12 @@ class MongoDbDriver {
         return results[0];
     }
 
-    async count({ model, options }) {
+    async count({ name, options }) {
         const clonedOptions = { ...options };
         MongoDbDriver.__prepareSearchOption(clonedOptions);
 
         return await this.getDatabase()
-            .collection(this.getCollectionName(model))
+            .collection(this.getCollectionName(name))
             .countDocuments(clonedOptions.query);
     }
 
@@ -199,27 +115,13 @@ class MongoDbDriver {
         return this.collections.naming;
     }
 
-    getCollectionName(model) {
+    getCollectionName(name) {
         const getCollectionName = this.getCollectionNaming();
         if (typeof getCollectionName === "function") {
-            return getCollectionName({ model, driver: this });
+            return getCollectionName({ name, driver: this });
         }
 
-        return this.collections.prefix + getName(model);
-    }
-
-    static __preparePerPageOption(options: Object) {
-        if ("perPage" in options) {
-            options.limit = options.perPage;
-            delete options.perPage;
-        }
-    }
-
-    static __preparePageOption(options: Object) {
-        if ("page" in options) {
-            options.offset = options.limit * (options.page - 1);
-            delete options.page;
-        }
+        return this.collections.prefix + name;
     }
 
     static __prepareSearchOption(options: Object) {

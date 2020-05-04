@@ -19,9 +19,7 @@ describe("attribute models test", () => {
         const findSpy = sandbox.spy(MainEntity.getStorageDriver(), "find");
         await mainEntity.attribute1;
 
-        expect(findSpy.getCall(0).args[0].options).toEqual({
-            page: 1,
-            perPage: 10,
+        expect(findSpy.getCall(0).args[0].options).toMatchObject({
             query: {
                 mainEntity: "A"
             }

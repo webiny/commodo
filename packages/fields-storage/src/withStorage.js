@@ -1,12 +1,15 @@
 // @flow
+import { getName } from "@commodo/name";
 import { withStaticProps, withProps } from "repropose";
+import cloneDeep from "lodash.clonedeep";
 import { withHooks } from "@commodo/hooks";
 import type { SaveParams } from "@commodo/fields-storage/types";
+import mdbid from "mdbid";
 import WithStorageError from "./WithStorageError";
-import createPaginationMeta from "./createPaginationMeta";
 import Collection from "./Collection";
 import StoragePool from "./StoragePool";
 import FieldsStorageAdapter from "./FieldsStorageAdapter";
+import { decodeCursor, encodeCursor } from "./cursor";
 
 interface IStorageDriver {}
 
@@ -42,9 +45,29 @@ const registerSaveUpdateCreateHooks = async (prefix, { existing, model, options 
 };
 
 type FindParams = Object & {
-    perPage: ?number,
-    page: ?number
+    query: ?{ [string]: number },
+    sort: ?{ [string]: number },
+    limit: ?number,
+    before: ?string,
+    after: ?string,
+    totalCount: ?boolean
 };
+
+function cursorFrom(data, keys) {
+    return encodeCursor(
+        keys.reduce(
+            (acc, key) => {
+                if (key === "id") {
+                    return acc;
+                }
+
+                acc[key] = data[key];
+                return acc;
+            },
+            { id: data.id }
+        )
+    );
+}
 
 const withStorage = (configuration: Configuration) => {
     return baseFn => {
@@ -65,8 +88,11 @@ const withStorage = (configuration: Configuration) => {
                 processing: false,
                 fieldsStorageAdapter: new FieldsStorageAdapter()
             },
+            generateId() {
+                return mdbid();
+            },
             isId(value) {
-                return this.constructor.getStorageDriver().isId(value);
+                return typeof value === "string" && !!value.match(/^[a-zA-Z0-9]*$/);
             },
             isExisting() {
                 return this.__withStorage.existing;
@@ -105,10 +131,18 @@ const withStorage = (configuration: Configuration) => {
                     });
 
                     if (this.isDirty()) {
+                        if (!this.id) {
+                            this.id = this.generateId();
+                        }
+
                         await this.getStorageDriver().save({
+                            name: getName(this),
                             isUpdate: existing,
                             isCreate: !existing,
-                            model: this
+                            data: {
+                                ...(await this.toStorage()),
+                                id: this.id
+                            }
                         });
                     }
 
@@ -123,6 +157,9 @@ const withStorage = (configuration: Configuration) => {
 
                     this.constructor.getStoragePool().add(this);
                 } catch (e) {
+                    if (!existing) {
+                        this.getField("id").reset();
+                    }
                     throw e;
                 } finally {
                     this.__withStorage.processing = null;
@@ -151,7 +188,12 @@ const withStorage = (configuration: Configuration) => {
 
                     await this.hook("beforeDelete", { options, model: this });
 
-                    await this.getStorageDriver().delete({ model: this, options });
+                    await this.getStorageDriver().delete({
+                        name: getName(this),
+                        data: { id: this.id },
+                        options
+                    });
+
                     await this.hook("afterDelete", { options, model: this });
 
                     this.constructor.getStoragePool().remove(this);
@@ -216,43 +258,137 @@ const withStorage = (configuration: Configuration) => {
                     return this.__withStorage.driver;
                 },
                 isId(value) {
-                    return this.getStorageDriver().isId(value);
+                    return typeof value === "string" && !!value.match(/^[a-zA-Z0-9]*$/);
                 },
                 async find(options: ?FindParams) {
                     if (!options) {
                         options = {};
                     }
 
-                    const prepared = { ...options };
+                    const maxPerPage = this.__withStorage.maxPerPage || 100;
 
-                    // Prepare find-specific options: perPage and page.
-                    prepared.page = Number(prepared.page);
-                    if (!Number.isInteger(prepared.page) || (prepared.page && prepared.page <= 1)) {
-                        prepared.page = 1;
+                    let {
+                        query = {},
+                        sort,
+                        limit,
+                        before,
+                        after,
+                        totalCount: countTotal = false,
+                        ...other
+                    } = options;
+
+                    if (!sort) {
+                        sort = {};
                     }
 
-                    prepared.perPage = Number.isInteger(prepared.perPage) ? prepared.perPage : 10;
+                    limit = Number.isInteger(limit) && limit > 0 ? limit : maxPerPage;
 
-                    if (prepared.perPage && prepared.perPage > 0) {
-                        const maxPerPage = this.__withStorage.maxPerPage || 100;
-                        if (Number.isInteger(maxPerPage) && prepared.perPage > maxPerPage) {
-                            throw new WithStorageError(
-                                `Cannot query for more than ${maxPerPage} models per page.`,
-                                WithStorageError.MAX_PER_PAGE_EXCEEDED
-                            );
+                    if (limit > maxPerPage) {
+                        throw new WithStorageError(
+                            `Cannot query for more than ${maxPerPage} models per page.`,
+                            WithStorageError.MAX_PER_PAGE_EXCEEDED
+                        );
+                    }
+
+                    // Keep a backup of query for optional total count
+                    const originalQuery = cloneDeep(query);
+
+                    let forward = Boolean(after || !before);
+                    const cursor = decodeCursor(after || before);
+
+                    const op = forward ? "$lt" : "$gt";
+
+                    if (cursor) {
+                        if (!query.$and) {
+                            query["$and"] = [];
                         }
-                    } else {
-                        prepared.perPage = 10;
+
+                        const { id, ...fields } = cursor;
+                        const sortFields = [Object.keys(fields).shift()];
+
+                        if (sortFields.length) {
+                            query["$and"].push({
+                                $or: [
+                                    // Build condition from cursor fields
+                                    sortFields.reduce((acc, key) => {
+                                        acc[key] = { [op]: fields[key] };
+                                        return acc;
+                                    }, {}),
+                                    // Add condition to handle "exact match" records
+                                    sortFields.reduce(
+                                        (acc, key) => {
+                                            acc[key] = fields[key];
+                                            return acc;
+                                        },
+                                        { id: { [op]: id } }
+                                    )
+                                ]
+                            });
+                        } else {
+                            query["$and"].push({ id: { [op]: id } });
+                        }
                     }
 
-                    const [results, meta] = await this.getStorageDriver().find({
-                        model: this,
-                        options: prepared
+                    if (!forward) {
+                        Object.keys(sort).forEach(key => {
+                            sort[key] *= -1;
+                        });
+                    }
+
+                    if (sort && !sort.id) {
+                        sort["id"] = forward ? -1 : 1;
+                    }
+
+                    const params = { query, sort, limit: limit + 1, ...other };
+                    let [results, meta] = await this.getStorageDriver().find({
+                        name: getName(this),
+                        options: params
                     });
 
-                    const collection = new Collection()
-                        .setParams(prepared)
-                        .setMeta({ ...createPaginationMeta(), ...meta });
+                    // Have we reached the last record?
+                    const hasMore = results.length > limit;
+
+                    if (hasMore) {
+                        results.pop();
+                    }
+
+                    const hasNextPage = !!before || hasMore;
+                    const hasPreviousPage = !!after || !!(before && hasMore);
+
+                    let totalCount = null;
+                    if (countTotal) {
+                        totalCount = await this.getStorageDriver().count({
+                            name: getName(this),
+                            options: {
+                                query: originalQuery,
+                                ...other
+                            }
+                        });
+                    }
+
+                    const lastIndex = results.length - 1;
+                    const nextCursor = hasNextPage
+                        ? cursorFrom(forward ? results[lastIndex] : results[0], Object.keys(sort))
+                        : null;
+
+                    const previousCursor = hasPreviousPage
+                        ? cursorFrom(forward ? results[0] : results[lastIndex], Object.keys(sort))
+                        : null;
+
+                    if (!forward) {
+                        results = results.reverse();
+                    }
+
+                    const collection = new Collection().setParams(params).setMeta({
+                        ...meta,
+                        cursors: {
+                            next: nextCursor,
+                            previous: previousCursor
+                        },
+                        hasPreviousPage,
+                        hasNextPage,
+                        totalCount
+                    });
 
                     const result: ?Array<Object> = results;
                     if (result instanceof Array) {
@@ -328,7 +464,7 @@ const withStorage = (configuration: Configuration) => {
                     const prepared = { ...options };
 
                     const result = await this.getStorageDriver().findOne({
-                        model: this,
+                        name: getName(this),
                         options: prepared
                     });
 
@@ -359,7 +495,7 @@ const withStorage = (configuration: Configuration) => {
                     const prepared = { ...options };
 
                     return await this.getStorageDriver().count({
-                        model: this,
+                        name: getName(this),
                         options: prepared
                     });
                 }

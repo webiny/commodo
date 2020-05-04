@@ -1,88 +1,162 @@
-import sinon from "sinon";
-import SimpleModel from "./models/simpleModel";
-import { database, collection, findCursor } from "./database";
-
-const sandbox = sinon.createSandbox();
+import useModels from "./models/useModels";
+import createSimpleModelsMock from "./mocks/createSimpleModelsMock";
 
 describe("findOne test", function() {
-    afterEach(() => {
-        sandbox.restore();
-        findCursor.data = [];
-    });
+    const { models, getCollection } = useModels();
+    const { simpleModelsMock, ids } = createSimpleModelsMock();
+    const [id1, , id3, id4] = ids;
 
-    beforeEach(() => SimpleModel.getStoragePool().flush());
-    it("findOne - must generate correct query", async () => {
-        const collectionSpy = sandbox.spy(database, "collection");
-        // We mock 'find' because it is called internally.
-        const findOneSpy = sandbox.spy(collection, "find");
+    beforeAll(() => getCollection("SimpleModel").insertMany(simpleModelsMock));
 
-        await SimpleModel.findOne();
+    it("must find one correctly", async () => {
+        const { SimpleModel } = models;
 
-        const databaseArg = collectionSpy.getCall(0).args[0];
-        const findArg = findOneSpy.getCall(0).args[0];
+        // Simple queries.
+        let model = await SimpleModel.findOne({ query: { id: String(id1) } });
+        expect(model.id).toBe(String(id1));
 
-        expect(databaseArg).toBe("SimpleModel");
-        expect(findArg).toBe(undefined);
+        model = await SimpleModel.findOne({ query: { name: "Amazon Web Services" } });
+        expect(model.id).toBe(String(id1));
 
-        collectionSpy.restore();
-        findOneSpy.restore();
-    });
+        model = await SimpleModel.findOne({ query: { name: "one-xyz" } });
+        expect(model).toBe(null);
 
-    it("findOne - should find previously inserted model", async () => {
-        // We mock 'find' because it is called internally.
-        const findOneStub = sandbox.stub(collection, "find").callsFake(() => {
-            findCursor.data = [
-                {
-                    id: "xyz",
-                    name: "This is a test",
-                    slug: "thisIsATest",
-                    enabled: true
-                }
-            ];
-            return findCursor;
+        model = await SimpleModel.findOne({ query: { enabled: false } });
+        expect(model.id).toBe(String(id3));
+
+        model = await SimpleModel.findOne({ query: { tags: { $in: ["purple"] } } });
+        expect(model.id).toBe(String(id4));
+
+        // Query with sorting.
+        model = await SimpleModel.findOne({
+            query: { tags: { $in: ["blue"] } },
+            sort: { name: -1 }
         });
+        expect(model.id).toBe(String(id4));
 
-        const simpleModel = await SimpleModel.findOne({ query: { id: "xyz" } });
-        findOneStub.restore();
-
-        expect(simpleModel.id).toBe("xyz");
-        expect(simpleModel.name).toBe("This is a test");
-        expect(simpleModel.slug).toBe("thisIsATest");
-        expect(simpleModel.enabled).toBe(true);
-    });
-
-    it("findOne - should include search query if passed", async () => {
-        // We mock 'find' because it is called internally.
-        const findOneSpy = sandbox.spy(collection, "find");
-
-        await SimpleModel.findOne({
+        // Query - search query should be passed.
+        model = await SimpleModel.findOne({
             query: {
-                age: { $gt: 30 }
+                age: { $gte: 40 }
             },
             search: {
-                query: "this is",
+                query: "thr3ee",
                 fields: ["name"]
             }
         });
 
-        expect(findOneSpy.getCall(0).args[0]).toEqual({
-            $and: [
-                {
-                    $or: [
-                        {
-                            name: {
-                                $regex: ".*this is.*",
-                                $options: "i"
-                            }
-                        }
-                    ]
-                },
-                {
-                    age: {
-                        $gt: 30
-                    }
-                }
-            ]
+        expect(model).toBe(null);
+
+        model = await SimpleModel.findOne({
+            query: {
+                age: { $gte: 40 }
+            },
+            search: {
+                query: "three",
+                fields: ["name"]
+            }
         });
+
+        expect(model).toBe(null);
+
+        model = await SimpleModel.findOne({
+            query: {
+                age: { $gt: 25 }
+            },
+            search: {
+                query: "Lambda",
+                fields: ["name"]
+            }
+        });
+
+        expect(model.id).toBe(String(id3));
+
+        model = await SimpleModel.findOne({
+            query: {
+                age: { $gt: 25 }
+            },
+            search: {
+                query: "th1ree",
+                fields: ["name"]
+            }
+        });
+
+        expect(model).toBe(null);
+    });
+
+    it("should correctly apply search params", async () => {
+        const { SimpleModel } = models;
+
+        // Simple queries.
+        let model = await SimpleModel.findOne({ query: { id: String(id1) } });
+        expect(model.id).toBe(String(id1));
+
+        model = await SimpleModel.findOne({ query: { name: "Amazon Web Services" } });
+        expect(model.id).toBe(String(id1));
+
+        model = await SimpleModel.findOne({ query: { name: "one-xyz" } });
+        expect(model).toBe(null);
+
+        model = await SimpleModel.findOne({ query: { enabled: false } });
+        expect(model.id).toBe(String(id3));
+
+        model = await SimpleModel.findOne({ query: { tags: { $in: ["purple"] } } });
+        expect(model.id).toBe(String(id4));
+
+        // Query with sorting.
+        model = await SimpleModel.findOne({
+            query: { tags: { $in: ["blue"] } },
+            sort: { name: -1 }
+        });
+        expect(model.id).toBe(String(id4));
+
+        // Query - search query should be passed.
+        model = await SimpleModel.findOne({
+            query: {
+                age: { $gte: 40 }
+            },
+            search: {
+                query: "thr3ee",
+                fields: ["name"]
+            }
+        });
+
+        expect(model).toBe(null);
+
+        model = await SimpleModel.findOne({
+            query: {
+                age: { $gte: 40 }
+            },
+            search: {
+                query: "three",
+                fields: ["name"]
+            }
+        });
+
+        expect(model).toBe(null);
+
+        model = await SimpleModel.findOne({
+            query: {
+                age: { $gt: 25 }
+            },
+            search: {
+                query: "Lambda",
+                fields: ["name"]
+            }
+        });
+
+        expect(model.id).toBe(String(id3));
+
+        model = await SimpleModel.findOne({
+            query: {
+                age: { $gt: 25 }
+            },
+            search: {
+                query: "th1ree",
+                fields: ["name"]
+            }
+        });
+
+        expect(model).toBe(null);
     });
 });

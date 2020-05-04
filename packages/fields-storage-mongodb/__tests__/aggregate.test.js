@@ -1,18 +1,19 @@
-import sinon from "sinon";
-import SimpleModel from "./models/simpleModel";
-import { collection } from "./database";
+import useModels from "./models/useModels";
+import createSimpleModelsMock from "./mocks/createSimpleModelsMock";
 import { withAggregate } from "@commodo/fields-storage-mongodb";
 
-const sandbox = sinon.createSandbox();
-
 describe("aggregate test", function() {
-    afterEach(() => sandbox.restore());
+    const { models, getCollection } = useModels();
+    const { simpleModelsMock } = createSimpleModelsMock();
 
-    it("must generate correct query", async () => {
-        const aggSpy = sandbox.spy(collection, "aggregate");
-        const SimpleModelWithAggregate = withAggregate()(SimpleModel);
-        await SimpleModelWithAggregate.aggregate([{ $match: { something: 123 } }, { $limit: 10 }]);
-        expect(aggSpy.getCall(0).args[0]).toEqual([{ $match: { something: 123 } }, { $limit: 10 }]);
-        aggSpy.restore();
+    beforeAll(() => getCollection("SimpleModel").insertMany(simpleModelsMock));
+
+    it("must return correct records", async () => {
+        const SimpleModelWithAggregate = withAggregate()(models.SimpleModel);
+        const result = await SimpleModelWithAggregate.aggregate([
+            { $match: { age: { $gt: 10 } } },
+            { $limit: 2 }
+        ]);
+        expect(result.length).toBe(2);
     });
 });

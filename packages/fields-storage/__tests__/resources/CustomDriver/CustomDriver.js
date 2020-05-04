@@ -1,74 +1,61 @@
-import { getName } from "@commodo/name";
-import mdbid from "mdbid";
-import { createPaginationMeta } from "@commodo/fields-storage";
-
 class CustomDriver {
     constructor() {
         this.data = {};
     }
 
-    async save({ model, isCreate }) {
+    async save({ name, data, isCreate }) {
         const method = isCreate ? "create" : "update";
-        return this[method]({ model });
+        return this[method]({ name, data });
     }
 
-    async create({ model }) {
-        if (!model.id) {
-            model.id = mdbid();
-        }
-
-        const namespace = getName(model);
+    async create({ name, data }) {
         // Check if table exists.
-        if (!this.data[namespace]) {
-            this.data[namespace] = {};
+        if (!this.data[name]) {
+            this.data[name] = {};
         }
 
-        this.data[namespace][model.id] = await model.toStorage();
+        this.data[name][data.id] = data;
     }
 
-    async update({ model }) {
-        const namespace = getName(model);
+    async update({ name, data }) {
         // Check if table exists.
-        if (!this.data[namespace]) {
-            this.data[namespace] = {};
+        if (!this.data[name]) {
+            this.data[name] = {};
         }
 
-        this.data[namespace][model.id] = await model.toStorage();
+        this.data[name][data.id] = data;
     }
 
-    async delete({ model }) {
-        const namespace = getName(model);
-
-        if (!this.data[namespace]) {
+    async delete({ name, data }) {
+        if (!this.data[name]) {
             return;
         }
 
-        if (!this.data[namespace][model.id]) {
+        if (!this.data[name][data.id]) {
             return;
         }
 
-        delete this.data[namespace][model.id];
+        delete this.data[name][data.id];
     }
 
-    async count({ model, options }) {
-        const [results, meta] = await this.find({ model, options });
+    async count({ name, options }) {
+        const [, meta] = await this.find({
+            name,
+            options: { ...options, totalCount: true }
+        });
+
         return meta.totalCount;
     }
 
-    isId(value: any): boolean {
-        return typeof value === "string" && !!value.match(/^[a-zA-Z0-9]*$/);
-    }
-
-    async findOne({ model, options }) {
-        const namespace = getName(model);
-        const records = this.data[namespace];
+    async findOne({ name, options }) {
+        const records = this.data[name];
         if (!records) {
             return null;
         }
 
         let query = (options && options.query) || {};
-        recordsLoop: for (const id in this.data[namespace]) {
-            const record = this.data[namespace][id];
+        recordsLoop: for (const id in this.data[name]) {
+            const record = this.data[name][id];
             for (const key in query) {
                 const value = query[key];
                 if (record[key] !== value) {
@@ -79,24 +66,17 @@ class CustomDriver {
         }
     }
 
-    async find({ model, options }) {
-        const namespace = getName(model);
-        const records = this.data[namespace];
+    async find({ name, options }) {
+        const records = this.data[name];
         if (!records) {
-            const meta = createPaginationMeta({
-                totalCount: 0,
-                page: options.page,
-                perPage: options.perPage
-            });
-
-            return [[], meta];
+            return [[], { totalCount: options.totalCount ? 0 : null }];
         }
 
         const collection = [];
 
         let query = (options && options.query) || {};
-        recordsLoop: for (const id in this.data[namespace]) {
-            const record = this.data[namespace][id];
+        recordsLoop: for (const id in this.data[name]) {
+            const record = this.data[name][id];
             for (const key in query) {
                 const value = query[key];
                 if (record[key] !== value) {
@@ -106,11 +86,10 @@ class CustomDriver {
             collection.push(record);
         }
 
-        const meta = createPaginationMeta({
-            totalCount: collection.length,
-            page: options.page,
-            perPage: options.perPage
-        });
+        const meta = {};
+        if (options.totalCount) {
+            meta.totalCount = collection.length;
+        }
 
         return [collection, meta];
     }
