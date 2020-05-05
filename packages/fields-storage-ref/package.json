@@ -13,6 +13,7 @@
     "@commodo/fields": "^1.0.3-next.0",
     "@commodo/hooks": "^1.0.3-next.0",
     "@commodo/name": "^1.1.1-next.0",
+    "@commodo/field-storage": "^1.0.3",
     "repropose": "^1.0.2"
   },
   "license": "MIT",
