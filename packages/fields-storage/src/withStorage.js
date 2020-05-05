@@ -4,13 +4,12 @@ import { withStaticProps, withProps } from "repropose";
 import cloneDeep from "lodash.clonedeep";
 import { withHooks } from "@commodo/hooks";
 import type { SaveParams } from "@commodo/fields-storage/types";
-import mdbid from "mdbid";
 import WithStorageError from "./WithStorageError";
 import Collection from "./Collection";
 import StoragePool from "./StoragePool";
 import FieldsStorageAdapter from "./FieldsStorageAdapter";
 import { decodeCursor, encodeCursor } from "./cursor";
-
+import idGenerator from "./idGenerator";
 interface IStorageDriver {}
 
 type Configuration = {
@@ -27,6 +26,8 @@ const defaults = {
         hooks: {}
     }
 };
+
+const generateId = () => idGenerator.generate();
 
 const hook = async (name, { options, model }) => {
     if (options.hooks[name] === false) {
@@ -88,9 +89,7 @@ const withStorage = (configuration: Configuration) => {
                 processing: false,
                 fieldsStorageAdapter: new FieldsStorageAdapter()
             },
-            generateId() {
-                return mdbid();
-            },
+            generateId,
             isId(value) {
                 return typeof value === "string" && !!value.match(/^[a-zA-Z0-9]*$/);
             },
@@ -132,7 +131,7 @@ const withStorage = (configuration: Configuration) => {
 
                     if (this.isDirty()) {
                         if (!this.id) {
-                            this.id = this.generateId();
+                            this.id = this.constructor.generateId();
                         }
 
                         await this.getStorageDriver().save({
@@ -260,6 +259,7 @@ const withStorage = (configuration: Configuration) => {
                 isId(value) {
                     return typeof value === "string" && !!value.match(/^[a-zA-Z0-9]*$/);
                 },
+                generateId,
                 async find(options: ?FindParams) {
                     if (!options) {
                         options = {};
