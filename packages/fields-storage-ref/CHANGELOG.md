@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.3-next.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@1.0.2...@commodo/fields-storage-ref@1.0.3-next.0) (2020-05-05)
+
+
+### Bug Fixes
+
+* add "CompanyWithSisterCompany" model ([d9586d9](https://github.com/webiny/commodo/commit/d9586d94cd7e7c4105bb4c3c1311733198d25e2c))
+* do not use setValue ([6dcd12f](https://github.com/webiny/commodo/commit/6dcd12f8dc02f2cfcf37eb009ecf82d42a8b343e))
+
+
+
+
+
 ## [1.0.2](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@1.0.3...@commodo/fields-storage-ref@1.0.2) (2020-01-19)
 
 

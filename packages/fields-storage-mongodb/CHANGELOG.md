@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-next.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@1.0.2...@commodo/fields-storage-mongodb@2.0.0-next.0) (2020-05-05)
+
+
+### Bug Fixes
+
+* do not pass sort/match into aggregation pipeline if not needed ([e619fc9](https://github.com/webiny/commodo/commit/e619fc9282845ea2d0f98779891b8703c853b7b9))
+
+
+### Features
+
+* remove page/perPage handling ([b845316](https://github.com/webiny/commodo/commit/b845316ef0c5670b32fba857cbf318dfe730cc5c))
+* use raw data instead of model instances in storage drivers ([7b9e15b](https://github.com/webiny/commodo/commit/7b9e15b6a4883c8d5f28269a3daf97aa2563098d))
+
+
+### BREAKING CHANGES
+
+* Storage drivers no longer accept a model instance. They now work with raw data passed from fields-storage layer.
+* Handling of page/perPage was removed to make driver more generic. Developers who need this, need to handle parameters before calling the driver, and calculate proper limit/offset themselves.
+
+
+
+
+
 ## [1.0.3](https://github.com/webiny/commodo/compare/@commodo/fields-storage-mongodb@1.0.2...@commodo/fields-storage-mongodb@1.0.3) (2020-01-21)
 
 **Note:** Version bump only for package @commodo/fields-storage-mongodb

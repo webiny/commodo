@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-next.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage@1.0.2...@commodo/fields-storage@2.0.0-next.0) (2020-05-05)
+
+
+### Bug Fixes
+
+* add id sorter only if it's not already set ([af08a87](https://github.com/webiny/commodo/commit/af08a874c36926585c686aff88ae2f9f81fbe365))
+* avoid calling hasOwnProperty ([ead8369](https://github.com/webiny/commodo/commit/ead8369de6bbf07ade18c55edeeb54a23a50cfd8))
+* bring back findByIds ([87c96be](https://github.com/webiny/commodo/commit/87c96be1ee3eadf7323d8c16ee055d7f5d0132dc))
+* handle non-object sort value ([7c06ac8](https://github.com/webiny/commodo/commit/7c06ac8613cff3153f9867d7786fd7669d5ab33f))
+* remove deprecated findByIds method ([bfcbd84](https://github.com/webiny/commodo/commit/bfcbd84f23eda7b7691f2d981c1e0fa21766e9a9))
+
+
+### Features
+
+* implement cursor pagination ([6354c66](https://github.com/webiny/commodo/commit/6354c664fb6c5d55de46be67de9f5c614f6e6bee))
+* use raw data instead of model instances in storage drivers ([7b9e15b](https://github.com/webiny/commodo/commit/7b9e15b6a4883c8d5f28269a3daf97aa2563098d))
+
+
+### BREAKING CHANGES
+
+* Storage drivers no longer accept a model instance. They now work with raw data passed from fields-storage layer.
+
+
+
+
+
 ## [1.0.3](https://github.com/webiny/commodo/compare/@commodo/fields-storage@1.0.2...@commodo/fields-storage@1.0.3) (2020-01-21)
 
 
