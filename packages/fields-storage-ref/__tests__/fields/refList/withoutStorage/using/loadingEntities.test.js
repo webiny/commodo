@@ -1,6 +1,8 @@
 import sinon from "sinon";
 import { Group, User, UsersGroups } from "../../../../resources/models/modelsUsing";
 import mdbid from "mdbid";
+import { getName } from "@commodo/name/index";
+import idGenerator from "@commodo/fields-storage/idGenerator";
 
 const sandbox = sinon.createSandbox();
 
@@ -51,28 +53,28 @@ describe("save and delete models attribute test", () => {
 
         await user.groups;
 
-        expect(findStub.getCall(0).args[0].model).toEqual(UsersGroups);
+        expect(findStub.getCall(0).args[0].name).toEqual(getName(UsersGroups));
         expect(findStub.getCall(0).args[0].options).toMatchObject({
             query: {
                 user: A
             }
         });
 
-        expect(findOneStub.getCall(0).args[0].model).toEqual(Group);
+        expect(findOneStub.getCall(0).args[0].name).toEqual(getName(Group));
         expect(findOneStub.getCall(0).args[0].options).toEqual({
             query: {
                 id: X
             }
         });
 
-        expect(findOneStub.getCall(1).args[0].model).toEqual(Group);
+        expect(findOneStub.getCall(1).args[0].name).toEqual(getName(Group));
         expect(findOneStub.getCall(1).args[0].options).toEqual({
             query: {
                 id: Y
             }
         });
 
-        expect(findOneStub.getCall(2).args[0].model).toEqual(Group);
+        expect(findOneStub.getCall(2).args[0].name).toEqual(getName(Group));
         expect(findOneStub.getCall(2).args[0].options).toEqual({
             query: {
                 id: Z
@@ -131,38 +133,22 @@ describe("save and delete models attribute test", () => {
         expect(user.getField("groups").state.loading).toBe(false);
         expect(user.getField("groups").state.loaded).toBe(false);
 
-        let modelSave = sandbox
-            .stub(user.getStorageDriver(), "save")
+        let saveSpy = sandbox.spy(user.getStorageDriver(), "save");
+
+        let generateIdStub = sandbox
+            .stub(idGenerator, "generate")
             .onCall(0)
-            .callsFake(() => {
-                return true;
-            })
+            .callsFake(() => P)
             .onCall(1)
-            .callsFake(({ model }) => {
-                model.id = P;
-                return true;
-            })
+            .callsFake(() => fourth)
             .onCall(2)
-            .callsFake(({ model }) => {
-                model.id = fourth;
-                return true;
-            })
+            .callsFake(() => Q)
             .onCall(3)
-            .callsFake(({ model }) => {
-                model.id = Q;
-                return true;
-            })
-            .onCall(4)
-            .callsFake(({ model }) => {
-                model.id = fifth;
-                return true;
-            });
+            .callsFake(() => fifth);
 
         await user.save();
 
-        modelSave.restore();
-
-        expect(modelSave.callCount).toEqual(5);
+        expect(saveSpy.callCount).toEqual(5);
 
         expect(user.getField("groups").initial).toHaveLength(2);
         expect(user.getField("groups").initial[0].id).toEqual(P);
@@ -178,5 +164,8 @@ describe("save and delete models attribute test", () => {
         expect(user.getField("groups").links.current).toHaveLength(2);
         expect(user.getField("groups").links.current[0].id).toEqual(fourth);
         expect(user.getField("groups").links.current[1].id).toEqual(fifth);
+
+        saveSpy.restore();
+        generateIdStub.restore();
     });
 });

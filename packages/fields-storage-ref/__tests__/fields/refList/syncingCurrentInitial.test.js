@@ -1,6 +1,7 @@
 import { MainEntity, Entity1 } from "../../resources/models/modelsAttributeModels";
 import mdbid from "mdbid";
 import sinon from "sinon";
+import idGenerator from "@commodo/fields-storage/idGenerator";
 
 const sandbox = sinon.createSandbox();
 
@@ -11,7 +12,7 @@ describe("save and delete models attribute test", () => {
         const A = mdbid();
         const B = mdbid();
         const C = mdbid();
-        const x = 'entity-x';
+        const x = mdbid();
 
         let modelFindById = sandbox
             .stub(MainEntity.getStorageDriver(), "findOne")
@@ -40,15 +41,10 @@ describe("save and delete models attribute test", () => {
 
         const X = mdbid();
 
-        let modelSave = sandbox
-            .stub(mainEntity.getStorageDriver(), "save")
-            .onCall(1)
-            .callsFake(({ model }) => {
-                model.id = X;
-                return true;
-            })
+        let generateIdStub = sandbox
+            .stub(idGenerator, "generate")
             .onCall(0)
-            .callsFake(() => true);
+            .callsFake(() => X);
 
         await mainEntity.save();
 
@@ -60,13 +56,16 @@ describe("save and delete models attribute test", () => {
         expect(mainEntity.getField("attribute1").current.length).toBe(1);
         expect(mainEntity.getField("attribute1").current[0].id).toEqual(X);
 
-        modelSave.restore();
+        generateIdStub.restore();
         modelFind.restore();
 
         const y = mdbid();
         const z = mdbid();
 
-        mainEntity.attribute1 = [{ name: y, type: "dog" }, { name: z, type: "parrot" }];
+        mainEntity.attribute1 = [
+            { name: y, type: "dog" },
+            { name: z, type: "parrot" }
+        ];
 
         expect(mainEntity.getField("attribute1").initial.length).toBe(1);
         expect(mainEntity.getField("attribute1").initial[0].id).toEqual(X);
@@ -77,20 +76,13 @@ describe("save and delete models attribute test", () => {
         const Y = mdbid();
         const Z = mdbid();
 
-        modelSave = sandbox
-            .stub(mainEntity.getStorageDriver(), "save")
-            .onCall(1)
-            .callsFake(({ model }) => {
-                model.id = Y;
-                return true;
-            })
-            .onCall(2)
-            .callsFake(({ model }) => {
-                model.id = Z;
-                return true;
-            })
+        // Last refactor (feat/cursors) - these indexes were incremented by 1.
+        generateIdStub = sandbox
+            .stub(idGenerator, "generate")
             .onCall(0)
-            .callsFake(() => true);
+            .callsFake(() => Y)
+            .onCall(1)
+            .callsFake(() => Z);
 
         await mainEntity.save();
 
@@ -101,7 +93,7 @@ describe("save and delete models attribute test", () => {
         expect(mainEntity.getField("attribute1").current[0].id).toEqual(Y);
         expect(mainEntity.getField("attribute1").current[1].id).toEqual(Z);
 
-        modelSave.restore();
+        generateIdStub.restore();
 
         mainEntity.attribute1 = null;
         expect(mainEntity.getField("attribute1").initial.length).toBe(2);

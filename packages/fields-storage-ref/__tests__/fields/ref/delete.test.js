@@ -3,6 +3,7 @@ import { One } from "../../resources/models/oneTwoThree";
 import { ClassA } from "../../resources/models/abc";
 import { ClassADynamic } from "../../resources/models/abcDynamicAttribute";
 import sinon from "sinon";
+import idGenerator from "@commodo/fields-storage/idGenerator";
 
 const sandbox = sinon.createSandbox();
 
@@ -27,22 +28,13 @@ describe("model delete test", () => {
         });
 
         let modelSave = sandbox
-            .stub(user.getStorageDriver(), "save")
+            .stub(idGenerator, "generate")
             .onCall(0)
-            .callsFake(({ model }) => {
-                model.id = "AA";
-                return true;
-            })
+            .callsFake(() => "AA")
             .onCall(1)
-            .callsFake(({ model }) => {
-                model.id = "BB";
-                return true;
-            })
+            .callsFake(() => "BB")
             .onCall(2)
-            .callsFake(({ model }) => {
-                model.id = "CC";
-                return true;
-            });
+            .callsFake(() => "CC");
 
         await user.save();
         modelSave.restore();
@@ -156,27 +148,19 @@ describe("model delete test", () => {
 
         classA.classB = { name: "classB", classC: { name: "classC" } };
 
-        const modelSave = sandbox
-            .stub(classA.getStorageDriver(), "save")
+        const saveSpy = sandbox.stub(classA.getStorageDriver(), "save");
+        const generateIdStub = sandbox
+            .stub(idGenerator, "generate")
             .onCall(0)
-            .callsFake(({ model }) => {
-                model.id = "classC";
-                return true;
-            })
+            .callsFake(() => "classC")
             .onCall(1)
-            .callsFake(({ model }) => {
-                model.id = "classB";
-                return true;
-            })
-            .onCall(2)
-            .callsFake(() => {
-                return true;
-            });
+            .callsFake(() => "classB");
 
         await classA.save();
-        modelSave.restore();
+        saveSpy.restore();
+        generateIdStub.restore();
 
-        expect(modelSave.calledThrice).toBeTruthy();
+        expect(saveSpy.calledThrice).toBeTruthy();
 
         expect(classA.id).toBe("classA");
 

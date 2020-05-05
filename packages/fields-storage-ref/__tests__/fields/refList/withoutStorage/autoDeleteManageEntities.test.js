@@ -1,6 +1,7 @@
 import { MainEntity, Entity1, Entity2 } from "../../../resources/models/modelsAttributeModels";
 import sinon from "sinon";
 import mdbid from "mdbid";
+import idGenerator from "@commodo/fields-storage/idGenerator";
 
 const sandbox = sinon.createSandbox();
 
@@ -41,15 +42,11 @@ describe("model attribute current / initial values syncing", () => {
 
         const X = mdbid();
 
-        let modelSave = sandbox
-            .stub(mainEntity.getStorageDriver(), "save")
-            .onCall(1)
-            .callsFake(({ model }) => {
-                model.id = X;
-                return true;
-            })
+        let saveSpy = sandbox.spy(mainEntity.getStorageDriver(), "save");
+        let generateIdStub = sandbox
+            .stub(idGenerator, "generate")
             .onCall(0)
-            .callsFake(() => true);
+            .callsFake(() => X);
 
         await mainEntity.save();
 
@@ -57,10 +54,11 @@ describe("model attribute current / initial values syncing", () => {
         expect(mainEntity.getField("attribute1").initial[0].id).toEqual(X);
         expect(mainEntity.getField("attribute1").current.length).toBe(1);
         expect(mainEntity.getField("attribute1").current[0].id).toEqual(X);
-        expect(modelSave.callCount).toEqual(2);
+        expect(saveSpy.callCount).toEqual(2);
         expect(modelDelete.callCount).toEqual(2);
 
-        modelSave.restore();
+        generateIdStub.restore();
+        saveSpy.restore();
         modelFind.restore();
 
         const D = mdbid();
@@ -121,23 +119,20 @@ describe("model attribute current / initial values syncing", () => {
         expect(mainEntity.getField("attribute2").current[1]).toBe(undefined);
         expect(mainEntity.getField("attribute2").current[2]).toBe(undefined);
 
-        modelSave = sandbox
-            .stub(mainEntity.getStorageDriver(), "save")
+        saveSpy = sandbox.spy(mainEntity.getStorageDriver(), "save");
+        generateIdStub = sandbox
+            .stub(idGenerator, "generate")
             .onCall(0)
-            .callsFake(({ model }) => {
-                model.id = F;
-                return true;
-            })
-            .onCall(1)
-            .callsFake(() => true);
+            .callsFake(() => F);
 
-        mainEntity.attribute2 = [...attribute2] ; // Force dirty check, since it's not the same array.
+        mainEntity.attribute2 = [...attribute2]; // Force dirty check, since it's not the same array.
         await mainEntity.save();
 
         expect(modelDelete.callCount).toEqual(4);
-        expect(modelSave.callCount).toEqual(1);
+        expect(saveSpy.callCount).toEqual(1);
 
         modelDelete.restore();
-        modelSave.restore();
+        saveSpy.restore();
+        generateIdStub.restore();
     });
 });

@@ -244,20 +244,12 @@ describe("save and delete models attribute test", () => {
             .setAutoDelete(false)
             .setAutoSave(false);
 
-        const AA = mdbid();
-
-        let modelSave = sandbox
-            .stub(mainEntity.getStorageDriver(), "save")
-            .onCall(0)
-            .callsFake(({ model }) => {
-                model.id = AA;
-                return true;
-            });
+        let saveSpy = sandbox.spy(mainEntity.getStorageDriver(), "save");
 
         await mainEntity.save();
 
-        expect(modelSave.callCount).toEqual(1);
-        modelSave.restore();
+        expect(saveSpy.callCount).toEqual(1);
+        saveSpy.restore();
 
         let modelDelete = sandbox.stub(mainEntity.getStorageDriver(), "delete");
         let error = null;
