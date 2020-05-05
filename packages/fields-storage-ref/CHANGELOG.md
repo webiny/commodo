@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.3-next.1](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@1.0.3-next.0...@commodo/fields-storage-ref@1.0.3-next.1) (2020-05-05)
+
+
+### Bug Fixes
+
+* add missing dependency ([317c471](https://github.com/webiny/commodo/commit/317c4719cc97ddff1253dd81bc5aa44dca336b26))
+
+
+
+
+
 ## [1.0.3-next.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@1.0.2...@commodo/fields-storage-ref@1.0.3-next.0) (2020-05-05)
 
 
