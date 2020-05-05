@@ -2,6 +2,7 @@ import { User, Company, CompanyWithSisterCompany } from "../../resources/models/
 import { One } from "../../resources/models/oneTwoThree";
 import sinon from "sinon";
 import mdbid from "mdbid";
+import idGenerator from "@commodo/fields-storage/idGenerator";
 
 const sandbox = sinon.createSandbox();
 
@@ -30,8 +31,8 @@ describe("model attribute test", () => {
 
         const ids = { B: mdbid(), one: mdbid(), five: mdbid() };
 
-        model.getField("company").setStorageValue("one");
-        expect(await model.getField("company").getStorageValue()).toEqual("one");
+        model.getField("company").setStorageValue(ids.one);
+        expect(await model.getField("company").getStorageValue()).toEqual(ids.one);
 
         const findById = sandbox
             .stub(model.getStorageDriver(), "findOne")
@@ -63,10 +64,7 @@ describe("model attribute test", () => {
             name: "company1"
         });
 
-        let save = sandbox.stub(model.getStorageDriver(), "save").callsFake(({ model }) => {
-            model.id = ids.A;
-            return true;
-        });
+        let generateIdStub = sandbox.stub(idGenerator, "generate").callsFake(() => ids.A);
 
         await model.save();
 
@@ -77,17 +75,15 @@ describe("model attribute test", () => {
         });
         await model2.save();
 
-        save.restore();
+        generateIdStub.restore();
     });
 
     test("it should auto save linked model only if it is enabled", async () => {
         const user = new User();
 
         const A = mdbid();
-        let save = sandbox.stub(user.getStorageDriver(), "save").callsFake(({ model }) => {
-            model.id = A;
-            return true;
-        });
+        let saveSpy = sandbox.spy(user.getStorageDriver(), "save");
+        let generateIdStub = sandbox.stub(idGenerator, "generate").callsFake(() => A);
 
         user.populate({
             firstName: "John",
@@ -110,9 +106,10 @@ describe("model attribute test", () => {
 
         await user.save();
 
-        save.restore();
+        saveSpy.restore();
+        generateIdStub.restore();
 
-        expect(save.callCount).toEqual(1);
+        expect(saveSpy.callCount).toEqual(1);
         expect(user.id).toEqual(A);
 
         user.getField("company").setAutoSave();
@@ -120,23 +117,18 @@ describe("model attribute test", () => {
         const B = mdbid();
 
         // This time we should have an update on User model, and insert on linked company model
-        save = sandbox
-            .stub(user.getStorageDriver(), "save")
+        saveSpy = sandbox.spy(user.getStorageDriver(), "save");
+        generateIdStub = sandbox
+            .stub(idGenerator, "generate")
             .onCall(0)
-            .callsFake(({ model }) => {
-                model.id = B;
-                return true;
-            })
-            .onCall(1)
-            .callsFake(() => {
-                return true;
-            });
+            .callsFake(() => B);
 
         await user.save();
 
-        save.restore();
+        saveSpy.restore();
+        generateIdStub.restore();
 
-        expect(save.calledTwice).toBeTruthy();
+        expect(saveSpy.calledTwice).toBeTruthy();
         expect(user.id).toEqual(A);
         expect((await user.company).id).toEqual(B);
 
@@ -150,26 +142,18 @@ describe("model attribute test", () => {
         // Additionally, image model has a createdBy attribute, but since it's empty, nothing must happen here.
 
         const C = mdbid();
-        save = sandbox
-            .stub(user.getStorageDriver(), "save")
+        saveSpy = sandbox.spy(user.getStorageDriver(), "save");
+        generateIdStub = sandbox
+            .stub(idGenerator, "generate")
             .onCall(0)
-            .callsFake(({ model }) => {
-                model.id = C;
-                return true;
-            })
-            .onCall(1)
-            .callsFake(() => {
-                return true;
-            })
-            .onCall(2)
-            .callsFake(() => {
-                return true;
-            });
+            .callsFake(() => C);
 
         await user.save();
-        save.restore();
 
-        expect(save.callCount).toEqual(2);
+        saveSpy.restore();
+        generateIdStub.restore();
+
+        expect(saveSpy.callCount).toEqual(2);
         expect(user.id).toEqual(A);
         const company = await user.company;
         const image = await company.image;
@@ -195,28 +179,22 @@ describe("model attribute test", () => {
         const B = mdbid();
         const C = mdbid();
 
-        let save = sandbox
-            .stub(user.getStorageDriver(), "save")
+        let saveSpy = sandbox.spy(user.getStorageDriver(), "save");
+        let generateIdStub = sandbox
+            .stub(idGenerator, "generate")
             .onCall(0)
-            .callsFake(({ model }) => {
-                model.id = C;
-                return true;
-            })
+            .callsFake(() => C)
             .onCall(1)
-            .callsFake(({ model }) => {
-                model.id = B;
-                return true;
-            })
+            .callsFake(() => B)
             .onCall(2)
-            .callsFake(({ model }) => {
-                model.id = A;
-                return true;
-            });
+            .callsFake(() => A);
 
         await user.save();
-        save.restore();
 
-        expect(save.callCount).toBe(3);
+        saveSpy.restore();
+        generateIdStub.restore();
+
+        expect(saveSpy.callCount).toBe(3);
         expect(user.id).toEqual(A);
 
         const company = await user.company;
@@ -240,122 +218,128 @@ describe("model attribute test", () => {
             }
         });
 
-        let save = sandbox
-            .stub(user.getStorageDriver(), "save")
+        const A = mdbid();
+        const B = mdbid();
+        const C = mdbid();
+
+        let saveSpy = sandbox.spy(user.getStorageDriver(), "save");
+        let generateIdStub = sandbox
+            .stub(idGenerator, "generate")
             .onCall(0)
-            .callsFake(({ model }) => {
-                model.id = "C";
-                return true;
-            })
+            .callsFake(() => C)
             .onCall(1)
-            .callsFake(({ model }) => {
-                model.id = "B";
-                return true;
-            })
+            .callsFake(() => B)
             .onCall(2)
-            .callsFake(({ model }) => {
-                model.id = "A";
-                return true;
-            });
+            .callsFake(() => A);
 
         await user.save();
-        save.restore();
 
-        expect(save.calledThrice).toBeTruthy();
-        expect(user.id).toEqual("A");
+        saveSpy.restore();
+        generateIdStub.restore();
+
+        expect(saveSpy.calledThrice).toBeTruthy();
+        expect(user.id).toEqual(A);
 
         const company = await user.company;
-        expect(company.id).toEqual("B");
-        expect((await company.image).id).toEqual("C");
+        expect(company.id).toEqual(B);
+        expect((await company.image).id).toEqual(C);
     });
 
     test("should not trigger save on linked model since it was not loaded", async () => {
+        const ids = {
+            one: mdbid(),
+            two: mdbid()
+        };
+
         const findById = sandbox
             .stub(One.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: "one", name: "One", two: "two" };
+                return { id: ids.one, name: "One", two: ids.two };
             });
 
-        const one = await One.findById("one");
+        const one = await One.findById(ids.one);
         findById.restore();
 
-        const save = sandbox
-            .stub(one.getStorageDriver(), "save")
-            .onCall(0)
-            .callsFake(() => {
-                return true;
-            });
+        let saveSpy = sandbox.spy(One.getStorageDriver(), "save");
 
         await one.save();
-        expect(save.callCount).toEqual(0);
+        expect(saveSpy.callCount).toEqual(0);
 
         one.name = "asd";
         await one.save();
 
-        expect(save.callCount).toEqual(1);
-        save.restore();
+        expect(saveSpy.callCount).toEqual(1);
+        saveSpy.restore();
     });
 
     test("should create new model and save links correctly", async () => {
+        const ids = {
+            one: mdbid(),
+            two: mdbid(),
+            three: mdbid(),
+            anotherTwo: mdbid(),
+            anotherThree: mdbid(),
+            anotherFour: mdbid(),
+            anotherFourFour: mdbid()
+        };
+
         const findById = sandbox
             .stub(One.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: "one", name: "One" };
+                return { id: ids.one, name: "One" };
             });
 
-        const one = await One.findById("one");
+        const one = await One.findById(ids.one);
         findById.restore();
 
-        one.two = { name: "two", three: { name: "three" } };
+        one.two = { name: ids.two, three: { name: ids.three } };
 
-        const save = sandbox
-            .stub(one.getStorageDriver(), "save")
+        let saveSpy = sandbox.spy(one.getStorageDriver(), "save");
+        const generateIdStub = sandbox
+            .stub(idGenerator, "generate")
             .onCall(0)
-            .callsFake(({ model }) => {
-                model.id = "three";
-                return true;
-            })
+            .callsFake(() => ids.three)
             .onCall(1)
-            .callsFake(({ model }) => {
-                model.id = "two";
-                return true;
-            })
-            .onCall(2)
-            .callsFake(() => {
-                return true;
-            });
+            .callsFake(() => ids.two);
 
         await one.save();
-        save.restore();
+        saveSpy.restore();
+        generateIdStub.restore();
 
-        expect(save.calledThrice).toBeTruthy();
+        expect(saveSpy.calledThrice).toBeTruthy();
 
-        expect(one.id).toEqual("one");
+        expect(one.id).toEqual(ids.one);
 
         const two = await one.two;
-        expect(two.id).toEqual("two");
+        expect(two.id).toEqual(ids.two);
 
         const three = await two.three;
-        expect(three.id).toEqual("three");
+        expect(three.id).toEqual(ids.three);
 
-        expect(await one.getField("two").getStorageValue()).toEqual("two");
-        expect(await two.getField("three").getStorageValue()).toEqual("three");
+        expect(await one.getField("two").getStorageValue()).toEqual(ids.two);
+        expect(await two.getField("three").getStorageValue()).toEqual(ids.three);
     });
 
     test("should delete existing model once new one was assigned and main model saved", async () => {
+        const ids = {
+            one: mdbid(),
+            two: mdbid(),
+            three: mdbid()
+        };
+
         let modelFindById = sandbox
             .stub(One.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: "one", name: "One", two: "two" };
+                return { id: ids.one, name: "One", two: ids.two };
             });
 
         const one = await One.findById("a");
-        expect(await one.getField("two").getStorageValue()).toEqual("two");
-        expect(one.getField("two").current).toEqual("two");
-        expect(one.getField("two").initial).toEqual("two");
+        expect(await one.getField("two").getStorageValue()).toEqual(ids.two);
+        expect(one.getField("two").current).toEqual(ids.two);
+        expect(one.getField("two").initial).toEqual(ids.two);
 
         // "one.two = ..." triggers loading of entity (ONLY WITH DEBUGGER), regular test run works just fine!!!
         // OMG -_-
@@ -372,7 +356,7 @@ describe("model attribute test", () => {
         modelFindById.restore();
 
         // ... and now we can be sure the values are set and ready for testing.
-        expect(one.getField("two").initial).toEqual("two");
+        expect(one.getField("two").initial).toEqual(ids.two);
         expect(one.getField("two").current.id).toBe(undefined);
         expect(one.getField("two").state.loaded).toBe(false);
         expect(one.getField("two").state.loading).toBe(false);
@@ -380,32 +364,17 @@ describe("model attribute test", () => {
         // This is what will happen once we execute save method on One model
 
         // 1. recursively call save method on all child entities.
-        let modelSave = sandbox
-            .stub(One.getStorageDriver(), "save")
+        let saveSpy = sandbox.spy(One.getStorageDriver(), "save");
+        let generateIdStub = sandbox
+            .stub(idGenerator, "generate")
             .onCall(0)
-            .callsFake(({ model }) => {
-                model.id = "anotherFour";
-                return true;
-            })
+            .callsFake(() => ids.anotherFour)
             .onCall(1)
-            .callsFake(({ model }) => {
-                model.id = "anotherFourFour";
-                return true;
-            })
+            .callsFake(() => ids.anotherFourFour)
             .onCall(2)
-            .callsFake(({ model }) => {
-                model.id = "anotherThree";
-                return true;
-            })
+            .callsFake(() => ids.anotherThree)
             .onCall(3)
-            .callsFake(({ model }) => {
-                model.id = "anotherTwo";
-                return true;
-            })
-            .onCall(4)
-            .callsFake(() => {
-                return true;
-            });
+            .callsFake(() => ids.anotherTwo);
 
         // 2. Once the save is done, deletes will start because main model has a different model on attribute 'two'.
         // Before deletions, findById method will be executed to recursively load entities and then of course delete
@@ -414,71 +383,77 @@ describe("model attribute test", () => {
             .stub(One.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: "two", name: "Two", three: "three" };
+                return { id: ids.two, name: "Two", three: ids.three };
             })
             .onCall(1)
             .callsFake(() => {
-                return { id: "three", name: "Three" };
+                return { id: ids.three, name: "Three" };
             });
 
-        let modelDelete = sandbox.stub(One.getStorageDriver(), "delete").callsFake(() => {
-            true;
-        });
+        let modelDelete = sandbox.stub(One.getStorageDriver(), "delete").callsFake(() => true);
 
         await one.save();
 
-        expect(modelSave.callCount).toEqual(5);
+        expect(saveSpy.callCount).toEqual(5);
         expect(modelFindById.callCount).toEqual(2);
 
         // Make sure model with ID 'three' was first deleted, and then the one with ID 'two'.
-        expect(modelDelete.getCall(0).args[0].model.id).toEqual("three");
-        expect(modelDelete.getCall(1).args[0].model.id).toEqual("two");
+        expect(modelDelete.getCall(0).args[0].data.id).toEqual(ids.three);
+        expect(modelDelete.getCall(1).args[0].data.id).toEqual(ids.two);
 
-        expect(one.getField("two").initial.id).toEqual("anotherTwo");
-        expect(one.getField("two").current.id).toEqual("anotherTwo");
+        expect(one.getField("two").initial.id).toEqual(ids.anotherTwo);
+        expect(one.getField("two").current.id).toEqual(ids.anotherTwo);
         expect(one.getField("two").state.loaded).toBe(true);
         expect(one.getField("two").state.loading).toBe(false);
 
         modelFindById.restore();
         modelDelete.restore();
-        modelSave.restore();
+        saveSpy.restore();
+        generateIdStub.restore();
     });
 
     test("should load entities on save to make sure they exist", async () => {
+        const ids = {
+            one: mdbid(),
+            two: mdbid(),
+            three: mdbid(),
+            anotherTwo: mdbid()
+        };
+
         let modelFindById = sandbox
             .stub(One.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: "one", name: "One", two: "two" };
+                return { id: ids.one, name: "One", two: ids.two };
             });
 
-        const one = await One.findById("a");
+        const one = await One.findById(ids.one);
 
         expect(modelFindById.callCount).toEqual(1);
         modelFindById.restore();
 
-        // one.getField("two").setValue("anotherTwo"); // Use this one for debugging.
-        one.two = "anotherTwo"; // Causes "loading" flag to be true, probably some kind of a babel/transpile issue.
+        // one.getField('two').setValue("anotherTwo"); // Use this one for debugging.
+        one.two = ids.anotherTwo; // Causes "loading" flag to be true, probably some kind of a babel/transpile issue.
 
         modelFindById = sandbox
             .stub(One.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: "two", name: "Two" };
+                return { id: ids.two, name: "Two" };
             })
             .onCall(1)
             .callsFake(() => {
-                return { id: "anotherTwo", name: "Another Two" };
+                return { id: ids.anotherTwo, name: "Another Two" };
             });
 
-        let modelSave = sandbox.stub(One.getStorageDriver(), "save").callsFake(() => true);
+        let saveSpy = sandbox.spy(One.getStorageDriver(), "save");
 
         await one.save();
 
         expect(modelFindById.callCount).toEqual(2);
-        expect(modelSave.callCount).toEqual(1);
+        expect(saveSpy.callCount).toEqual(1);
 
         modelFindById.restore();
-        modelSave.restore();
+        saveSpy.restore();
     });
 });

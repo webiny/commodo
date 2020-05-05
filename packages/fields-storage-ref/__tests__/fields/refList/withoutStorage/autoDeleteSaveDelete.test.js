@@ -1,6 +1,7 @@
 import { MainEntity, Entity1 } from "../../../resources/models/modelsAttributeModels";
 import sinon from "sinon";
 import mdbid from "mdbid";
+import idGenerator from "@commodo/fields-storage/idGenerator";
 
 const sandbox = sinon.createSandbox();
 
@@ -152,57 +153,31 @@ describe("save and delete models attribute test", () => {
         const HH = mdbid();
         const II = mdbid();
 
-        let modelSave = sandbox
-            .stub(mainEntity.getStorageDriver(), "save")
+        let saveSpy = sandbox.spy(mainEntity.getStorageDriver(), "save");
+        let generateIdStub = sandbox
+            .stub(idGenerator, "generate")
             .onCall(1)
-            .callsFake(({ model }) => {
-                model.id = BB;
-                return true;
-            })
+            .callsFake(() => BB)
             .onCall(2)
-            .callsFake(({ model }) => {
-                model.id = CC;
-                return true;
-            })
+            .callsFake(() => CC)
             .onCall(3)
-            .callsFake(({ model }) => {
-                model.id = DD;
-                return true;
-            })
+            .callsFake(() => DD)
             .onCall(4)
-            .callsFake(({ model }) => {
-                model.id = EE;
-                return true;
-            })
+            .callsFake(() => EE)
             .onCall(5)
-            .callsFake(({ model }) => {
-                model.id = FF;
-                return true;
-            })
+            .callsFake(() => FF)
             .onCall(6)
-            .callsFake(({ model }) => {
-                model.id = GG;
-                return true;
-            })
+            .callsFake(() => GG)
             .onCall(7)
-            .callsFake(({ model }) => {
-                model.id = HH;
-                return true;
-            })
+            .callsFake(() => HH)
             .onCall(8)
-            .callsFake(({ model }) => {
-                model.id = II;
-                return true;
-            })
+            .callsFake(() => II)
             .onCall(0)
-            .callsFake(({ model }) => {
-                model.id = AA;
-                return true;
-            });
+            .callsFake(() => AA);
 
         await mainEntity.save();
 
-        expect(modelSave.callCount).toEqual(9);
+        expect(saveSpy.callCount).toEqual(9);
 
         expect(mainEntity.id).toBe(AA);
         expect(attr1[0].id).toBe(BB);
@@ -214,7 +189,8 @@ describe("save and delete models attribute test", () => {
         expect((await attr2[1].model1Entities)[0].id).toBe(II);
         expect(attr2[1].id).toBe(HH);
 
-        modelSave.restore();
+        saveSpy.restore();
+        generateIdStub.restore();
     });
 
     test("should save only attributes that were loaded", async () => {
@@ -292,58 +268,33 @@ describe("save and delete models attribute test", () => {
         const HH = mdbid();
         const II = mdbid();
 
-        let modelSave = sandbox
-            .stub(mainEntity.getStorageDriver(), "save")
+        let saveSpy = sandbox.spy(MainEntity.getStorageDriver(), "save");
+        let generateIdStub = sandbox
+            .stub(idGenerator, "generate")
             .onCall(0)
-            .callsFake(({ model }) => {
-                model.id = BB;
-                return true;
-            })
+            .callsFake(() => BB)
             .onCall(1)
-            .callsFake(({ model }) => {
-                model.id = CC;
-                return true;
-            })
+            .callsFake(() => CC)
             .onCall(2)
-            .callsFake(({ model }) => {
-                model.id = DD;
-                return true;
-            })
+            .callsFake(() => DD)
             .onCall(3)
-            .callsFake(({ model }) => {
-                model.id = EE;
-                return true;
-            })
+            .callsFake(() => EE)
             .onCall(4)
-            .callsFake(({ model }) => {
-                model.id = FF;
-                return true;
-            })
+            .callsFake(() => FF)
             .onCall(5)
-            .callsFake(({ model }) => {
-                model.id = GG;
-                return true;
-            })
+            .callsFake(() => GG)
             .onCall(6)
-            .callsFake(({ model }) => {
-                model.id = HH;
-                return true;
-            })
+            .callsFake(() => HH)
             .onCall(7)
-            .callsFake(({ model }) => {
-                model.id = II;
-                return true;
-            })
+            .callsFake(() => II)
             .onCall(8)
-            .callsFake(({ model }) => {
-                model.id = AA;
-                return true;
-            });
+            .callsFake(() => AA);
 
         await mainEntity.save();
 
-        expect(modelSave.callCount).toEqual(9);
-        modelSave.restore();
+        expect(saveSpy.callCount).toEqual(9);
+        saveSpy.restore();
+        generateIdStub.restore();
 
         let modelDelete = sandbox.stub(mainEntity.getStorageDriver(), "delete");
         let error = null;
@@ -504,7 +455,6 @@ describe("save and delete models attribute test", () => {
 
         expect(mainEntity.getField("attribute1").current[0].id).toEqual(B);
         expect(mainEntity.getField("attribute1").current[1].id).toEqual(C);
-
 
         expect(mainEntity.getField("attribute2").state.loaded).toBe(false);
         expect(mainEntity.getField("attribute2").state.loading).toBe(false);

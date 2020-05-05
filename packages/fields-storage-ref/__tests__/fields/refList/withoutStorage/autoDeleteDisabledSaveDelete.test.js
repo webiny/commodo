@@ -2,6 +2,7 @@ import { MainEntity, Entity1 } from "../../../resources/models/modelsAttributeMo
 import sinon from "sinon";
 import mdbid from "mdbid";
 const sandbox = sinon.createSandbox();
+import idGenerator from "@commodo/fields-storage/idGenerator";
 
 describe("save and delete models attribute test", () => {
     afterEach(() => sandbox.restore());
@@ -153,17 +154,15 @@ describe("save and delete models attribute test", () => {
         (await attr2[0].model1Entities)[2].type = "dog";
 
         const AA = mdbid();
-        let modelSave = sandbox
-            .stub(mainEntity.getStorageDriver(), "save")
+        let saveSpy = sandbox.spy(mainEntity.getStorageDriver(), "save");
+        let generateIdStub = sandbox
+            .stub(idGenerator, "generate")
             .onCall(0)
-            .callsFake(({ model }) => {
-                model.id = AA;
-                return true;
-            });
+            .callsFake(() => AA);
 
         await mainEntity.save();
 
-        expect(modelSave.callCount).toEqual(1);
+        expect(saveSpy.callCount).toEqual(1);
 
         expect(mainEntity.id).toEqual(AA);
         expect(attr1[0].id).toEqual(null);
@@ -175,14 +174,11 @@ describe("save and delete models attribute test", () => {
         expect((await attr2[1].model1Entities)[0].id).toEqual(null);
         expect(attr2[1].id).toEqual(null);
 
-        modelSave.restore();
+        saveSpy.restore();
+        generateIdStub.restore();
     });
 
     test("should save only attributes that were loaded", async () => {
-        const AA = mdbid();
-        const BB = mdbid();
-        const CC = mdbid();
-
         const mainEntity = new MainEntity();
         mainEntity.attribute1 = [
             { id: null, name: "Enlai", type: "dog", markedAsCannotDelete: false },
@@ -198,32 +194,16 @@ describe("save and delete models attribute test", () => {
             .setAutoDelete(false)
             .setAutoSave(false);
 
-        let modelSave = sandbox
-            .stub(mainEntity.getStorageDriver(), "save")
-            .onCall(0)
-            .callsFake(({ model }) => {
-                model.id = BB;
-                return true;
-            })
-            .onCall(1)
-            .callsFake(({ model }) => {
-                model.id = CC;
-                return true;
-            })
-            .onCall(2)
-            .callsFake(({ model }) => {
-                model.id = AA;
-                return true;
-            });
+        let saveSpy = sandbox.spy(mainEntity.getStorageDriver(), "save");
 
         let modelFind = sandbox.stub(mainEntity.getStorageDriver(), "find");
 
         await mainEntity.save();
 
-        expect(modelSave.callCount).toEqual(1);
+        expect(saveSpy.callCount).toEqual(1);
         expect(modelFind.callCount).toEqual(0);
 
-        modelSave.restore();
+        saveSpy.restore();
         modelFind.restore();
     });
 
