@@ -10,7 +10,7 @@
     "Adrian Smijulj <adrian@webiny.com>"
   ],
   "dependencies": {
-    "@commodo/field-storage": "^1.0.3",
+    "@commodo/fields-storage": "^1.0.3",
     "@commodo/fields": "^1.0.3-next.0",
     "@commodo/hooks": "^1.0.3-next.0",
     "@commodo/name": "^1.1.1-next.0",
