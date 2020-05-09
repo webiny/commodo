@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.3-next.1](https://github.com/webiny/commodo/compare/@commodo/fields@1.0.3-next.0...@commodo/fields@1.0.3-next.1) (2020-05-09)
+
+
+### Bug Fixes
+
+* "setOnce" must not allow value reassignment ([5999c42](https://github.com/webiny/commodo/commit/5999c42685bc83abd09860e77512f53292596d3c))
+
+
+
+
+
 ## [1.0.3-next.0](https://github.com/webiny/commodo/compare/@commodo/fields@1.0.2...@commodo/fields@1.0.3-next.0) (2020-05-05)
 
 **Note:** Version bump only for package @commodo/fields
