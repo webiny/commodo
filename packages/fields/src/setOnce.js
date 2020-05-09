@@ -5,13 +5,11 @@ const setOnce = () => {
     return withProps(props => {
         const { setValue } = props;
         return {
-            valueSet: false,
             setValue(value) {
-                if (this.valueSet) {
+                if (this.state.set) {
                     return;
                 }
 
-                this.valueSet = true;
                 return setValue.call(this, value);
             }
         };
