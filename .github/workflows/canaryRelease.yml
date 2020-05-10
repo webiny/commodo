@@ -6,7 +6,7 @@ on:
 
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
 jobs:
   build-and-test:
@@ -16,15 +16,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: canary
-
-      - name: Set git email
-        run: git config --global user.email "adrian@webiny.com"
-
-      - name: Set git username
-        run: git config --global user.name "doitadrian"
-
-      - name: Log in to NPM
-        run: npm login
 
       - name: Install dependencies
         run: yarn
@@ -37,6 +28,12 @@ jobs:
 
       - name: Prepare packages
         run: yarn prepack
+
+      - name: Set git email
+        run: git config --global user.email "adrian@webiny.com"
+
+      - name: Set git username
+        run: git config --global user.name "doitadrian"
 
       - name: Create a release on GitHub
         run: yarn lerna version --conventional-prerelease --yes
