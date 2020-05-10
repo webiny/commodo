@@ -44,7 +44,7 @@ export default ({ init = true } = {}) => {
                 useUnifiedTopology: true
             });
             self.db = await self.connection.db(global.__MONGO_DB_NAME__ + "_" + Date.now());
-            self.getDatabase().dropDatabase();
+            await self.getDatabase().dropDatabase();
 
             const base = () =>
                 compose(
