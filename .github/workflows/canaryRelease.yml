@@ -4,6 +4,10 @@ on:
   push:
     branches: [ canary ]
 
+env:
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
 jobs:
   build-and-test:
     name: Build and test
