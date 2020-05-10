@@ -13,6 +13,12 @@ jobs:
         with:
           ref: canary
 
+      - name: Set git email
+        run: git config --global user.email "adrian@webiny.com"
+
+      - name: Set git username
+        run: git config --global user.name "doitadrian"
+
       - name: Install dependencies
         run: yarn
 
@@ -30,3 +36,4 @@ jobs:
 
       - name: Create a release on GitHub
         run: yarn lerna publish from-package --dist-tag canary
+
