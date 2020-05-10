@@ -9,8 +9,8 @@ env:
   NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
 jobs:
-  build-and-test:
-    name: Build and test
+  build-test-release:
+    name: Build, test and release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
