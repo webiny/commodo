@@ -13,8 +13,7 @@
         ",**/__fixtures__/**",
         "**/__tests__/**",
         "**/*.md",
-        "lerna.json",
-        "examples/**"
+        "lerna.json"
       ],
       "allowBranch": ["master", "canary"],
       "conventionalCommits": true,
