@@ -1,6 +1,6 @@
 {
   "name": "@commodo/fields-storage-mongodb",
-  "version": "2.0.0-canary.5",
+  "version": "2.0.0-canary.6",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -11,9 +11,9 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@commodo/fields": "^1.0.3-canary.5",
-    "@commodo/fields-storage": "^2.0.0-canary.5",
-    "@commodo/name": "^1.1.1-canary.5",
+    "@commodo/fields": "^1.0.3-canary.6",
+    "@commodo/fields-storage": "^2.0.0-canary.6",
+    "@commodo/name": "^1.1.1-canary.6",
     "mongodb": "^3.1.13",
     "repropose": "^1.0.2"
   },
