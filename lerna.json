@@ -7,7 +7,7 @@
   "version": "independent",
   "command": {
     "version": {
-      "preid": "next",
+      "preid": "canary",
       "ignoreChanges": [
         "scripts/**",
         ",**/__fixtures__/**",
