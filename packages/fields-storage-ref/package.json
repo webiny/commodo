@@ -1,6 +1,6 @@
 {
   "name": "@commodo/fields-storage-ref",
-  "version": "1.0.3-canary.2",
+  "version": "1.0.3-canary.3",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -10,10 +10,10 @@
     "Adrian Smijulj <adrian@webiny.com>"
   ],
   "dependencies": {
-    "@commodo/fields": "^1.0.3-canary.2",
-    "@commodo/fields-storage": "^2.0.0-canary.2",
-    "@commodo/hooks": "^1.0.3-canary.2",
-    "@commodo/name": "^1.1.1-canary.2",
+    "@commodo/fields": "^1.0.3-canary.3",
+    "@commodo/fields-storage": "^2.0.0-canary.3",
+    "@commodo/hooks": "^1.0.3-canary.3",
+    "@commodo/name": "^1.1.1-canary.3",
     "repropose": "^1.0.2"
   },
   "license": "MIT",
