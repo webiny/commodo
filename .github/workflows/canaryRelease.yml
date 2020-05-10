@@ -1,7 +1,7 @@
-name: Check Pull Requests
+name: Canary Release
 
 on:
-  pull_request:
+  push:
     branches: [ canary ]
 
 jobs:
@@ -19,3 +19,5 @@ jobs:
 
       - name: Run tests
         run: yarn test:dist
+
+      - name: Create a release on GitHub

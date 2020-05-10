@@ -1,0 +1,21 @@
+name: Check Pull Request
+
+on:
+  pull_request:
+    branches: [ canary ]
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Build packages
+        run: yarn build
+
+      - name: Run tests
+        run: yarn test:dist
