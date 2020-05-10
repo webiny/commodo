@@ -62,7 +62,7 @@ export default ({ init = true } = {}) => {
             });
         },
         afterAll: async () => {
-            await self.getCollection().close();
+            await self.getConnection().close();
             await self.getDatabase().close();
         }
     };
