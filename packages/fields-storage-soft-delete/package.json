@@ -1,6 +1,6 @@
 {
   "name": "@commodo/fields-storage-soft-delete",
-  "version": "2.0.0-canary.4",
+  "version": "2.0.0-canary.5",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -11,8 +11,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@commodo/fields": "^1.0.3-canary.4",
-    "@commodo/name": "^1.1.1-canary.4",
+    "@commodo/fields": "^1.0.3-canary.5",
+    "@commodo/name": "^1.1.1-canary.5",
     "repropose": "^1.0.0"
   },
   "publishConfig": {
