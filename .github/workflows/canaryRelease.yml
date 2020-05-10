@@ -23,6 +23,9 @@ jobs:
       - name: Set git username
         run: git config --global user.name "doitadrian"
 
+      - name: Log in to NPM
+        run: npm login
+
       - name: Install dependencies
         run: yarn
 
