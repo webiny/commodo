@@ -39,8 +39,8 @@
   },
   "scripts": {
     "build": "lerna exec -- rm -rf dist && lerna run build",
-    "test:src": "jest --config=jest.config.js --detectOpenHandles",
-    "test:dist": "cross-env SOURCE_DIR=dist jest --config=jest.config.js --detectOpenHandles",
+    "test:src": "jest --config=jest.config.js",
+    "test:dist": "cross-env SOURCE_DIR=dist jest --config=jest.config.js",
     "test:coverage": "yarn test:src --coverage",
     "test:coverage:coveralls": "npm run test:coverage && cat ./coverage/lcov.info | coveralls",
     "lint-staged": "lint-staged",
