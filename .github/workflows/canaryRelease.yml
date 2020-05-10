@@ -20,4 +20,11 @@ jobs:
       - name: Run tests
         run: yarn test:dist
 
+      - name: Prepare packages
+        run: yarn prepack
+
       - name: Create a release on GitHub
+        run: lerna version --conventional-prerelease --yes
+
+      - name: Create a release on GitHub
+        run: lerna publish from-package --dist-tag canary
