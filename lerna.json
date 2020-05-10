@@ -16,7 +16,7 @@
         "lerna.json",
         "examples/**"
       ],
-      "allowBranch": ["master"],
+      "allowBranch": ["master", "canary"],
       "conventionalCommits": true,
       "createRelease": "github",
       "commitHooks": false,
