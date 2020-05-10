@@ -1,4 +1,4 @@
-import User from "./resources/models/user";
+import User from "./resources/models/User";
 import { Collection } from "@commodo/fields-storage";
 
 const getEntities = () => [

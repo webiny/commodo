@@ -1,4 +1,4 @@
-import User from "./resources/models/user";
+import User from "./resources/models/User";
 import { withFields, string, fields } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { compose } from "ramda";
