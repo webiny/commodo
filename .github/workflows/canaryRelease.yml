@@ -38,6 +38,6 @@ jobs:
       - name: Create a release on GitHub
         run: yarn lerna version --conventional-prerelease --yes
 
-      - name: Create a release on GitHub
-        run: yarn lerna publish from-package --dist-tag canary
+      - name: Release packages to NPM
+        run: yarn lerna publish from-package --dist-tag canary --yes
 
