@@ -2,7 +2,6 @@
 .webpack
 .serverless
 .env
-.npmrc
 lerna-debug.log
 npm-debug.log
 node_modules
