@@ -1,8 +1,8 @@
-name: Canary Release
+name: Next Release
 
 on:
   push:
-    branches: [ canary ]
+    branches: [ next ]
 
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -37,5 +37,5 @@ jobs:
         run: yarn lerna version --conventional-prerelease --yes
 
       - name: Release packages to NPM
-        run: yarn lerna publish from-package --dist-tag canary --yes
+        run: yarn lerna publish from-package --dist-tag next --yes
 

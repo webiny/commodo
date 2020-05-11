@@ -7,7 +7,7 @@
   "version": "independent",
   "command": {
     "version": {
-      "preid": "canary",
+      "preid": "next",
       "ignoreChanges": [
         "scripts/**",
         ",**/__fixtures__/**",
@@ -15,7 +15,7 @@
         "**/*.md",
         "lerna.json"
       ],
-      "allowBranch": ["master", "canary"],
+      "allowBranch": ["master", "next"],
       "conventionalCommits": true,
       "createRelease": "github",
       "commitHooks": false,
