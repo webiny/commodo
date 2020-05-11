@@ -1,6 +1,6 @@
 {
   "name": "@commodo/fields",
-  "version": "1.0.3-canary.6",
+  "version": "1.0.3-next.6",
   "main": "index.js",
   "repository": {
     "type": "git",
