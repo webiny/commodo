@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.0.0-next.8 (2020-05-14)
+
+
+### Bug Fixes
+
+* update to work with the new driver interface ([588beb1](https://github.com/webiny/commodo/commit/588beb1b5c01e14b5eb49ed3cbb5aaa020c29724))
+
+
+
+
+
 # 2.0.0-next.7 (2020-05-11)
 
 **Note:** Version bump only for package @commodo/fields-storage
