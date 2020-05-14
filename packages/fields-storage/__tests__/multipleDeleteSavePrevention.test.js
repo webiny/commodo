@@ -16,7 +16,7 @@ describe("multiple delete / save prevention test", () => {
 
     test("should only call save once", async () => {
         const user = new User();
-        const save = sandbox.spy(User.getStorageDriver(), "save");
+        const save = sandbox.spy(User.getStorageDriver(), "update");
 
         const promise = user.save();
         user.save();

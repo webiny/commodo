@@ -98,54 +98,63 @@ describe("attribute models (using an additional aggregation class) - loading tes
 
     test("should not load if values are already set", async () => {
         const user = new User();
-        const modelSave = sandbox.spy(UsersGroups.getStorageDriver(), "save");
+        const modelCreate = sandbox.spy(UsersGroups.getStorageDriver(), "create");
+        const modelUpdate = sandbox.spy(UsersGroups.getStorageDriver(), "update");
         const modelFind = sandbox.spy(UsersGroups.getStorageDriver(), "find");
         const modelFindById = sandbox.spy(UsersGroups.getStorageDriver(), "findOne");
         await user.groups;
 
-        expect(modelSave.callCount).toEqual(0);
+        expect(modelCreate.callCount).toEqual(0);
+        expect(modelUpdate.callCount).toEqual(0);
         expect(modelFind.callCount).toEqual(0);
         expect(modelFindById.callCount).toEqual(0);
 
         await user.save();
 
-        expect(modelSave.callCount).toEqual(0);
+        expect(modelCreate.callCount).toEqual(0);
+        expect(modelUpdate.callCount).toEqual(0);
         expect(modelFind.callCount).toEqual(0);
         expect(modelFindById.callCount).toEqual(0);
 
         await user.save();
-        expect(modelSave.callCount).toEqual(0);
+        expect(modelCreate.callCount).toEqual(0);
+        expect(modelUpdate.callCount).toEqual(0);
         expect(modelFind.callCount).toEqual(0);
         expect(modelFindById.callCount).toEqual(0);
 
         await user.save();
-        expect(modelSave.callCount).toEqual(0);
+        expect(modelCreate.callCount).toEqual(0);
+        expect(modelUpdate.callCount).toEqual(0);
         expect(modelFind.callCount).toEqual(0);
         expect(modelFindById.callCount).toEqual(0);
 
         await user.groups;
         await user.save();
 
-        expect(modelSave.callCount).toEqual(0);
+        expect(modelCreate.callCount).toEqual(0);
+        expect(modelUpdate.callCount).toEqual(0);
         expect(modelFind.callCount).toEqual(0);
         expect(modelFindById.callCount).toEqual(0);
 
         const user2 = new User();
 
         await user2.save();
-        expect(modelSave.callCount).toEqual(0);
+        expect(modelCreate.callCount).toEqual(0);
+        expect(modelUpdate.callCount).toEqual(0);
         expect(modelFind.callCount).toEqual(0);
         expect(modelFindById.callCount).toEqual(0);
 
         await user2.save();
-        expect(modelSave.callCount).toEqual(0);
+        expect(modelCreate.callCount).toEqual(0);
+        expect(modelUpdate.callCount).toEqual(0);
         expect(modelFind.callCount).toEqual(0);
         expect(modelFindById.callCount).toEqual(0);
 
         await user2.getField('groups').getValue();
         await user2.save();
 
-        expect(modelSave.callCount).toEqual(0);
+        expect(modelCreate.callCount).toEqual(0);
+        expect(modelUpdate.callCount).toEqual(0);
         expect(modelFind.callCount).toEqual(1);
         expect(modelFindById.callCount).toEqual(0);
 
@@ -155,7 +164,8 @@ describe("attribute models (using an additional aggregation class) - loading tes
 
         await user2.groups;
 
-        expect(modelSave.callCount).toEqual(0);
+        expect(modelCreate.callCount).toEqual(0);
+        expect(modelUpdate.callCount).toEqual(0);
         expect(modelFind.callCount).toEqual(1);
         expect(modelFindById.callCount).toEqual(0);
 
@@ -165,11 +175,13 @@ describe("attribute models (using an additional aggregation class) - loading tes
 
         await user3.groups;
 
-        expect(modelSave.callCount).toEqual(1);
+        expect(modelCreate.callCount).toEqual(1);
+        expect(modelUpdate.callCount).toEqual(0);
         expect(modelFind.callCount).toEqual(2);
         expect(modelFindById.callCount).toEqual(0);
 
-        modelSave.restore();
+        modelCreate.restore();
+        modelUpdate.restore();
         modelFind.restore();
         modelFindById.restore();
     });

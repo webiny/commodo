@@ -153,7 +153,7 @@ describe("save and delete models attribute test", () => {
         const HH = mdbid();
         const II = mdbid();
 
-        let saveSpy = sandbox.spy(mainEntity.getStorageDriver(), "save");
+        let createSpy = sandbox.spy(mainEntity.getStorageDriver(), "create");
         let generateIdStub = sandbox
             .stub(idGenerator, "generate")
             .onCall(1)
@@ -177,7 +177,7 @@ describe("save and delete models attribute test", () => {
 
         await mainEntity.save();
 
-        expect(saveSpy.callCount).toEqual(9);
+        expect(createSpy.callCount).toEqual(9);
 
         expect(mainEntity.id).toBe(AA);
         expect(attr1[0].id).toBe(BB);
@@ -189,7 +189,7 @@ describe("save and delete models attribute test", () => {
         expect((await attr2[1].model1Entities)[0].id).toBe(II);
         expect(attr2[1].id).toBe(HH);
 
-        saveSpy.restore();
+        createSpy.restore();
         generateIdStub.restore();
     });
 
@@ -200,8 +200,8 @@ describe("save and delete models attribute test", () => {
             new Entity1().populate({ id: null, name: "Bucky", type: "dog" })
         ];
 
-        let modelSave = sandbox
-            .stub(mainEntity.getStorageDriver(), "save")
+        let modelCreate = sandbox
+            .stub(mainEntity.getStorageDriver(), "create")
             .onCall(0)
             .callsFake(model => {
                 model.id = "BB";
@@ -222,10 +222,10 @@ describe("save and delete models attribute test", () => {
 
         await mainEntity.save();
 
-        expect(modelSave.callCount).toEqual(3);
+        expect(modelCreate.callCount).toEqual(3);
         expect(modelFind.callCount).toEqual(0);
 
-        modelSave.restore();
+        modelCreate.restore();
         modelFind.restore();
     });
 
@@ -268,7 +268,7 @@ describe("save and delete models attribute test", () => {
         const HH = mdbid();
         const II = mdbid();
 
-        let saveSpy = sandbox.spy(MainEntity.getStorageDriver(), "save");
+        let createSpy = sandbox.spy(MainEntity.getStorageDriver(), "create");
         let generateIdStub = sandbox
             .stub(idGenerator, "generate")
             .onCall(0)
@@ -292,8 +292,8 @@ describe("save and delete models attribute test", () => {
 
         await mainEntity.save();
 
-        expect(saveSpy.callCount).toEqual(9);
-        saveSpy.restore();
+        expect(createSpy.callCount).toEqual(9);
+        createSpy.restore();
         generateIdStub.restore();
 
         let modelDelete = sandbox.stub(mainEntity.getStorageDriver(), "delete");

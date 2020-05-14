@@ -3,6 +3,7 @@ import { One } from "../../resources/models/oneTwoThree";
 import sinon from "sinon";
 import mdbid from "mdbid";
 import idGenerator from "@commodo/fields-storage/idGenerator";
+import { update } from "ramda";
 
 const sandbox = sinon.createSandbox();
 
@@ -82,7 +83,7 @@ describe("model attribute test", () => {
         const user = new User();
 
         const A = mdbid();
-        let saveSpy = sandbox.spy(user.getStorageDriver(), "save");
+        let createSpy = sandbox.spy(user.getStorageDriver(), "create");
         let generateIdStub = sandbox.stub(idGenerator, "generate").callsFake(() => A);
 
         user.populate({
@@ -106,10 +107,10 @@ describe("model attribute test", () => {
 
         await user.save();
 
-        saveSpy.restore();
+        createSpy.restore();
         generateIdStub.restore();
 
-        expect(saveSpy.callCount).toEqual(1);
+        expect(createSpy.callCount).toEqual(1);
         expect(user.id).toEqual(A);
 
         user.getField("company").setAutoSave();
@@ -117,7 +118,8 @@ describe("model attribute test", () => {
         const B = mdbid();
 
         // This time we should have an update on User model, and insert on linked company model
-        saveSpy = sandbox.spy(user.getStorageDriver(), "save");
+        createSpy = sandbox.spy(user.getStorageDriver(), "create");
+        let updateSpy = sandbox.spy(user.getStorageDriver(), "update");
         generateIdStub = sandbox
             .stub(idGenerator, "generate")
             .onCall(0)
@@ -125,10 +127,12 @@ describe("model attribute test", () => {
 
         await user.save();
 
-        saveSpy.restore();
+        createSpy.restore();
+        updateSpy.restore();
         generateIdStub.restore();
 
-        expect(saveSpy.calledTwice).toBeTruthy();
+        expect(createSpy.calledOnce).toBeTruthy();
+        expect(updateSpy.calledOnce).toBeTruthy();
         expect(user.id).toEqual(A);
         expect((await user.company).id).toEqual(B);
 
@@ -142,7 +146,8 @@ describe("model attribute test", () => {
         // Additionally, image model has a createdBy attribute, but since it's empty, nothing must happen here.
 
         const C = mdbid();
-        saveSpy = sandbox.spy(user.getStorageDriver(), "save");
+        createSpy = sandbox.spy(user.getStorageDriver(), "create");
+        updateSpy = sandbox.spy(user.getStorageDriver(), "update");
         generateIdStub = sandbox
             .stub(idGenerator, "generate")
             .onCall(0)
@@ -150,10 +155,12 @@ describe("model attribute test", () => {
 
         await user.save();
 
-        saveSpy.restore();
+        createSpy.restore();
+        updateSpy.restore();
         generateIdStub.restore();
 
-        expect(saveSpy.callCount).toEqual(2);
+        expect(createSpy.callCount).toEqual(1);
+        expect(updateSpy.callCount).toEqual(1);
         expect(user.id).toEqual(A);
         const company = await user.company;
         const image = await company.image;
@@ -179,7 +186,7 @@ describe("model attribute test", () => {
         const B = mdbid();
         const C = mdbid();
 
-        let saveSpy = sandbox.spy(user.getStorageDriver(), "save");
+        let createSpy = sandbox.spy(user.getStorageDriver(), "create");
         let generateIdStub = sandbox
             .stub(idGenerator, "generate")
             .onCall(0)
@@ -191,10 +198,10 @@ describe("model attribute test", () => {
 
         await user.save();
 
-        saveSpy.restore();
+        createSpy.restore();
         generateIdStub.restore();
 
-        expect(saveSpy.callCount).toBe(3);
+        expect(createSpy.callCount).toBe(3);
         expect(user.id).toEqual(A);
 
         const company = await user.company;
@@ -222,7 +229,7 @@ describe("model attribute test", () => {
         const B = mdbid();
         const C = mdbid();
 
-        let saveSpy = sandbox.spy(user.getStorageDriver(), "save");
+        let createSpy = sandbox.spy(user.getStorageDriver(), "create");
         let generateIdStub = sandbox
             .stub(idGenerator, "generate")
             .onCall(0)
@@ -234,10 +241,10 @@ describe("model attribute test", () => {
 
         await user.save();
 
-        saveSpy.restore();
+        createSpy.restore();
         generateIdStub.restore();
 
-        expect(saveSpy.calledThrice).toBeTruthy();
+        expect(createSpy.calledThrice).toBeTruthy();
         expect(user.id).toEqual(A);
 
         const company = await user.company;
@@ -261,16 +268,16 @@ describe("model attribute test", () => {
         const one = await One.findById(ids.one);
         findById.restore();
 
-        let saveSpy = sandbox.spy(One.getStorageDriver(), "save");
+        let updateSpy = sandbox.spy(One.getStorageDriver(), "update");
 
         await one.save();
-        expect(saveSpy.callCount).toEqual(0);
+        expect(updateSpy.callCount).toEqual(0);
 
         one.name = "asd";
         await one.save();
 
-        expect(saveSpy.callCount).toEqual(1);
-        saveSpy.restore();
+        expect(updateSpy.callCount).toEqual(1);
+        updateSpy.restore();
     });
 
     test("should create new model and save links correctly", async () => {
@@ -296,7 +303,8 @@ describe("model attribute test", () => {
 
         one.two = { name: ids.two, three: { name: ids.three } };
 
-        let saveSpy = sandbox.spy(one.getStorageDriver(), "save");
+        let createSpy = sandbox.spy(one.getStorageDriver(), "create");
+        let updateSpy = sandbox.spy(one.getStorageDriver(), "update");
         const generateIdStub = sandbox
             .stub(idGenerator, "generate")
             .onCall(0)
@@ -305,10 +313,12 @@ describe("model attribute test", () => {
             .callsFake(() => ids.two);
 
         await one.save();
-        saveSpy.restore();
+        createSpy.restore();
+        updateSpy.restore();
         generateIdStub.restore();
 
-        expect(saveSpy.calledThrice).toBeTruthy();
+        expect(createSpy.calledTwice).toBeTruthy();
+        expect(updateSpy.calledOnce).toBeTruthy();
 
         expect(one.id).toEqual(ids.one);
 
@@ -364,7 +374,9 @@ describe("model attribute test", () => {
         // This is what will happen once we execute save method on One model
 
         // 1. recursively call save method on all child entities.
-        let saveSpy = sandbox.spy(One.getStorageDriver(), "save");
+        let createSpy = sandbox.spy(One.getStorageDriver(), "create");
+        let updateSpy = sandbox.spy(One.getStorageDriver(), "update");
+
         let generateIdStub = sandbox
             .stub(idGenerator, "generate")
             .onCall(0)
@@ -394,12 +406,13 @@ describe("model attribute test", () => {
 
         await one.save();
 
-        expect(saveSpy.callCount).toEqual(5);
+        expect(createSpy.callCount).toEqual(4);
+        expect(updateSpy.callCount).toEqual(1);
         expect(modelFindById.callCount).toEqual(2);
 
         // Make sure model with ID 'three' was first deleted, and then the one with ID 'two'.
-        expect(modelDelete.getCall(0).args[0].data.id).toEqual(ids.three);
-        expect(modelDelete.getCall(1).args[0].data.id).toEqual(ids.two);
+        expect(modelDelete.getCall(0).args[0][0].data.id).toEqual(ids.three);
+        expect(modelDelete.getCall(1).args[0][0].data.id).toEqual(ids.two);
 
         expect(one.getField("two").initial.id).toEqual(ids.anotherTwo);
         expect(one.getField("two").current.id).toEqual(ids.anotherTwo);
@@ -408,7 +421,8 @@ describe("model attribute test", () => {
 
         modelFindById.restore();
         modelDelete.restore();
-        saveSpy.restore();
+        createSpy.restore();
+        updateSpy.restore();
         generateIdStub.restore();
     });
 
@@ -446,14 +460,14 @@ describe("model attribute test", () => {
                 return { id: ids.anotherTwo, name: "Another Two" };
             });
 
-        let saveSpy = sandbox.spy(One.getStorageDriver(), "save");
+        let updateSpy = sandbox.spy(One.getStorageDriver(), "update");
 
         await one.save();
 
         expect(modelFindById.callCount).toEqual(2);
-        expect(saveSpy.callCount).toEqual(1);
+        expect(updateSpy.callCount).toEqual(1);
 
         modelFindById.restore();
-        saveSpy.restore();
+        updateSpy.restore();
     });
 });

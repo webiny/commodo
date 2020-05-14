@@ -148,7 +148,8 @@ describe("model delete test", () => {
 
         classA.classB = { name: "classB", classC: { name: "classC" } };
 
-        const saveSpy = sandbox.stub(classA.getStorageDriver(), "save");
+        const createSpy = sandbox.stub(classA.getStorageDriver(), "create");
+        const updateSpy = sandbox.stub(classA.getStorageDriver(), "update");
         const generateIdStub = sandbox
             .stub(idGenerator, "generate")
             .onCall(0)
@@ -157,10 +158,11 @@ describe("model delete test", () => {
             .callsFake(() => "classB");
 
         await classA.save();
-        saveSpy.restore();
+        updateSpy.restore();
         generateIdStub.restore();
 
-        expect(saveSpy.calledThrice).toBeTruthy();
+        expect(createSpy.callCount).toBe(2);
+        expect(updateSpy.callCount).toBe(1);
 
         expect(classA.id).toBe("classA");
 
@@ -198,7 +200,7 @@ describe("model delete test", () => {
         modelFindById.restore();
 
         const modelSave = sandbox
-            .stub(classADynamic.getStorageDriver(), "save")
+            .stub(classADynamic.getStorageDriver(), "update")
             .onCall(0)
             .callsFake(() => {
                 return true;

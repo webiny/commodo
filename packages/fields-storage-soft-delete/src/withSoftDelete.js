@@ -31,14 +31,16 @@ export default () => {
                     await this.hook("beforeDelete", { options, model: this });
 
                     this.deleted = true;
-                    await this.getStorageDriver().save({
-                        name: getName(this),
-                        data: {
-                            ...(await this.toStorage()),
-                            id: this.id
-                        },
-                        options
-                    });
+                    await this.getStorageDriver().update([
+                        {
+                            name: getName(this),
+                            data: {
+                                ...(await this.toStorage()),
+                                id: this.id
+                            },
+                            options
+                        }
+                    ]);
 
                     await this.hook("afterDelete", { options, model: this });
 

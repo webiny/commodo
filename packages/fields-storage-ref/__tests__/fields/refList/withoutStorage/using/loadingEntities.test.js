@@ -133,7 +133,8 @@ describe("save and delete models attribute test", () => {
         expect(user.getField("groups").state.loading).toBe(false);
         expect(user.getField("groups").state.loaded).toBe(false);
 
-        let saveSpy = sandbox.spy(user.getStorageDriver(), "save");
+        let createSpy = sandbox.spy(user.getStorageDriver(), "create");
+        let updateSpy = sandbox.spy(user.getStorageDriver(), "update");
 
         let generateIdStub = sandbox
             .stub(idGenerator, "generate")
@@ -148,7 +149,8 @@ describe("save and delete models attribute test", () => {
 
         await user.save();
 
-        expect(saveSpy.callCount).toEqual(5);
+        expect(createSpy.callCount).toEqual(4);
+        expect(updateSpy.callCount).toEqual(1);
 
         expect(user.getField("groups").initial).toHaveLength(2);
         expect(user.getField("groups").initial[0].id).toEqual(P);
@@ -165,7 +167,8 @@ describe("save and delete models attribute test", () => {
         expect(user.getField("groups").links.current[0].id).toEqual(fourth);
         expect(user.getField("groups").links.current[1].id).toEqual(fifth);
 
-        saveSpy.restore();
+        createSpy.restore();
+        updateSpy.restore();
         generateIdStub.restore();
     });
 });

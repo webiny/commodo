@@ -12,8 +12,8 @@ describe("model pool test", () => {
         const A = mdbid();
         const user = new User();
         user.age = 30;
-        sandbox.stub(user.getStorageDriver(), "save").callsFake(({ data }) => {
-            data.id = A;
+        sandbox.stub(user.getStorageDriver(), "create").callsFake((items) => {
+            items[0].data.id = A;
             return true;
         });
 
