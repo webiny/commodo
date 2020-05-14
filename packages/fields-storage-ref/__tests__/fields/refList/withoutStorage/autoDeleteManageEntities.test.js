@@ -42,7 +42,8 @@ describe("model attribute current / initial values syncing", () => {
 
         const X = mdbid();
 
-        let saveSpy = sandbox.spy(mainEntity.getStorageDriver(), "save");
+        let createSpy = sandbox.spy(mainEntity.getStorageDriver(), "create");
+        let updateSpy = sandbox.spy(mainEntity.getStorageDriver(), "update");
         let generateIdStub = sandbox
             .stub(idGenerator, "generate")
             .onCall(0)
@@ -54,11 +55,13 @@ describe("model attribute current / initial values syncing", () => {
         expect(mainEntity.getField("attribute1").initial[0].id).toEqual(X);
         expect(mainEntity.getField("attribute1").current.length).toBe(1);
         expect(mainEntity.getField("attribute1").current[0].id).toEqual(X);
-        expect(saveSpy.callCount).toEqual(2);
+        expect(createSpy.callCount).toEqual(1);
+        expect(updateSpy.callCount).toEqual(1);
         expect(modelDelete.callCount).toEqual(2);
 
         generateIdStub.restore();
-        saveSpy.restore();
+        createSpy.restore();
+        updateSpy.restore();
         modelFind.restore();
 
         const D = mdbid();
@@ -119,7 +122,7 @@ describe("model attribute current / initial values syncing", () => {
         expect(mainEntity.getField("attribute2").current[1]).toBe(undefined);
         expect(mainEntity.getField("attribute2").current[2]).toBe(undefined);
 
-        saveSpy = sandbox.spy(mainEntity.getStorageDriver(), "save");
+        updateSpy = sandbox.spy(mainEntity.getStorageDriver(), "update");
         generateIdStub = sandbox
             .stub(idGenerator, "generate")
             .onCall(0)
@@ -129,10 +132,10 @@ describe("model attribute current / initial values syncing", () => {
         await mainEntity.save();
 
         expect(modelDelete.callCount).toEqual(4);
-        expect(saveSpy.callCount).toEqual(1);
+        expect(updateSpy.callCount).toEqual(1);
 
         modelDelete.restore();
-        saveSpy.restore();
+        updateSpy.restore();
         generateIdStub.restore();
     });
 });

@@ -4,14 +4,13 @@ import mdbid from "mdbid";
 
 const sandbox = sinon.createSandbox();
 const getEntity = async () => {
-
     const id = mdbid();
 
     let modelFindById = sandbox
         .stub(One.getStorageDriver(), "findOne")
         .onCall(0)
         .callsFake(() => {
-            return ({ id, name: "One", two: "two" });
+            return { id, name: "One", two: "two" };
         });
 
     const model = await One.findById(id);
@@ -103,7 +102,7 @@ describe("dirty flag test", () => {
         expect(twoAttribute.state.dirty).toBe(false);
 
         let findById = sandbox.stub(One.getStorageDriver(), "findOne").callsFake(() => {
-            return ({ id: "two", name: "Two" });
+            return { id: "two", name: "Two" };
         });
 
         const two = await one.two;
@@ -120,25 +119,25 @@ describe("dirty flag test", () => {
         const one = await getEntity();
 
         let findById = sandbox.stub(One.getStorageDriver(), "findOne").callsFake(() => {
-            return ({ id: "two", name: "Two" });
+            return { id: "two", name: "Two" };
         });
 
         const two = await one.two;
         findById.restore();
 
-        const modelSaveSpy = sandbox.spy(One.getStorageDriver(), "save");
+        const modelUpdateSpy = sandbox.spy(One.getStorageDriver(), "update");
 
         await one.save();
-        expect(modelSaveSpy.callCount).toEqual(0);
+        expect(modelUpdateSpy.callCount).toEqual(0);
 
         two.name = "anotherName";
         expect(two.isDirty()).toBe(true);
         await one.save();
-        expect(modelSaveSpy.callCount).toEqual(1);
+        expect(modelUpdateSpy.callCount).toEqual(1);
         expect(!two.isDirty()).toBe(true);
 
         await one.save();
-        expect(modelSaveSpy.callCount).toEqual(1);
+        expect(modelUpdateSpy.callCount).toEqual(1);
         expect(!two.isDirty()).toBe(true);
     });
 });

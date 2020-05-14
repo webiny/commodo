@@ -114,11 +114,12 @@ describe("model attribute current / initial values syncing", () => {
                 return { id: ids.two, name: "Two" };
             });
 
-        let saveSpy = sandbox.spy(One.getStorageDriver(), "save");
+        let createSpy = sandbox.spy(One.getStorageDriver(), "create");
+        let updateSpy = sandbox.spy(One.getStorageDriver(), "update");
         let generateIdStub = sandbox
             .stub(idGenerator, "generate")
             .onCall(0)
-            .callsFake(() => ids.anotherTwo)
+            .callsFake(() => ids.anotherTwo);
 
         const modelDelete = sandbox.stub(One.getStorageDriver(), "delete").callsFake(() => {
             true;
@@ -147,7 +148,8 @@ describe("model attribute current / initial values syncing", () => {
 
         await one.save();
 
-        expect(saveSpy.callCount).toEqual(2);
+        expect(createSpy.callCount).toEqual(1);
+        expect(updateSpy.callCount).toEqual(1);
         expect(one.id).toEqual(ids.one);
         expect(attrTwo.state.loading).toBe(false);
         expect(attrTwo.state.loaded).toBe(true);
@@ -158,7 +160,8 @@ describe("model attribute current / initial values syncing", () => {
         expect(modelDelete.callCount).toEqual(1);
 
         generateIdStub.restore();
-        saveSpy.restore();
+        createSpy.restore();
+        updateSpy.restore();
         modelDelete.restore();
         modelFindById.restore();
     });

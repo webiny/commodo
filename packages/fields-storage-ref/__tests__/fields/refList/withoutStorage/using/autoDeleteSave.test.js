@@ -71,7 +71,8 @@ describe("attribute models (using an additional aggregation class) - saving test
         expect(user.getField("groups").links.initial).toHaveLength(0);
         expect(user.getField("groups").links.current).toHaveLength(0);
 
-        let saveSpy = sandbox.spy(user.getStorageDriver(), "save");
+        let createSpy = sandbox.spy(user.getStorageDriver(), "create");
+        let updateSpy = sandbox.spy(user.getStorageDriver(), "update");
 
         let generateIdStub = sandbox
             .stub(idGenerator, "generate")
@@ -86,10 +87,12 @@ describe("attribute models (using an additional aggregation class) - saving test
 
         await user.save();
 
-        saveSpy.restore();
+        createSpy.restore();
+        updateSpy.restore();
         generateIdStub.restore();
 
-        expect(saveSpy.callCount).toEqual(5);
+        expect(createSpy.callCount).toEqual(4);
+        expect(updateSpy.callCount).toEqual(1);
 
         expect(user.getField("groups").initial).toHaveLength(2);
         expect(user.getField("groups").initial[0].id).toEqual(P);
@@ -120,7 +123,8 @@ describe("attribute models (using an additional aggregation class) - saving test
 
         // Here we care only for save calls that actually created an ID, we don't care about updates. We should have
         // four saves: link for 1st item, link and the item itself for 2nd, and again only link for the last item.
-        saveSpy = sandbox.spy(user.getStorageDriver(), "save");
+        createSpy = sandbox.spy(user.getStorageDriver(), "create");
+        updateSpy = sandbox.spy(user.getStorageDriver(), "update");
         generateIdStub = sandbox
             .stub(idGenerator, "generate")
             .onCall(0)
@@ -133,10 +137,12 @@ describe("attribute models (using an additional aggregation class) - saving test
             .callsFake(() => usersGroups.eighth);
 
         await user.save();
-        saveSpy.restore();
+        createSpy.restore();
+        updateSpy.restore();
         generateIdStub.restore();
 
-        expect(saveSpy.callCount).toEqual(9);
+        expect(createSpy.callCount).toEqual(6);
+        expect(updateSpy.callCount).toEqual(3);
 
         expect(user.getField("groups").initial).toHaveLength(5);
         expect(user.getField("groups").initial[0].id).toEqual(P);
@@ -172,14 +178,14 @@ describe("attribute models (using an additional aggregation class) - saving test
         user.groups = groups;
 
         const modelDelete = sandbox.spy(user.getStorageDriver(), "delete");
-         saveSpy = sandbox.spy(user.getStorageDriver(), "save");
+        updateSpy = sandbox.spy(user.getStorageDriver(), "update");
 
         await user.save();
 
-        expect(saveSpy.callCount).toEqual(4);
+        expect(updateSpy.callCount).toEqual(4);
         expect(modelDelete.callCount).toEqual(2);
 
-        saveSpy.restore();
+        updateSpy.restore();
         modelDelete.restore();
 
         expect(user.getField("groups").initial).toHaveLength(3);
@@ -228,7 +234,8 @@ describe("attribute models (using an additional aggregation class) - saving test
 
         expect(user.getField("groups").state.dirty).toBe(true);
 
-        let modelSaveSpy = sandbox.spy(User.getStorageDriver(), "save");
+        let modelCreateSpy = sandbox.spy(User.getStorageDriver(), "create");
+        let modelUpdateSpy = sandbox.spy(User.getStorageDriver(), "update");
         let modelDeleteSpy = sandbox.spy(User.getStorageDriver(), "delete");
 
         sandbox
@@ -266,7 +273,8 @@ describe("attribute models (using an additional aggregation class) - saving test
 
         await user.save();
 
-        expect(modelSaveSpy.callCount).toEqual(2);
+        expect(modelCreateSpy.callCount).toEqual(1);
+        expect(modelUpdateSpy.callCount).toEqual(1);
         expect(modelDeleteSpy.callCount).toEqual(0);
     });
 
@@ -280,8 +288,8 @@ describe("attribute models (using an additional aggregation class) - saving test
         const user = await UserDynamic.findById(A);
         modelFindById.restore();
 
-        let modelSave = sandbox
-            .stub(user.getStorageDriver(), "save")
+        let modelUpdate = sandbox
+            .stub(user.getStorageDriver(), "update")
             .onCall(0)
             .callsFake(() => {
                 return true;
@@ -291,12 +299,12 @@ describe("attribute models (using an additional aggregation class) - saving test
                 return true;
             });
         await user.save();
-        expect(modelSave.callCount).toEqual(0);
+        expect(modelUpdate.callCount).toEqual(0);
 
         user.name = "now it should save because of this dirty attribute";
         await user.save();
-        modelSave.restore();
-        expect(modelSave.callCount).toEqual(1);
+        modelUpdate.restore();
+        expect(modelUpdate.callCount).toEqual(1);
 
         let modelDelete = sandbox
             .stub(user.getStorageDriver(), "delete")

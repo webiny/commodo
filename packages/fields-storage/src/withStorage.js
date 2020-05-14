@@ -134,15 +134,15 @@ const withStorage = (configuration: Configuration) => {
                             this.id = this.constructor.generateId();
                         }
 
-                        await this.getStorageDriver().save({
-                            name: getName(this),
-                            isUpdate: existing,
-                            isCreate: !existing,
-                            data: {
-                                ...(await this.toStorage()),
-                                id: this.id
+                        await this.getStorageDriver()[existing ? "update" : "create"]([
+                            {
+                                name: getName(this),
+                                data: {
+                                    ...(await this.toStorage()),
+                                    id: this.id
+                                }
                             }
-                        });
+                        ]);
                     }
 
                     await registerSaveUpdateCreateHooks("__after", {
@@ -187,11 +187,13 @@ const withStorage = (configuration: Configuration) => {
 
                     await this.hook("beforeDelete", { options, model: this });
 
-                    await this.getStorageDriver().delete({
-                        name: getName(this),
-                        data: { id: this.id },
-                        options
-                    });
+                    await this.getStorageDriver().delete([
+                        {
+                            name: getName(this),
+                            data: { id: this.id },
+                            options
+                        }
+                    ]);
 
                     await this.hook("afterDelete", { options, model: this });
 

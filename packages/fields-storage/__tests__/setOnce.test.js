@@ -17,13 +17,11 @@ describe("setOnce test", () => {
             })
         )(createModel());
 
-        let modelFindById = sandbox
-            .stub(SomeModel.getStorageDriver(), "findOne")
-            .callsFake(() => ({
-                id,
-                slug: "slug-test",
-                name: "name-test"
-            }));
+        let modelFindById = sandbox.stub(SomeModel.getStorageDriver(), "findOne").callsFake(() => ({
+            id,
+            slug: "slug-test",
+            name: "name-test"
+        }));
 
         const someModel1 = await SomeModel.findById(id);
 
@@ -35,7 +33,7 @@ describe("setOnce test", () => {
 
         // Changing the slug and saving it to the database should not work
         // Slug should not change because of a "setOnce" call.
-        let saveSpy = sandbox.spy(someModel1.getStorageDriver(), "save");
+        let saveSpy = sandbox.spy(someModel1.getStorageDriver(), "update");
 
         someModel1.slug = "slug-test-2";
         await someModel1.save();
@@ -46,14 +44,14 @@ describe("setOnce test", () => {
         await someModel1.save();
 
         expect(saveSpy.callCount).toEqual(1);
-        expect(saveSpy.getCall(0).args[0]).toEqual({
-            data: {
-                id: id,
-                name: "name-test-2"
-            },
-            isCreate: false,
-            isUpdate: true,
-            name: "SomeModel"
-        });
+        expect(saveSpy.getCall(0).args[0]).toEqual([
+            {
+                data: {
+                    id: id,
+                    name: "name-test-2"
+                },
+                name: "SomeModel"
+            }
+        ]);
     });
 });

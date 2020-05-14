@@ -3,39 +3,41 @@ class CustomDriver {
         this.data = {};
     }
 
-    async save({ name, data, isCreate }) {
-        const method = isCreate ? "create" : "update";
-        return this[method]({ name, data });
+    async create(items) {
+        for (let i = 0; i < items.length; i++) {
+            const { name, data } = items[i];
+            if (!this.data[name]) {
+                this.data[name] = {};
+            }
+
+            this.data[name][data.id] = data;
+        }
     }
 
-    async create({ name, data }) {
-        // Check if table exists.
-        if (!this.data[name]) {
-            this.data[name] = {};
-        }
+    async update(items) {
+        for (let i = 0; i < items.length; i++) {
+            const { name, data } = items[i];
+            if (!this.data[name]) {
+                this.data[name] = {};
+            }
 
-        this.data[name][data.id] = data;
+            this.data[name][data.id] = data;
+        }
     }
 
-    async update({ name, data }) {
-        // Check if table exists.
-        if (!this.data[name]) {
-            this.data[name] = {};
+    async delete(items) {
+        for (let i = 0; i < items.length; i++) {
+            const { name, data } = items[i];
+            if (!this.data[name]) {
+                continue;
+            }
+
+            if (!this.data[name][data.id]) {
+                continue;
+            }
+
+            delete this.data[name][data.id];
         }
-
-        this.data[name][data.id] = data;
-    }
-
-    async delete({ name, data }) {
-        if (!this.data[name]) {
-            return;
-        }
-
-        if (!this.data[name][data.id]) {
-            return;
-        }
-
-        delete this.data[name][data.id];
     }
 
     async count({ name, options }) {
