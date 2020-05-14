@@ -1,5 +1,9 @@
 name: Check Pull Request
 
+env:
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+
 on:
   pull_request:
     branches: [ next ]
