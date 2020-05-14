@@ -17,34 +17,40 @@ class MongoDbDriver {
         };
     }
 
-    // eslint-disable-next-line
-    async save({ name, data, isCreate }) {
-        return isCreate ? this.create({ name, data }) : this.update({ name, data });
-    }
-
-    async create({ name, data }: Object) {
-        data._id = new mongodb.ObjectID(data.id);
-
-        await this.getDatabase()
-            .collection(this.getCollectionName(name))
-            .insertOne(data);
-        return true;
-    }
-
-    async update({ name, data }: Object) {
-        const collection = this.getCollectionName(name);
-        await this.getDatabase()
-            .collection(collection)
-            .updateOne({ id: data.id }, { $set: data });
+    async create(items: Array<Object>) {
+        for (let i = 0; i < items.length; i++) {
+            const { name, data } = items[i];
+            data._id = new mongodb.ObjectID(data.id);
+            await this.getDatabase()
+                .collection(this.getCollectionName(name))
+                .insertOne(data);
+        }
 
         return true;
     }
 
+    async update(items: Array<Object>) {
+        for (let i = 0; i < items.length; i++) {
+            const { name, data } = items[i];
+            const collection = this.getCollectionName(name);
+            await this.getDatabase()
+                .collection(collection)
+                .updateOne({ id: data.id }, { $set: data });
+        }
+
+        return true;
+    }
+
     // eslint-disable-next-line
-    async delete({ name, data: { id } }) {
-        await this.getDatabase()
-            .collection(this.getCollectionName(name))
-            .deleteOne({ id });
+    async delete(items: Array<Object>) {
+        for (let i = 0; i < items.length; i++) {
+            const { name, data } = items[i];
+
+            await this.getDatabase()
+                .collection(this.getCollectionName(name))
+                .deleteOne({ id: data.id });
+        }
+
         return true;
     }
 
