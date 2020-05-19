@@ -65,4 +65,17 @@ describe("find test", function() {
         expect(records[0].id).toBe(stringIds[1]);
         expect(records[1].id).toBe(stringIds[2]);
     });
+
+    it("should return only specified fields", async () => {
+        const [records] = await models.SimpleModel.getStorageDriver().find({
+            name: "SimpleModel",
+            options: {
+                limit: 1,
+                fields: ["name", "slug"]
+            }
+        });
+
+        expect(records.length).toBe(1);
+        expect(Object.keys(records[0])).toStrictEqual(["_id", "id", "name", "slug"]);
+    });
 });

@@ -1,5 +1,5 @@
 // @flow
-import mongodb from "mongodb";
+import { clone } from "ramda";
 import isMongoDbId from "./isMongoDbId";
 
 class MongoDbDriver {
@@ -20,7 +20,6 @@ class MongoDbDriver {
     async create(items: Array<Object>) {
         for (let i = 0; i < items.length; i++) {
             const { name, data } = items[i];
-            data._id = new mongodb.ObjectID(data.id);
             await this.getDatabase()
                 .collection(this.getCollectionName(name))
                 .insertOne(data);
@@ -42,15 +41,13 @@ class MongoDbDriver {
     }
 
     // eslint-disable-next-line
-    async delete(items: Array<Object>) {
-        for (let i = 0; i < items.length; i++) {
-            const { name, data } = items[i];
+    async delete({ name, options }) {
+        const clonedOptions = { ...options };
 
-            await this.getDatabase()
-                .collection(this.getCollectionName(name))
-                .deleteOne({ id: data.id });
-        }
-
+        MongoDbDriver.__prepareSearchOption(clonedOptions);
+        await this.getDatabase()
+            .collection(this.getCollectionName(name))
+            .deleteMany(clonedOptions.query);
         return true;
     }
 
@@ -58,12 +55,17 @@ class MongoDbDriver {
         const clonedOptions = { limit: 0, offset: 0, ...options };
 
         MongoDbDriver.__prepareSearchOption(clonedOptions);
+        MongoDbDriver.__prepareProjectFields(clonedOptions);
 
         const database = await this.getDatabase()
             .collection(this.getCollectionName(name))
             .find(clonedOptions.query)
             .limit(clonedOptions.limit)
             .skip(clonedOptions.offset);
+
+        if (Array.isArray(options.fields) && options.fields.length > 0) {
+            database.project(clonedOptions.project);
+        }
 
         if (clonedOptions.sort && Object.keys(clonedOptions.sort).length > 0) {
             database.sort(clonedOptions.sort);
@@ -75,15 +77,21 @@ class MongoDbDriver {
     async findOne({ name, options }) {
         const clonedOptions = { ...options };
         MongoDbDriver.__prepareSearchOption(clonedOptions);
+        MongoDbDriver.__prepareProjectFields(clonedOptions);
 
-        const results = await this.getDatabase()
+        const database = await this.getDatabase()
             .collection(this.getCollectionName(name))
             .find(clonedOptions.query)
             .limit(1)
-            .sort(clonedOptions.sort)
-            .toArray();
+            .sort(clonedOptions.sort);
 
-        return results[0];
+        if (Array.isArray(options.fields) && options.fields.length > 0) {
+            database.project(clonedOptions.project);
+        }
+
+        const result = await database.toArray();
+
+        return result[0];
     }
 
     async count({ name, options }) {
@@ -153,6 +161,21 @@ class MongoDbDriver {
             }
 
             delete options.search;
+        }
+    }
+
+    static __prepareProjectFields(options) {
+        // Here we convert requested fields into a "project" parameter
+        if (options.fields) {
+            options.project = options.fields.reduce(
+                (acc, item) => {
+                    acc[item] = 1;
+                    return acc;
+                },
+                { id: 1 }
+            );
+
+            delete options.fields;
         }
     }
 }
