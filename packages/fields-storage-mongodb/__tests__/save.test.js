@@ -12,7 +12,7 @@ describe("save test", function() {
             .find()
             .toSimpleArray();
 
-        expect(items).toEqual([{ _id: simpleModel.id, id: simpleModel.id, enabled: true }]);
+        expect(items).toMatchObject([{ id: simpleModel.id, enabled: true }]);
 
         simpleModel.name = "test2";
         await simpleModel.save();
@@ -21,8 +21,8 @@ describe("save test", function() {
             .find()
             .toSimpleArray();
         
-        expect(items).toEqual([
-            { _id: simpleModel.id, id: simpleModel.id, enabled: true, name: "test2", slug: "test2" }
+        expect(items).toMatchObject([
+            { id: simpleModel.id, enabled: true, name: "test2", slug: "test2" }
         ]);
     });
 
