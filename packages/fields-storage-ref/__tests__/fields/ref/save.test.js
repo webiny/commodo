@@ -411,8 +411,8 @@ describe("model attribute test", () => {
         expect(modelFindById.callCount).toEqual(2);
 
         // Make sure model with ID 'three' was first deleted, and then the one with ID 'two'.
-        expect(modelDelete.getCall(0).args[0][0].data.id).toEqual(ids.three);
-        expect(modelDelete.getCall(1).args[0][0].data.id).toEqual(ids.two);
+        expect(modelDelete.getCall(0).args[0].options.query.id).toEqual(ids.three);
+        expect(modelDelete.getCall(1).args[0].options.query.id).toEqual(ids.two);
 
         expect(one.getField("two").initial.id).toEqual(ids.anotherTwo);
         expect(one.getField("two").current.id).toEqual(ids.anotherTwo);

@@ -25,18 +25,20 @@ class CustomDriver {
         }
     }
 
-    async delete(items) {
-        for (let i = 0; i < items.length; i++) {
-            const { name, data } = items[i];
-            if (!this.data[name]) {
-                continue;
+    async delete({ name, options }) {
+        const records = this.data[name];
+        if (!records) {
+            return null;
+        }
+        let query = (options && options.query) || {};
+        recordsLoop: for (const id in this.data[name]) {
+            const record = this.data[name][id];
+            for (const key in query) {
+                if (record[key] !== query[key]) {
+                    continue recordsLoop;
+                }
             }
-
-            if (!this.data[name][data.id]) {
-                continue;
-            }
-
-            delete this.data[name][data.id];
+            delete this.data[name][id];
         }
     }
 
