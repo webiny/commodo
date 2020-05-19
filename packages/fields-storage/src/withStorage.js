@@ -51,7 +51,8 @@ type FindParams = Object & {
     limit: ?number,
     before: ?string,
     after: ?string,
-    totalCount: ?boolean
+    totalCount: ?boolean,
+    defaultSortField: ?string
 };
 
 function cursorFrom(data, keys) {
@@ -187,13 +188,10 @@ const withStorage = (configuration: Configuration) => {
 
                     await this.hook("beforeDelete", { options, model: this });
 
-                    await this.getStorageDriver().delete([
-                        {
-                            name: getName(this),
-                            data: { id: this.id },
-                            options
-                        }
-                    ]);
+                    await this.getStorageDriver().delete({
+                        name: getName(this),
+                        options: { query: { id: this.id }, ...options }
+                    });
 
                     await this.hook("afterDelete", { options, model: this });
 
@@ -217,9 +215,10 @@ const withStorage = (configuration: Configuration) => {
                 return this;
             },
 
-            async toStorage() {
+            async toStorage({ skipDifferenceCheck = false } = {}) {
                 return this.__withStorage.fieldsStorageAdapter.toStorage({
-                    fields: this.getFields()
+                    fields: this.getFields(),
+                    skipDifferenceCheck
                 });
             }
         }))(fn);
@@ -276,6 +275,7 @@ const withStorage = (configuration: Configuration) => {
                         before,
                         after,
                         totalCount: countTotal = false,
+                        defaultSortField = "id",
                         ...other
                     } = options;
 
@@ -337,8 +337,8 @@ const withStorage = (configuration: Configuration) => {
                         });
                     }
 
-                    if (sort && !sort.id) {
-                        sort["id"] = forward ? -1 : 1;
+                    if (sort && !sort[defaultSortField]) {
+                        sort[defaultSortField] = forward ? -1 : 1;
                     }
 
                     const params = { query, sort, limit: limit + 1, ...other };
