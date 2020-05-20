@@ -258,7 +258,7 @@ const withStorage = (configuration: Configuration) => {
                     return this.__withStorage.driver;
                 },
                 isId(value) {
-                    return typeof value === "string" && !!value.match(/^[a-zA-Z0-9]*$/);
+                    return typeof value === "string" && !!value.match(/^[0-9a-fA-F]{24}$/);
                 },
                 generateId,
                 async find(options: ?FindParams) {

@@ -3,7 +3,6 @@ import { One } from "../../resources/models/oneTwoThree";
 import sinon from "sinon";
 import mdbid from "mdbid";
 import idGenerator from "@commodo/fields-storage/idGenerator";
-import { update } from "ramda";
 
 const sandbox = sinon.createSandbox();
 
@@ -12,12 +11,14 @@ describe("model attribute test", () => {
     beforeEach(() => User.getStoragePool().flush());
 
     test("should return model from storage", async () => {
+        const A = mdbid();
+
         const model = new User();
-        model.getField("company").setStorageValue("A");
-        expect(model.getField("company").current).toBe("A");
+        model.getField("company").setStorageValue(A);
+        expect(model.getField("company").current).toBe(A);
 
         sandbox.stub(Company.getStorageDriver(), "findOne").callsFake(() => {
-            return { id: "A", name: "TestCompany" };
+            return { id: A, name: "TestCompany" };
         });
 
         const company = await model.company;
@@ -346,7 +347,7 @@ describe("model attribute test", () => {
                 return { id: ids.one, name: "One", two: ids.two };
             });
 
-        const one = await One.findById("a");
+        const one = await One.findById(ids.one);
         expect(await one.getField("two").getStorageValue()).toEqual(ids.two);
         expect(one.getField("two").current).toEqual(ids.two);
         expect(one.getField("two").initial).toEqual(ids.two);

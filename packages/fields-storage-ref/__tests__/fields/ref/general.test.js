@@ -7,7 +7,7 @@ import { withName } from "@commodo/name";
 import { ref } from "@commodo/fields-storage-ref";
 import { compose } from "ramda";
 import createModel from "./../../resources/models/createModel";
-
+import mdbid from "mdbid";
 const sandbox = sinon.createSandbox();
 
 describe("model attribute test", () => {
@@ -82,7 +82,7 @@ describe("model attribute test", () => {
                         }
                     }
                 })
-            }),
+            })
         )(createModel());
 
         const Primary = compose(
@@ -155,89 +155,103 @@ describe("model attribute test", () => {
     });
 
     test("should lazy load any of the accessed linked models", async () => {
+        const ids = {
+            one: mdbid(),
+            two: mdbid(),
+            three: mdbid(),
+            four: mdbid(),
+            anotherFour: mdbid(),
+            five: mdbid(),
+            six: mdbid()
+        };
         let findById = sandbox
             .stub(One.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: "one", name: "One", two: "two" };
+                return { id: ids.one, name: "One", two: ids.two };
             })
             .onCall(1)
             .callsFake(() => {
-                return { id: "two", name: "Two", three: "three" };
+                return { id: ids.two, name: "Two", three: ids.three };
             })
             .onCall(2)
             .callsFake(() => {
                 return {
-                    id: "three",
+                    id: ids.three,
                     name: "Three",
-                    four: "four",
-                    anotherFour: "anotherFour",
-                    five: "five",
-                    six: "six"
+                    four: ids.four,
+                    anotherFour: ids.anotherFour,
+                    five: ids.five,
+                    six: ids.six
                 };
             })
             .onCall(3)
             .callsFake(() => {
-                return { id: "four", name: "Four" };
+                return { id: ids.four, name: "Four" };
             })
             .onCall(4)
             .callsFake(() => {
-                return { id: "anotherFour", name: "Another Four" };
+                return { id: ids.anotherFour, name: "Another Four" };
             })
             .onCall(5)
             .callsFake(() => {
-                return { id: "five", name: "Five" };
+                return { id: ids.five, name: "Five" };
             })
             .onCall(6)
             .callsFake(() => {
-                return { id: "six", name: "Six" };
+                return { id: ids.six, name: "Six" };
             });
 
-        const one = await One.findById("one");
-        expect(one.id).toEqual("one");
+        const one = await One.findById(ids.one);
+        expect(one.id).toEqual(ids.one);
         expect(one.name).toEqual("One");
-        expect(one.getField("two").current).toEqual("two");
+        expect(one.getField("two").current).toEqual(ids.two);
 
         const two = await one.two;
-        expect(two.id).toEqual("two");
+        expect(two.id).toEqual(ids.two);
         expect(two.name).toEqual("Two");
 
-        expect(two.getField("three").current).toEqual("three");
+        expect(two.getField("three").current).toEqual(ids.three);
 
         const three = await two.three;
-        expect(three.id).toEqual("three");
+        expect(three.id).toEqual(ids.three);
         expect(three.name).toEqual("Three");
 
-        expect(three.getField("four").current).toEqual("four");
+        expect(three.getField("four").current).toEqual(ids.four);
 
         const four = await three.four;
-        expect(four.id).toEqual("four");
+        expect(four.id).toEqual(ids.four);
         expect(four.name).toEqual("Four");
 
         const anotherFour = await three.anotherFour;
-        expect(anotherFour.id).toEqual("anotherFour");
+        expect(anotherFour.id).toEqual(ids.anotherFour);
         expect(anotherFour.name).toEqual("Another Four");
 
         const five = await three.five;
-        expect(five.id).toEqual("five");
+        expect(five.id).toEqual(ids.five);
         expect(five.name).toEqual("Five");
 
         const six = await three.six;
-        expect(six.id).toEqual("six");
+        expect(six.id).toEqual(ids.six);
         expect(six.name).toEqual("Six");
 
         findById.restore();
     });
 
     test("should set internal loaded flag to true when called for the first time, and no findById calls should be made", async () => {
+        const ids = {
+            one: mdbid(),
+            two: mdbid()
+        };
+
         let findById = sandbox
             .stub(One.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: "one", name: "One" };
+                return { id: ids.one, name: "One" };
             });
 
-        const one = await One.findById("one");
+        const one = await One.findById(ids.one);
         findById.restore();
 
         expect(one.getField("two").current).toEqual(null);

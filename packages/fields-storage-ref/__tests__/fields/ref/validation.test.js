@@ -5,7 +5,7 @@ import { One, Two } from "../../resources/models/oneTwoThree";
 import sinon from "sinon";
 import { WithFieldsError, withFields, string } from "@commodo/fields";
 import { ref } from "@commodo/fields-storage-ref";
-
+import mdbid from "mdbid";
 import { compose } from "ramda";
 const sandbox = sinon.createSandbox();
 
@@ -149,14 +149,19 @@ describe("model attribute test", () => {
     });
 
     test("should validate if attribute is being loaded", async () => {
+        const ids = {
+            one: mdbid(),
+            two: mdbid()
+        };
+
         let findById = sandbox
             .stub(One.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: "one", name: "One" };
+                return { id: ids.one, name: "One" };
             });
 
-        const one = await One.findById("one");
+        const one = await One.findById(ids.one);
 
         await one.save();
 
@@ -178,7 +183,7 @@ describe("model attribute test", () => {
             withFields({
                 name: string()
             }),
-            withName("Two"),
+            withName("Two")
         )(createModel());
 
         const One = compose(
@@ -193,17 +198,18 @@ describe("model attribute test", () => {
                     }
                 })
             }),
-            withName("One"),
+            withName("One")
         )(createModel());
 
+        const ids = { one: mdbid() };
         let findById = sandbox
             .stub(One.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: "one", name: "One" };
+                return { id: ids.one, name: "One" };
             });
 
-        const one = await One.findById("one");
+        const one = await One.findById(ids.one);
         findById.restore();
 
         let error = null;
@@ -228,14 +234,16 @@ describe("model attribute test", () => {
     });
 
     test("should throw error since invalid ID was set", async () => {
+        const ids = { one: mdbid(), two: mdbid() };
+
         let modelFindById = sandbox
             .stub(One.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: "one", name: "One", two: "two" };
+                return { id: ids.one, name: "One", two: ids.two };
             });
 
-        const one = await One.findById("a");
+        const one = await One.findById(ids.one);
 
         expect(modelFindById.callCount).toEqual(1);
         modelFindById.restore();

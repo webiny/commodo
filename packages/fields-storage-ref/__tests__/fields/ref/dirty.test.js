@@ -3,17 +3,15 @@ import sinon from "sinon";
 import mdbid from "mdbid";
 
 const sandbox = sinon.createSandbox();
-const getEntity = async () => {
-    const id = mdbid();
-
+const getEntity = async (oneId = mdbid(), twoId = mdbid()) => {
     let modelFindById = sandbox
         .stub(One.getStorageDriver(), "findOne")
         .onCall(0)
         .callsFake(() => {
-            return { id, name: "One", two: "two" };
+            return { id: oneId, name: "One", two: twoId };
         });
 
-    const model = await One.findById(id);
+    const model = await One.findById(oneId);
     modelFindById.restore();
     return model;
 };
@@ -61,19 +59,27 @@ describe("dirty flag test", () => {
     });
 
     test("loaded model - when setting a value, dirty must be set as true only if different", async () => {
-        let model = await getEntity();
+        let oneId = mdbid();
+        let twoId = mdbid();
+        let model = await getEntity(oneId, twoId);
+
         let twoAttribute = model.getField("two");
 
-        model.two = "anotherTwo";
+        model.two = mdbid();
         expect(twoAttribute.state.dirty).toBe(true);
 
-        model = await getEntity();
+        oneId = mdbid();
+        twoId = mdbid();
+        model = await getEntity(oneId, twoId);
+
         twoAttribute = model.getField("two");
 
-        model.two = "two";
+        model.two = twoId;
         expect(twoAttribute.state.dirty).toBe(false);
 
-        model = await getEntity();
+        oneId = mdbid();
+        twoId = mdbid();
+        model = await getEntity(oneId, twoId);
         twoAttribute = model.getField("two");
 
         model.two = null;
@@ -81,10 +87,13 @@ describe("dirty flag test", () => {
     });
 
     test("when setting an object with ID, value must not be dirty if ID is same", async () => {
-        let model = await getEntity();
+        const oneId = mdbid();
+        const twoId = mdbid();
+
+        let model = await getEntity(oneId, twoId);
         let twoAttribute = model.getField("two");
 
-        model.two = { id: "two" };
+        model.two = { id: twoId };
         expect(twoAttribute.state.dirty).toBe(false);
     });
 
@@ -97,12 +106,19 @@ describe("dirty flag test", () => {
     });
 
     test("should not be dirty when loading value from storage", async () => {
+        const ids = {
+            one: mdbid(),
+            two: mdbid()
+        };
+
         const one = await getEntity();
         const twoAttribute = one.getField("two");
+        twoAttribute.current = ids.two;
+
         expect(twoAttribute.state.dirty).toBe(false);
 
         let findById = sandbox.stub(One.getStorageDriver(), "findOne").callsFake(() => {
-            return { id: "two", name: "Two" };
+            return { id: ids.two, name: "Two" };
         });
 
         const two = await one.two;

@@ -1,5 +1,6 @@
 import { One, Two } from "../../resources/models/oneTwoThree";
 import sinon from "sinon";
+import mdbid from "mdbid";
 
 const sandbox = sinon.createSandbox();
 
@@ -8,14 +9,16 @@ describe("populate test", () => {
     afterEach(() => sandbox.restore());
 
     test("should not load anything if no ID was received from storage", async () => {
+        const ids = { one: mdbid(), two: mdbid() };
+
         const findById = sandbox
             .stub(One.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: "one", name: "One" };
+                return { id: ids.one, name: "One" };
             });
 
-        const model = await One.findById("one");
+        const model = await One.findById(ids.one);
         expect(model.getField("two").state.loaded).toBe(false);
         expect(model.getField("two").state.loading).toBe(false);
         await model.two;
@@ -27,28 +30,33 @@ describe("populate test", () => {
     });
 
     test("should load model if received an ID from storage", async () => {
+        const ids = {
+            one: mdbid(),
+            two: mdbid()
+        };
+
         let findById = sandbox
             .stub(One.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: "one", name: "One", two: "two" };
+                return { id: ids.one, name: "One", two: ids.two };
             });
 
-        const model = await One.findById("one");
+        const model = await One.findById(ids.one);
         expect(model.getField("two").state.loaded).toBe(false);
         expect(model.getField("two").state.loading).toBe(false);
 
         findById.restore();
 
         findById = sandbox.stub(One.getStorageDriver(), "findOne").callsFake(() => {
-            return { id: "two", name: "Two" };
+            return { id: ids.two, name: "Two" };
         });
 
         await model.two;
         expect(model.getField("two").state.loaded).toBe(true);
         expect(model.getField("two").state.loading).toBe(false);
         expect(await model.two).toBeInstanceOf(Two);
-        expect((await model.two).id).toBe("two");
+        expect((await model.two).id).toBe(ids.two);
 
         findById.restore();
     });
@@ -57,10 +65,16 @@ describe("populate test", () => {
         let findOneSpy = sandbox.spy(One.getStorageDriver(), "findOne");
         const model1 = new One();
 
+        const ids = {
+            one: mdbid(),
+            two: mdbid(),
+            invalidTwo: mdbid()
+        };
+
         expect(model1.getField("two").state.loaded).toBe(false);
         expect(model1.getField("two").state.loading).toBe(false);
 
-        model1.two = { id: "invalidTwo" };
+        model1.two = { id: ids.invalidTwo };
         expect(model1.getField("two").state.loaded).toBe(false);
         expect(model1.getField("two").state.loading).toBe(false);
 
@@ -75,10 +89,10 @@ describe("populate test", () => {
             .stub(One.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: "one", name: "One", two: "two" };
+                return { id: ids.one, name: "One", two: ids.two };
             });
 
-        const model2 = await One.findById("one");
+        const model2 = await One.findById(ids.one);
         findById.restore();
 
         findOneSpy = sandbox.spy(One.getStorageDriver(), "findOne");
@@ -86,12 +100,12 @@ describe("populate test", () => {
         expect(model2.getField("two").state.loaded).toBe(false);
         expect(model2.getField("two").state.loading).toBe(false);
 
-        model1.two = { id: "invalidTwo" };
+        model1.two = { id: ids.invalidTwo };
 
         expect(model2.getField("two").state.loaded).toBe(false);
         expect(model2.getField("two").state.loading).toBe(false);
 
-        expect(await model1.two).toEqual({ id: "invalidTwo" });
+        expect(await model1.two).toEqual({ id: ids.invalidTwo });
         expect(findOneSpy.callCount).toEqual(1);
         findOneSpy.restore();
     });
@@ -99,18 +113,22 @@ describe("populate test", () => {
     test("when a new id is set, getting the value should return a loaded instance", async () => {
         const one = new One();
 
-        one.two = { id: "newTwo" };
+        const ids = {
+            newTwo: mdbid()
+        };
+
+        one.two = { id: ids.newTwo };
 
         expect(one.getField("two").state.loaded).toBe(false);
         expect(one.getField("two").state.loading).toBe(false);
 
         let findById = sandbox.stub(One.getStorageDriver(), "findOne").callsFake(() => {
-            return { id: "newTwo", name: "New Two" };
+            return { id: ids.newTwo, name: "New Two" };
         });
 
         await one.two;
 
-        expect((await one.two).id).toEqual("newTwo");
+        expect((await one.two).id).toEqual(ids.newTwo);
         expect((await one.two).name).toEqual("New Two");
         expect(findById.callCount).toEqual(1);
         expect(one.getField("two").state.loaded).toBe(false);
@@ -122,7 +140,9 @@ describe("populate test", () => {
     test("when an invalid id is set, getting the value should return initially set value", async () => {
         const one = new One();
 
-        one.two = { id: "newTwo" };
+        const ids = { newTwo: mdbid() };
+
+        one.two = { id: ids.newTwo };
 
         expect(one.getField("two").state.loaded).toBe(false);
         expect(one.getField("two").state.loading).toBe(false);
@@ -130,7 +150,7 @@ describe("populate test", () => {
         const findById = sandbox.spy(One.getStorageDriver(), "findOne");
         const two = await one.two;
         expect(findById.callCount).toEqual(1);
-        expect(two).toEqual({ id: "newTwo" });
+        expect(two).toEqual({ id: ids.newTwo });
 
         expect(one.getField("two").state.loaded).toBe(false);
         expect(one.getField("two").state.loading).toBe(false);
@@ -140,12 +160,16 @@ describe("populate test", () => {
     test("when loading an instance from passed ID, load must happen only on first call", async () => {
         const one = new One();
 
-        one.two = { id: "newTwo" };
+        const ids = {
+            newTwo: mdbid()
+        };
+
+        one.two = { id: ids.newTwo };
 
         expect(one.getField("two").state.loaded).toBe(false);
         expect(one.getField("two").state.loading).toBe(false);
         let findById = sandbox.stub(One.getStorageDriver(), "findOne").callsFake(() => {
-            return { id: "newTwo", name: "New Two" };
+            return { id: ids.newTwo, name: "New Two" };
         });
 
         await one.two;
@@ -161,13 +185,15 @@ describe("populate test", () => {
     test("should get values correctly even on multiple set calls", async () => {
         const one = new One();
 
-        one.two = { id: "newTwo" };
+        const ids = { newTwo: mdbid() };
+
+        one.two = { id: ids.newTwo };
 
         expect(one.getField("two").state.loaded).toBe(false);
         expect(one.getField("two").state.loading).toBe(false);
 
         let findById = sandbox.stub(One.getStorageDriver(), "findOne").callsFake(() => {
-            return { id: "newTwo", name: "New Two" };
+            return { id: ids.newTwo, name: "New Two" };
         });
 
         await one.two;

@@ -4,7 +4,7 @@ import { ClassA } from "../../resources/models/abc";
 import { ClassADynamic } from "../../resources/models/abcDynamicAttribute";
 import sinon from "sinon";
 import idGenerator from "@commodo/fields-storage/idGenerator";
-
+import mdbid from "mdbid";
 const sandbox = sinon.createSandbox();
 
 describe("model delete test", () => {
@@ -86,45 +86,55 @@ describe("model delete test", () => {
     });
 
     test("should properly delete linked model even though they are not loaded (auto delete enabled)", async () => {
+        const ids = {
+            one: mdbid(),
+            two: mdbid(),
+            three: mdbid(),
+            four: mdbid(),
+            anotherFour: mdbid(),
+            five: mdbid(),
+            six: mdbid()
+        };
+
         let findById = sandbox
             .stub(One.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: "one", name: "One", two: "two" };
+                return { id: ids.one, name: "One", two: ids.two };
             })
             .onCall(1)
             .callsFake(() => {
-                return { id: "two", name: "Two", three: "three" };
+                return { id: ids.two, name: "Two", three: ids.three };
             })
             .onCall(2)
             .callsFake(() => {
                 return {
-                    id: "three",
+                    id: ids.three,
                     name: "Three",
-                    four: "four",
-                    anotherFour: "anotherFour",
-                    five: "five",
-                    six: "six"
+                    four: ids.four,
+                    anotherFour: ids.anotherFour,
+                    five: ids.five,
+                    six: ids.six
                 };
             })
             .onCall(3)
             .callsFake(() => {
-                return { id: "four", name: "Four" };
+                return { id: ids.four, name: "Four" };
             })
             .onCall(4)
             .callsFake(() => {
-                return { id: "anotherFour", name: "Another Four" };
+                return { id: ids.anotherFour, name: "Another Four" };
             })
             .onCall(5)
             .callsFake(() => {
-                return { id: "five", name: "Five" };
+                return { id: ids.five, name: "Five" };
             })
             .onCall(6)
             .callsFake(() => {
-                return { id: "six", name: "Six" };
+                return { id: ids.six, name: "Six" };
             });
 
-        const one = await One.findById("one");
+        const one = await One.findById(ids.one);
 
         let modelDelete = sandbox.stub(one.getStorageDriver(), "delete");
         await one.delete();
@@ -136,14 +146,20 @@ describe("model delete test", () => {
     });
 
     test("should not delete linked models if main model is deleted and auto delete is not enabled", async () => {
+        const ids = {
+            classA: mdbid(),
+            classB: mdbid(),
+            classC: mdbid()
+        };
+
         const modelFindById = sandbox
             .stub(ClassA.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: "classA", name: "ClassA" };
+                return { id: ids.classA, name: "ClassA" };
             });
 
-        const classA = await ClassA.findById("classA");
+        const classA = await ClassA.findById(ids.classA);
         modelFindById.restore();
 
         classA.classB = { name: "classB", classC: { name: "classC" } };
@@ -153,9 +169,9 @@ describe("model delete test", () => {
         const generateIdStub = sandbox
             .stub(idGenerator, "generate")
             .onCall(0)
-            .callsFake(() => "classC")
+            .callsFake(() => ids.classC)
             .onCall(1)
-            .callsFake(() => "classB");
+            .callsFake(() => ids.classB);
 
         await classA.save();
         updateSpy.restore();
@@ -164,16 +180,16 @@ describe("model delete test", () => {
         expect(createSpy.callCount).toBe(2);
         expect(updateSpy.callCount).toBe(1);
 
-        expect(classA.id).toBe("classA");
+        expect(classA.id).toBe(ids.classA);
 
         const classB = await classA.classB;
-        expect(classB.id).toBe("classB");
+        expect(classB.id).toBe(ids.classB);
 
         const classC = await classB.classC;
-        expect(classC.id).toBe("classC");
+        expect(classC.id).toBe(ids.classC);
 
-        expect(await classA.getField("classB").getStorageValue()).toBe("classB");
-        expect(await classB.getField("classC").getStorageValue()).toBe("classC");
+        expect(await classA.getField("classB").getStorageValue()).toBe(ids.classB);
+        expect(await classB.getField("classC").getStorageValue()).toBe(ids.classC);
 
         const modelDelete = sandbox
             .stub(ClassA.getStorageDriver(), "delete")
@@ -189,14 +205,15 @@ describe("model delete test", () => {
     });
 
     test("should not attempt to delete linked models if attribute is set as dynamic", async () => {
+        const ids = { classADynamic: mdbid() };
         const modelFindById = sandbox
             .stub(ClassADynamic.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: "classADynamic", name: "ClassADynamic" };
+                return { id: ids.classADynamic, name: "ClassADynamic" };
             });
 
-        const classADynamic = await ClassADynamic.findById("classADynamic");
+        const classADynamic = await ClassADynamic.findById(ids.classADynamic);
         modelFindById.restore();
 
         const modelSave = sandbox

@@ -11,6 +11,7 @@ import { withName } from "@commodo/name";
 import { ref } from "@commodo/fields-storage-ref";
 import { compose } from "ramda";
 import createModel from "./../../resources/models/createModel";
+import mdbid from "mdbid";
 
 const sandbox = sinon.createSandbox();
 
@@ -64,11 +65,17 @@ describe("attribute models test", () => {
     });
 
     test("should lazy load any of the accessed linked models", async () => {
+        const ids = {
+            xyz: mdbid(),
+            AA: mdbid(),
+            twelve: mdbid(),
+            thirteen: mdbid()
+        };
         const modelFind = sandbox.stub(MainEntity.getStorageDriver(), "findOne").callsFake(() => {
-            return { id: "xyz" };
+            return { id: ids.xyz };
         });
 
-        const mainEntity = await MainEntity.findById("xyz");
+        const mainEntity = await MainEntity.findById(ids.xyz);
         modelFind.restore();
 
         const modelsFind = sandbox
@@ -77,14 +84,14 @@ describe("attribute models test", () => {
             .callsFake(() => {
                 return [
                     [
-                        { id: "AA", name: "Bucky", type: "dog" },
-                        { id: "twelve", name: "Rocky", type: "dog" }
+                        { id: ids.AA, name: "Bucky", type: "dog" },
+                        { id: ids.twelve, name: "Rocky", type: "dog" }
                     ]
                 ];
             })
             .onCall(1)
             .callsFake(() => {
-                return [[{ id: "thirteen", firstName: "Foo", lastName: "Bar" }]];
+                return [[{ id: ids.thirteen, firstName: "Foo", lastName: "Bar" }]];
             });
 
         expect(Array.isArray(mainEntity.getField("attribute1").current)).toBe(true);
@@ -95,29 +102,30 @@ describe("attribute models test", () => {
         const attribute1 = await mainEntity.attribute1;
         expect(attribute1).toBeInstanceOf(Collection);
         expect(attribute1.length).toBe(2);
-        expect(attribute1[0].id).toEqual("AA");
-        expect(attribute1[1].id).toEqual("twelve");
+        expect(attribute1[0].id).toEqual(ids.AA);
+        expect(attribute1[1].id).toEqual(ids.twelve);
         expect(attribute1[0]).toBeInstanceOf(Entity1);
         expect(attribute1[1]).toBeInstanceOf(Entity1);
 
         const attribute2 = await mainEntity.attribute2;
         expect(attribute2).toBeInstanceOf(Collection);
         expect(attribute2.length).toBe(1);
-        expect(attribute2[0].id).toEqual("thirteen");
+        expect(attribute2[0].id).toEqual(ids.thirteen);
         expect(attribute2[0]).toBeInstanceOf(Entity2);
 
         modelsFind.restore();
     });
 
     test("should set internal loaded flag to true when called for the first time, and no findById calls should be made", async () => {
+        const ids = { oneTwoThree: mdbid() };
         const modelFind = sandbox
             .stub(MainEntity.getStorageDriver(), "findOne")
             .onCall(0)
             .callsFake(() => {
-                return { id: "oneTwoThree" };
+                return { id: ids.oneTwoThree };
             });
 
-        const mainEntity = await MainEntity.findById("oneTwoThree");
+        const mainEntity = await MainEntity.findById(ids.oneTwoThree);
         modelFind.restore();
 
         const modelsFind = sandbox.spy(mainEntity.getStorageDriver(), "find");
