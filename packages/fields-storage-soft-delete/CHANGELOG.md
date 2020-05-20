@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.0.0-next.11 (2020-05-20)
+
+
+### Bug Fixes
+
+* improve "isId" regex and fix tests ([7ddaaf5](https://github.com/webiny/commodo/commit/7ddaaf5e6062a1306f2c574bdd34f7cb073441f0))
+
+
+
+
+
 # 2.0.0-next.10 (2020-05-19)
 
 **Note:** Version bump only for package @commodo/fields-storage-soft-delete
