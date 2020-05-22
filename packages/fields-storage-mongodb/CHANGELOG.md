@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.0.0-next.13 (2020-05-22)
+
+
+### Features
+
+* add support for custom id structure ([2a8aa49](https://github.com/webiny/commodo/commit/2a8aa49a6ddc8ff830d1771b662da3dd48bcfd1c))
+
+
+
+
+
 # 2.0.0-next.12 (2020-05-22)
 
 
