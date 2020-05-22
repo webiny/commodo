@@ -31,13 +31,12 @@ export default () => {
                     await this.hook("beforeDelete", { options, model: this });
 
                     this.deleted = true;
+                    const { getId } = options;
                     await this.getStorageDriver().update([
                         {
                             name: getName(this),
-                            data: {
-                                ...(await this.toStorage()),
-                                id: this.id
-                            },
+                            data: await this.toStorage(),
+                            query: typeof getId === "function" ? getId(this) : { id: this.id },
                             options
                         }
                     ]);
