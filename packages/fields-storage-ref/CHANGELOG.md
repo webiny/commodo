@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 1.0.3-next.12 (2020-05-22)
+
+
+### Bug Fixes
+
+* add missing dependency ([d9fdb96](https://github.com/webiny/commodo/commit/d9fdb96d96358f50c280566d5da71fd5079cf212))
+
+
+
+
+
 ## 1.0.3-next.11 (2020-05-20)
 
 
