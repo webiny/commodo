@@ -46,8 +46,10 @@ describe("setOnce test", () => {
         expect(saveSpy.callCount).toEqual(1);
         expect(saveSpy.getCall(0).args[0]).toEqual([
             {
+                query: {
+                    id
+                },
                 data: {
-                    id: id,
                     name: "name-test-2"
                 },
                 name: "SomeModel"

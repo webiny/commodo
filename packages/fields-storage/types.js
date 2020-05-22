@@ -15,6 +15,7 @@ export type FindOneParams = {
 
 export type SaveParams = {
     validation?: boolean,
+    getId?: Function,
     hooks?: {
         beforeSave?: boolean,
         beforeUpdate?: boolean,
@@ -37,6 +38,7 @@ export type SaveParams = {
 export type DeleteParams = {
     validation?: boolean,
     permanent?: boolean,
+    getId?: Function,
     events?: {
         delete?: boolean,
         beforeDelete?: boolean,

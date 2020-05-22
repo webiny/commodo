@@ -135,15 +135,24 @@ const withStorage = (configuration: Configuration) => {
                             this.id = this.constructor.generateId();
                         }
 
-                        await this.getStorageDriver()[existing ? "update" : "create"]([
-                            {
-                                name: getName(this),
-                                data: {
-                                    ...(await this.toStorage()),
-                                    id: this.id
+                        if (existing) {
+                            const { getId } = options;
+                            await this.getStorageDriver().update([
+                                {
+                                    name: getName(this),
+                                    query:
+                                        typeof getId === "function" ? getId(this) : { id: this.id },
+                                    data: await this.toStorage()
                                 }
-                            }
-                        ]);
+                            ]);
+                        } else {
+                            await this.getStorageDriver().create([
+                                {
+                                    name: getName(this),
+                                    data: await this.toStorage()
+                                }
+                            ]);
+                        }
                     }
 
                     await registerSaveUpdateCreateHooks("__after", {
@@ -181,6 +190,10 @@ const withStorage = (configuration: Configuration) => {
 
                 options = { ...options, ...defaults.delete };
 
+                let getId;
+
+                ({ getId, ...options } = options);
+
                 try {
                     await this.hook("delete", { options, model: this });
 
@@ -190,14 +203,15 @@ const withStorage = (configuration: Configuration) => {
 
                     await this.getStorageDriver().delete({
                         name: getName(this),
-                        options: { query: { id: this.id }, ...options }
+                        options: {
+                            query: typeof getId === "function" ? getId(this) : { id: this.id },
+                            ...options
+                        }
                     });
 
                     await this.hook("afterDelete", { options, model: this });
 
                     this.constructor.getStoragePool().remove(this);
-                } catch (e) {
-                    throw e;
                 } finally {
                     props.__withStorage.processing = null;
                 }

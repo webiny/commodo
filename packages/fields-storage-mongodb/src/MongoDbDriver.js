@@ -30,11 +30,11 @@ class MongoDbDriver {
 
     async update(items: Array<Object>) {
         for (let i = 0; i < items.length; i++) {
-            const { name, data } = items[i];
+            const { name, query, data } = items[i];
             const collection = this.getCollectionName(name);
             await this.getDatabase()
                 .collection(collection)
-                .updateOne({ id: data.id }, { $set: data });
+                .updateOne(query, { $set: data });
         }
 
         return true;
