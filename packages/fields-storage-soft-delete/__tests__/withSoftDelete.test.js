@@ -35,7 +35,7 @@ describe("withSoftDelete test", () => {
         expect(model.deleted).toBe(true);
     });
 
-    test(`must set not call "delete" method on storage driver`, async () => {
+    test(`must not call "delete" method on storage driver`, async () => {
         const model = new Model();
 
         const deleteSpy = sandbox.spy(Model.getStorageDriver(), "delete");

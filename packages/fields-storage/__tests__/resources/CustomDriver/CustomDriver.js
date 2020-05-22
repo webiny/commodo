@@ -16,12 +16,22 @@ class CustomDriver {
 
     async update(items) {
         for (let i = 0; i < items.length; i++) {
-            const { name, data } = items[i];
+            const { name, query, data } = items[i];
             if (!this.data[name]) {
                 this.data[name] = {};
             }
 
-            this.data[name][data.id] = data;
+            recordsLoop: for (const id in this.data[name]) {
+                const record = this.data[name][id];
+                for (const key in query) {
+                    const value = query[key];
+                    if (record[key] !== value) {
+                        continue recordsLoop;
+                    }
+                }
+
+                this.data[name][record.id] = Object.assign({}, this.data[name][record.id], data);
+            }
         }
     }
 
