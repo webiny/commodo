@@ -7,7 +7,6 @@ on:
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-  NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
 jobs:
   build-test-release:
@@ -18,7 +17,9 @@ jobs:
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '12'
-          registry-url: 'https://registry.npmjs.org'
+
+      - name: Create ".npmrc" file in the project root
+      - run: echo "//registry.npmjs.org/:_authToken=\${NPM_AUTH_TOKEN}" > .npmrc
 
       - name: Install dependencies
         run: yarn --frozen-lockfile
