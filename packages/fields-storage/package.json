@@ -19,7 +19,10 @@
     "@commodo/fields": "^1.1.0-next.2",
     "@commodo/fields-storage-mongodb": "^2.0.0-next.15",
     "lodash.clonedeep": "^4.5.0",
-    "ramda": "^0.27.0"
+    "ramda": "^0.27.0",
+    "sinon": "^7.3.2",
+    "@shelf/jest-mongodb": "^1.1.5",
+    "mongodb": "^3.5.5"
   },
   "license": "MIT",
   "publishConfig": {
