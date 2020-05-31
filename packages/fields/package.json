@@ -13,6 +13,10 @@
   "dependencies": {
     "repropose": "^1.0.2"
   },
+  "devDependencies": {
+    "ramda": "^0.27.0",
+    "@commodo/name": "^1.2.0-next.2"
+  },
   "publishConfig": {
     "access": "public"
   },
