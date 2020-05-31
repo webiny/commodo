@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 1.2.0-next.9 (2020-05-31)
+
+
+### Bug Fixes
+
+* remove unused dependencies ([2baac91](https://github.com/webiny/commodo/commit/2baac9175a21cd05dc071efc54593cf6ca0e0648))
+
+
+
+
+
 # 1.2.0-next.8 (2020-05-31)
 
 **Note:** Version bump only for package @commodo/name
