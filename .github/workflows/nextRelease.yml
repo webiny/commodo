@@ -25,6 +25,9 @@ jobs:
       - name: Install dependencies
         run: yarn --frozen-lockfile
 
+      - name: Check dependencies
+        run: yarn adio
+
       - name: Build packages
         run: yarn build
 
