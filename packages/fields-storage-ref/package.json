@@ -20,6 +20,11 @@
   "publishConfig": {
     "access": "public"
   },
+  "devDependencies": {
+    "sinon": "^7.3.2",
+    "ramda": "^0.25.0",
+    "mdbid": "^1.0.0"
+  },
   "keywords": [
     "commodo",
     "composeable",

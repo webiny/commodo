@@ -1,36 +1,42 @@
 {
-  "name": "@commodo/fields-storage-mongodb",
-  "version": "2.0.0-next.15",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/webiny/commodo.git"
-  },
-  "contributors": [
-    "Adrian Smijulj <adrian@webiny.com>"
-  ],
-  "license": "MIT",
-  "dependencies": {
-    "@commodo/fields": "^1.1.0-next.2",
-    "@commodo/fields-storage": "^2.0.0-next.15",
-    "@commodo/name": "^1.2.0-next.2",
-    "repropose": "^1.0.2"
-  },
-  "devDependencies": {
-    "@shelf/jest-mongodb": "^1.1.5"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "keywords": [
-    "commodo",
-    "composeable",
-    "models",
-    "storage",
-    "mongodb"
-  ],
-  "scripts": {
-    "build": "babel src --ignore src/__tests__ --out-dir dist --source-maps",
-    "watch": "yarn build --watch"
-  }
+    "name": "@commodo/fields-storage-mongodb",
+    "version": "2.0.0-next.15",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/webiny/commodo.git"
+    },
+    "contributors": [
+        "Adrian Smijulj <adrian@webiny.com>"
+    ],
+    "license": "MIT",
+    "dependencies": {
+        "@commodo/fields": "^1.1.0-next.2",
+        "@commodo/fields-storage": "^2.0.0-next.15",
+        "@commodo/name": "^1.2.0-next.2",
+        "repropose": "^1.0.2"
+    },
+    "devDependencies": {
+        "@shelf/jest-mongodb": "^1.1.5",
+        "mongodb": "^3.5.5",
+        "@commodo/fields-storage-ref": "1.1.0-next.2",
+        "ramda": "^0.25.0",
+        "camelcase": "^5.2.0",
+        "mdbid": "^1.0.0",
+        "@commodo/hooks": "^1.1.0-next.2"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "keywords": [
+        "commodo",
+        "composeable",
+        "models",
+        "storage",
+        "mongodb"
+    ],
+    "scripts": {
+        "build": "babel src --ignore src/__tests__ --out-dir dist --source-maps",
+        "watch": "yarn build --watch"
+    }
 }
