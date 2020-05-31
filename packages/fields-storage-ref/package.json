@@ -1,6 +1,6 @@
 {
   "name": "@commodo/fields-storage-ref",
-  "version": "1.1.0-next.4",
+  "version": "1.1.0-next.5",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -10,10 +10,10 @@
     "Adrian Smijulj <adrian@webiny.com>"
   ],
   "dependencies": {
-    "@commodo/fields": "^1.1.0-next.4",
-    "@commodo/fields-storage": "^2.0.0-next.17",
-    "@commodo/hooks": "^1.1.0-next.4",
-    "@commodo/name": "^1.2.0-next.4",
+    "@commodo/fields": "^1.1.0-next.5",
+    "@commodo/fields-storage": "^2.0.0-next.18",
+    "@commodo/hooks": "^1.1.0-next.5",
+    "@commodo/name": "^1.2.0-next.5",
     "repropose": "^1.0.2"
   },
   "license": "MIT",
