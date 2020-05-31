@@ -1,4 +1,4 @@
-import isMongoDbId from "./isMongoDbId";
+import isNeDbId from "./isId";
 import Database from "./Database";
 
 class NeDbDriver {
@@ -99,7 +99,7 @@ class NeDbDriver {
     }
 
     isId(value) {
-        return isMongoDbId(value);
+        return isNeDbId(value);
     }
 
     getDatabase() {
