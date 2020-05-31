@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 1.1.0-next.3 (2020-05-25)
+
+
+### Bug Fixes
+
+* add missing "nedb-promises" dependency ([36a3172](https://github.com/webiny/commodo/commit/36a317222d49b860f09512fbc48f56a977a0245e))
+
+
+
+
+
 # 1.1.0-next.2 (2020-05-25)
 
 **Note:** Version bump only for package @commodo/fields-storage-ref
