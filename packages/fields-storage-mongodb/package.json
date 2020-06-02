@@ -1,6 +1,6 @@
 {
   "name": "@commodo/fields-storage-mongodb",
-  "version": "2.0.0-next.24",
+  "version": "2.0.0-next.25",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -11,14 +11,14 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@commodo/fields": "^1.1.0-next.11",
-    "@commodo/fields-storage": "^2.0.0-next.24",
-    "@commodo/name": "^1.2.0-next.11",
+    "@commodo/fields": "^1.1.0-next.12",
+    "@commodo/fields-storage": "^2.0.0-next.25",
+    "@commodo/name": "^1.2.0-next.12",
     "repropose": "^1.0.2"
   },
   "devDependencies": {
     "@commodo/fields-storage-ref": "1.1.0-next.2",
-    "@commodo/hooks": "^1.1.0-next.11",
+    "@commodo/hooks": "^1.1.0-next.12",
     "@shelf/jest-mongodb": "^1.1.5",
     "camelcase": "^5.2.0",
     "mdbid": "^1.0.0",
