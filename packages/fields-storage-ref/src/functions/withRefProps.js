@@ -305,10 +305,10 @@ export default ({ list, instanceOf, using, autoDelete, autoSave, refNameField, p
                 if (Array.isArray(this.classes.model.class)) {
                     let refNameField = this.parent.getField(this.options.refNameField);
                     if (refNameField) {
-                        const classId = refNameField.getValue();
+                        const modelName = refNameField.getValue();
                         for (let i = 0; i < this.classes.model.class.length; i++) {
                             let current = this.classes.model.class[i];
-                            if (current.classId === classId) {
+                            if (getName(current) === modelName) {
                                 return current;
                             }
                         }
