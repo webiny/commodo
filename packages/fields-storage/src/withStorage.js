@@ -1,5 +1,6 @@
 // @flow
-import { getName } from "@commodo/name";
+import { getName as defaultGetName } from "@commodo/name";
+import getStorageName from "./getStorageName";
 import { withStaticProps, withProps } from "repropose";
 import cloneDeep from "lodash.clonedeep";
 import { withHooks } from "@commodo/hooks";
@@ -43,6 +44,10 @@ const registerSaveUpdateCreateHooks = async (prefix, { existing, model, options 
     } else {
         await hook(prefix + "Create", { model, options });
     }
+};
+
+const getName = (instance) => {
+    return getStorageName(instance) || defaultGetName(instance);
 };
 
 type FindParams = Object & {
