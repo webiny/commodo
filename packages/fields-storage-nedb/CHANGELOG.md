@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.0.0-next.23 (2020-05-31)
+
+**Note:** Version bump only for package @commodo/fields-storage-nedb
+
+
+
+
+
 # 2.0.0-next.22 (2020-05-31)
 
 
