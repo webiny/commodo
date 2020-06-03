@@ -3,6 +3,7 @@ import type { FieldFactory } from "@commodo/fields/types";
 import WithFieldsError from "./../WithFieldsError";
 import { withProps } from "repropose";
 import { hasFields } from "@commodo/fields";
+import { getName, hasName } from "@commodo/name";
 import withFieldDataTypeValidation from "./withFieldDataTypeValidation";
 import createField from "./createField";
 
@@ -123,6 +124,11 @@ const fields: FieldFactory = ({ list, instanceOf, ...rest }: Object) => {
     withFieldDataTypeValidation(value => {
         if (typeof value === "object") {
             if (hasFields(value)) {
+                // If both received value and instanceOf has a name attached, let's compare by it.
+                if (hasName(value) && hasName(instanceOf)) {
+                    return getName(value) === getName(instanceOf);
+                }
+
                 return value instanceof instanceOf;
             }
             return true;
