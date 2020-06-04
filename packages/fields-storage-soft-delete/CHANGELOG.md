@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.0.0-next.27 (2020-06-04)
+
+
+### Bug Fixes
+
+* use withStorageName, fallback to withName ([12f7ebe](https://github.com/webiny/commodo/commit/12f7ebe19f0c0301cf792295228be47896b1efae))
+
+
+
+
+
 # 2.0.0-next.26 (2020-06-03)
 
 **Note:** Version bump only for package @commodo/fields-storage-soft-delete
