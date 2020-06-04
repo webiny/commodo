@@ -1,8 +1,13 @@
 // @flow
 import { withProps, withStaticProps } from "repropose";
 import { withFields, skipOnPopulate, boolean } from "@commodo/fields";
-import { getName } from "@commodo/name";
+import { getName as defaultGetName } from "@commodo/name";
 import applyDeletedFilter from "./functions/applyDeletedFilter";
+import getStorageName from "@commodo/fields-storage/getStorageName";
+
+const getName = instance => {
+    return getStorageName(instance) || defaultGetName(instance);
+};
 
 export default () => {
     return baseFn => {
