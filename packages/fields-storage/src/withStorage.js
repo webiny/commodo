@@ -325,7 +325,7 @@ const withStorage = (configuration: Configuration) => {
                         }
 
                         const { id, ...fields } = cursor;
-                        const sortFields = [Object.keys(fields).shift()];
+                        const sortFields = [Object.keys(fields).shift()].filter(Boolean);
 
                         if (sortFields.length) {
                             query["$and"].push({
