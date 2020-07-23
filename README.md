@@ -19,7 +19,7 @@ import { withFields, string, number, boolean } from "@commodo/fields";
 
 const Animal = withFields({
     name: string({
-        validate: value => {
+        validation: value => {
             if (!value) {
                 throw Error("A pet must have a name!");
             }
