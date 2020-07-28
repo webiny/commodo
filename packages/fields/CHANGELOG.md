@@ -3,26 +3,7 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# 1.1.0-next.18 (2020-07-23)
-
-
-### Bug Fixes
-
-* filter out empty elements in the `sortFields` array ([06919fa](https://github.com/webiny/commodo/commit/06919faa39a46a640c71fd7c6bc24cf4297a3a43))
-
-
-
-
-
-# 1.1.0-next.17 (2020-07-23)
-
-**Note:** Version bump only for package @commodo/fields
-
-
-
-
-
-# 1.1.0-next.16 (2020-06-10)
+# 1.1.0 (2020-06-10)
 
 **Note:** Version bump only for package @commodo/fields
 
