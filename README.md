@@ -11,6 +11,9 @@
 
 Commodo is a set of [higher order functions (HOFs)](https://en.wikipedia.org/wiki/Higher-order_function) that let you define and **com**pose rich data **mod**el **o**bjects.
 
+# Videos
+Wanna get up to speed quickly? Check out the [Commodo videos here](https://www.youtube.com/watch?v=i9xRDdqCzjk&list=PL9HlKSQaEuXRU5rPOlv3vPWeWew7-bMep)!
+
 ## Quick example
 
 ##### A simple model
