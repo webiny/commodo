@@ -1,3 +1,5 @@
+![](./docs/logo.png)
+
 # Commodo - composable model objects
 
 [![Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://prettier.io)
