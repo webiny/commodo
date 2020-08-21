@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.0.2-next.5 (2020-08-21)
+
+**Note:** Version bump only for package @commodo/fields-storage-soft-delete
+
+
+
+
+
 ## 2.0.2-next.4 (2020-08-21)
 
 **Note:** Version bump only for package @commodo/fields-storage-soft-delete
