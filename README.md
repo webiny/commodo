@@ -1,4 +1,6 @@
-![](./docs/logo.png)
+<p align="center">
+  <img src="./docs/logo.png" width="600">
+</p>
 
 # Commodo - composable model objects
 
