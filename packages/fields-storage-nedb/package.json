@@ -1,6 +1,6 @@
 {
   "name": "@commodo/fields-storage-nedb",
-  "version": "2.0.2-next.5",
+  "version": "2.0.2-next.6",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -11,7 +11,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@commodo/fields": "^1.1.2-next.5",
+    "@commodo/fields": "^1.1.2-next.6",
     "nedb-promises": "^4.0.3"
   },
   "publishConfig": {
