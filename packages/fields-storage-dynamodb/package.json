@@ -1,0 +1,33 @@
+{
+  "name": "@commodo/fields-storage-dynamodb",
+  "version": "2.0.1",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webiny/commodo.git"
+  },
+  "contributors": [
+    "Adrian Smijulj <adrian@webiny.com>"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.729.0"
+  },
+  "devDependencies": {
+    "@shelf/jest-dynamodb": "^1.7.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "commodo",
+    "composeable",
+    "models",
+    "storage",
+    "dynamoDb"
+  ],
+  "scripts": {
+    "build": "babel src --ignore src/__tests__ --out-dir dist --source-maps",
+    "watch": "yarn build --watch"
+  }
+}
