@@ -1,6 +1,9 @@
 // @flow
 import { getName as defaultGetName } from "@commodo/name";
 import getStorageName from "./getStorageName";
+import getKeys from "./getKeys";
+import getPrimaryKey from "./getPrimaryKey";
+import findQueryKey from "./findQueryKey";
 import { withStaticProps, withProps } from "repropose";
 import cloneDeep from "lodash.clonedeep";
 import { withHooks } from "@commodo/hooks";
@@ -10,7 +13,6 @@ import Collection from "./Collection";
 import StoragePool from "./StoragePool";
 import FieldsStorageAdapter from "./FieldsStorageAdapter";
 import { decodeCursor, encodeCursor } from "./cursor";
-import idGenerator from "./idGenerator";
 interface IStorageDriver {}
 
 type Configuration = {
@@ -28,8 +30,6 @@ const defaults = {
     }
 };
 
-const generateId = () => idGenerator.generate();
-
 const hook = async (name, { options, model }) => {
     if (options.hooks[name] === false) {
         return;
@@ -46,7 +46,7 @@ const registerSaveUpdateCreateHooks = async (prefix, { existing, model, options 
     }
 };
 
-const getName = (instance) => {
+const getName = instance => {
     return getStorageName(instance) || defaultGetName(instance);
 };
 
@@ -95,10 +95,10 @@ const withStorage = (configuration: Configuration) => {
                 processing: false,
                 fieldsStorageAdapter: new FieldsStorageAdapter()
             },
-            generateId,
-            isId(value) {
-                return typeof value === "string" && !!value.match(/^[a-zA-Z0-9]*$/);
-            },
+            // generateId,
+            // isId(value) {
+            //     return typeof value === "string" && !!value.match(/^[a-zA-Z0-9]*$/);
+            // },
             isExisting() {
                 return this.__withStorage.existing;
             },
@@ -107,6 +107,13 @@ const withStorage = (configuration: Configuration) => {
                 return this;
             },
             async save(options: ?SaveParams): Promise<void> {
+                const primaryKey = getPrimaryKey(this);
+                if (!primaryKey) {
+                    throw Error(
+                        `Cannot save "${this.getStorageName()}" model, no primary key defined.`
+                    );
+                }
+
                 options = { ...options, ...defaults.save };
 
                 if (this.__withStorage.processing) {
@@ -136,27 +143,23 @@ const withStorage = (configuration: Configuration) => {
                     });
 
                     if (this.isDirty()) {
-                        if (!this.id) {
-                            this.id = this.constructor.generateId();
-                        }
+                        // if (!this.id) {
+                        //     this.id = this.constructor.generateId();
+                        // }
 
                         if (existing) {
-                            const { getId } = options;
-                            await this.getStorageDriver().update([
-                                {
-                                    name: getName(this),
-                                    query:
-                                        typeof getId === "function" ? getId(this) : { id: this.id },
-                                    data: await this.toStorage()
-                                }
-                            ]);
+                            // const { getId } = options;
+                            // await this.getStorageDriver().update(model[
+                            //     {
+                            //         name: getName(this),
+                            //         query:
+                            //             typeof getId === "function" ? getId(this) : { id: this.id },
+                            //         data: await this.toStorage()
+                            //     }
+                            // ]);
+                            await this.getStorageDriver().update({ model: this, primaryKey });
                         } else {
-                            await this.getStorageDriver().create([
-                                {
-                                    name: getName(this),
-                                    data: await this.toStorage()
-                                }
-                            ]);
+                            await this.getStorageDriver().create({ model: this, primaryKey });
                         }
                     }
 
@@ -172,7 +175,7 @@ const withStorage = (configuration: Configuration) => {
                     this.constructor.getStoragePool().add(this);
                 } catch (e) {
                     if (!existing) {
-                        this.getField("id").reset();
+                        // this.getField("id").reset();
                     }
                     throw e;
                 } finally {
@@ -187,6 +190,13 @@ const withStorage = (configuration: Configuration) => {
              * @param options
              */
             async delete(options: ?Object) {
+                const primaryKey = getPrimaryKey(this);
+                if (!primaryKey) {
+                    throw Error(
+                        `Cannot delete "${this.getStorageName()}" model, no primary key defined.`
+                    );
+                }
+
                 if (this.__withStorage.processing) {
                     return;
                 }
@@ -224,6 +234,10 @@ const withStorage = (configuration: Configuration) => {
 
             getStorageDriver() {
                 return this.constructor.__withStorage.driver;
+            },
+
+            getStorageName() {
+                return getName(this);
             },
 
             async populateFromStorage(data: Object) {
@@ -276,10 +290,73 @@ const withStorage = (configuration: Configuration) => {
                 getStorageDriver() {
                     return this.__withStorage.driver;
                 },
-                isId(value) {
-                    return typeof value === "string" && !!value.match(/^[0-9a-fA-F]{24}$/);
+                getStorageName() {
+                    return getName(this);
                 },
-                generateId,
+
+                /**
+                 * Finds a single model matched by given ID.
+                 * @param id
+                 * @param options
+                 */
+                // async findById(id: mixed, options: ?Object): Promise<null | Entity> {
+                //     if (!id || !this.isId(id)) {
+                //         return null;
+                //     }
+                //
+                //     const pooled = this.getStoragePool().get(this, id);
+                //     if (pooled) {
+                //         return pooled;
+                //     }
+                //
+                //     if (!options) {
+                //         options = {};
+                //     }
+                //
+                //     const newParams = { ...options, query: { id } };
+                //     return await this.findOne(newParams);
+                // },
+
+                /**
+                 * Finds one model matched by given query parameters.
+                 * @param rawArgs
+                 */
+                async findOne(rawArgs: ?Object): Promise<null | $Subtype<Entity>> {
+                    if (!rawArgs) {
+                        rawArgs = {};
+                    }
+
+                    const args = cloneDeep(rawArgs);
+                    //
+                    // {
+                    //     name: getName(this),
+                    //         options: prepared
+                    // }
+                    //
+                    const result = await this.getStorageDriver().findOne({
+                        model: this,
+                        args
+                    });
+
+                    return result;
+                    if (result) {
+                        const pooled = this.getStoragePool().get(this, result.id);
+                        if (pooled) {
+                            return pooled;
+                        }
+
+                        const model: $Subtype<Entity> = new this();
+                        model.setExisting();
+                        await model.populateFromStorage(((result: any): Object));
+                        this.getStoragePool().add(model);
+                        return model;
+                    }
+                    return null;
+                },
+                // isId(value) {
+                //     return typeof value === "string" && !!value.match(/^[0-9a-fA-F]{24}$/);
+                // },
+                // generateId,
                 async find(options: ?FindParams) {
                     if (!options) {
                         options = {};
@@ -429,60 +506,6 @@ const withStorage = (configuration: Configuration) => {
 
                     return collection;
                 },
-                /**
-                 * Finds a single model matched by given ID.
-                 * @param id
-                 * @param options
-                 */
-                async findById(id: mixed, options: ?Object): Promise<null | Entity> {
-                    if (!id || !this.isId(id)) {
-                        return null;
-                    }
-
-                    const pooled = this.getStoragePool().get(this, id);
-                    if (pooled) {
-                        return pooled;
-                    }
-
-                    if (!options) {
-                        options = {};
-                    }
-
-                    const newParams = { ...options, query: { id } };
-                    return await this.findOne(newParams);
-                },
-
-                /**
-                 * Finds one model matched by given query parameters.
-                 * @param options
-                 */
-                async findOne(options: ?Object): Promise<null | $Subtype<Entity>> {
-                    if (!options) {
-                        options = {};
-                    }
-
-                    const prepared = { ...options };
-
-                    const result = await this.getStorageDriver().findOne({
-                        name: getName(this),
-                        options: prepared
-                    });
-
-                    if (result) {
-                        const pooled = this.getStoragePool().get(this, result.id);
-                        if (pooled) {
-                            return pooled;
-                        }
-
-                        const model: $Subtype<Entity> = new this();
-                        model.setExisting();
-                        await model.populateFromStorage(((result: any): Object));
-                        this.getStoragePool().add(model);
-                        return model;
-                    }
-                    return null;
-                },
-
                 /**
                  * Counts total number of models matched by given query parameters.
                  * @param options

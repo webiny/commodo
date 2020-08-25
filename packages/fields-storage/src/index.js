@@ -8,3 +8,7 @@ export { default as hasWithStorage } from "./hasWithStorage";
 export { default as withStorageName } from "./withStorageName";
 export { default as getStorageName } from "./getStorageName";
 export { default as hasStorageName } from "./hasStorageName";
+export { default as withPrimaryKey } from "./withPrimaryKey";
+export { default as withKey } from "./withKey";
+export { default as withUniqueKey } from "./withUniqueKey";
+export { default as getKeys } from "./getKeys";

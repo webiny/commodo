@@ -1,6 +1,6 @@
 {
-  "name": "@commodo/fields",
-  "version": "1.2.0-next.1",
+  "name": "@commodo/fields-storage-dynamodb",
+  "version": "2.0.1",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -11,11 +11,10 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@commodo/name": "^1.3.0-next.1",
-    "repropose": "^1.0.2"
+    "aws-sdk": "^2.729.0"
   },
   "devDependencies": {
-    "ramda": "^0.25.0"
+    "@shelf/jest-dynamodb": "^1.7.0"
   },
   "publishConfig": {
     "access": "public"
@@ -24,7 +23,8 @@
     "commodo",
     "composeable",
     "models",
-    "fields"
+    "storage",
+    "dynamoDb"
   ],
   "scripts": {
     "build": "babel src --ignore src/__tests__ --out-dir dist --source-maps",
