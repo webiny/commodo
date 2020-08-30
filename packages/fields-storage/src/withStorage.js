@@ -438,7 +438,8 @@ const withStorage = (configuration: Configuration) => {
                     const params = { query, sort, limit: limit + 1, ...other };
                     let [results, meta] = await this.getStorageDriver().find({
                         name: getName(this),
-                        options: params
+                        args: params,
+                        model: this
                     });
 
                     // Have we reached the last record?
@@ -454,11 +455,12 @@ const withStorage = (configuration: Configuration) => {
                     let totalCount = null;
                     if (countTotal) {
                         totalCount = await this.getStorageDriver().count({
+                            model: this,
                             name: getName(this),
-                            options: {
+                            args: {
                                 query: originalQuery,
                                 ...other
-                            }
+                            },
                         });
                     }
 
