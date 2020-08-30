@@ -1,9 +1,7 @@
 // @flow
 import { getName as defaultGetName } from "@commodo/name";
 import getStorageName from "./getStorageName";
-import getKeys from "./getKeys";
 import getPrimaryKey from "./getPrimaryKey";
-import findQueryKey from "./findQueryKey";
 import { withStaticProps, withProps } from "repropose";
 import cloneDeep from "lodash.clonedeep";
 import { withHooks } from "@commodo/hooks";
