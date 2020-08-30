@@ -1,4 +1,8 @@
 const getPrimaryKey = model => {
+    if (!model) {
+        return [];
+    }
+
     if (Array.isArray(model.__storageKeys)) {
         return model.__storageKeys;
     }
