@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.1.0-next.1 (2020-08-25)
+
+**Note:** Version bump only for package @commodo/fields-storage
+
+
+
+
+
+# 2.1.0-next.0 (2020-08-24)
+
+
+### Features
+
+* add custom filtering to the `loadRefs` function (via the `findRefArgs` param) ([9cab88f](https://github.com/webiny/commodo/commit/9cab88f1ae66401759f1d1d2a2025d2221f5b493))
+
+
+
+
+
 ## 2.0.2-next.6 (2020-08-21)
 
 **Note:** Version bump only for package @commodo/fields-storage

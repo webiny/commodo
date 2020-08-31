@@ -5,7 +5,16 @@ import { Collection } from "@commodo/fields-storage";
 import { hasFields, WithFieldsError } from "@commodo/fields";
 import { firstCharacterToLower, getIdFromValue, instanceOf as isInstanceOf, checkParent } from ".";
 
-export default ({ list, instanceOf, using, autoDelete, autoSave, refNameField, parent }) => {
+export default ({
+    list,
+    instanceOf,
+    using,
+    autoDelete,
+    autoSave,
+    refNameField,
+    parent,
+    findRefArgs
+}) => {
     return withProps(props => {
         const { setValue, isDirty, validate, clean } = props;
 
@@ -619,18 +628,43 @@ export default ({ list, instanceOf, using, autoDelete, autoSave, refNameField, p
                     let id = await this.parent.getField("id").getValue();
 
                     if (classes.using.class) {
-                        this.links.initial = await classes.using.class.find({
-                            query: { [classes.models.field]: id }
-                        });
+                        let finalFindRefArgs;
+
+                        if (findRefArgs) {
+                            if (typeof findRefArgs === "function") {
+                                finalFindRefArgs = findRefArgs();
+                            } else {
+                                finalFindRefArgs = findRefArgs;
+                            }
+
+                            this.initial = await classes.models.class.find(finalFindRefArgs);
+                        } else {
+                            finalFindRefArgs = {
+                                query: { [classes.models.field]: id }
+                            };
+                        }
+
+                        this.links.initial = await classes.using.class.find(finalFindRefArgs);
 
                         this.initial = new Collection();
                         for (let i = 0; i < this.links.initial.length; i++) {
                             this.initial.push(await this.links.initial[i][classes.using.field]);
                         }
                     } else {
-                        this.initial = await classes.models.class.find({
-                            query: { [classes.models.field]: id }
-                        });
+                        let finalFindRefArgs;
+                        if (findRefArgs) {
+                            if (typeof findRefArgs === "function") {
+                                finalFindRefArgs = findRefArgs();
+                            } else {
+                                finalFindRefArgs = findRefArgs;
+                            }
+                        } else {
+                            finalFindRefArgs = {
+                                query: { [classes.models.field]: id }
+                            };
+                        }
+
+                        this.initial = await classes.models.class.find(finalFindRefArgs);
                     }
 
                     if (!this.isDirty()) {
@@ -677,6 +711,8 @@ export default ({ list, instanceOf, using, autoDelete, autoSave, refNameField, p
                 if (this.parent.isId(initial)) {
                     const modelClass = this.getEntityClass();
                     if (modelClass) {
+                        // TODO: would be nice to maybe allow query customization for loadRef as well.
+                        // TODO: Check "findRefArgs" above.
                         const entity = await modelClass.findById(initial);
                         this.initial = entity;
                         // If current value is not dirty, than we can set initial value as current, otherwise we
