@@ -711,10 +711,21 @@ export default ({
                 if (this.parent.isId(initial)) {
                     const modelClass = this.getEntityClass();
                     if (modelClass) {
-                        // TODO: would be nice to maybe allow query customization for loadRef as well.
-                        // TODO: Check "findRefArgs" above.
-                        const entity = await modelClass.findById(initial);
-                        this.initial = entity;
+                        let entity;
+                        if (findRefArgs) {
+                            let finalFindRefArgs;
+                            if (typeof findRefArgs === "function") {
+                                finalFindRefArgs = findRefArgs();
+                            } else {
+                                finalFindRefArgs = findRefArgs;
+                            }
+                            entity = await modelClass.findOne(finalFindRefArgs);
+                            this.initial = entity;
+                        } else {
+                            entity = await modelClass.findById(initial);
+                            this.initial = entity;
+                        }
+
                         // If current value is not dirty, than we can set initial value as current, otherwise we
                         // assume that something else was set as current value like a new entity.
                         if (!this.isDirty()) {
