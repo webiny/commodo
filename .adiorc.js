@@ -1,9 +1,9 @@
 module.exports = {
     parser: {
-        plugins: ["jsx", "classProperties", "dynamicImport", "throwExpressions", "flow"]
+        plugins: ["jsx", "classProperties", "dynamicImport", "throwExpressions"]
     },
     ignore: {
-        src: ["path", "os", "fs", "util", "events", "crypto", "aws-sdk"],
+        src: ["path", "os", "fs", "util", "events", "crypto"],
         dependencies: ["@babel/runtime"],
         devDependencies: true
     },
