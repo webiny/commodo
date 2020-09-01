@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1-next.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@1.2.0...@commodo/fields-storage-ref@1.2.1-next.0) (2020-09-01)
+
+
+### Bug Fixes
+
+* replace `findRefArgs` with `loadRef` and `loadRefs` ([26dcbc1](https://github.com/webiny/commodo/commit/26dcbc1a7ab7fcbe961b878e168cc3c80ac9ef35))
+
+
+
+
+
 # [1.2.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage-ref@1.2.0-next.3...@commodo/fields-storage-ref@1.2.0) (2020-09-01)
 
 **Note:** Version bump only for package @commodo/fields-storage-ref

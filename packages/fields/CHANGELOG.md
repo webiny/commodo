@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1-next.0](https://github.com/webiny/commodo/compare/@commodo/fields@1.2.0...@commodo/fields@1.2.1-next.0) (2020-09-01)
+
+**Note:** Version bump only for package @commodo/fields
+
+
+
+
+
 # [1.2.0](https://github.com/webiny/commodo/compare/@commodo/fields@1.2.0-next.3...@commodo/fields@1.2.0) (2020-09-01)
 
 **Note:** Version bump only for package @commodo/fields
