@@ -50,6 +50,7 @@
     "lerna:version": "lerna version --yes",
     "lerna:publish": "lerna publish --yes",
     "lerna:rm-dist": "lerna exec -- rm -rf dist",
+    "release-latest": "node ./scripts/releaseLatest.js",
     "postinstall": "node ./scripts/linkPackages.js",
     "prepack": "node scripts/prepack.js",
     "cz": "git-cz"
