@@ -1,8 +1,8 @@
-name: Next Release
+name: Build
 
 on:
-  push:
-    branches: [ next ]
+  repository_dispatch:
+    types: [release-latest]
 
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -14,6 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.client_payload.branch }}
+          fetch-depth: 0
 
       - uses: actions/setup-node@v2-beta
         with:
@@ -44,8 +47,8 @@ jobs:
         run: git config --global user.name "webiny"
 
       - name: Create a release on GitHub
-        run: yarn lerna version --conventional-prerelease --yes
+        run: yarn lerna version --conventional-graduate --yes
 
       - name: Release packages to NPM
-        run: yarn lerna publish from-package --dist-tag next --yes
+        run: yarn lerna publish from-package --yes
 

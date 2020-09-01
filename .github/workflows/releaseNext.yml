@@ -1,8 +1,8 @@
-name: Build
+name: Next Release
 
 on:
   push:
-    branches: [ master ]
+    branches: [ release-** ]
 
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -10,14 +10,16 @@ env:
 
 jobs:
   build-test-release:
-    name: Build, test and release
+    name: Build, test and release ("next" tag)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: "0"
 
       - uses: actions/setup-node@v2-beta
         with:
-          node-version: '12'
+          node-version: 12
 
       - name: Create ".npmrc" file in the project root
         run: echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
@@ -44,8 +46,8 @@ jobs:
         run: git config --global user.name "webiny"
 
       - name: Create a release on GitHub
-        run: yarn lerna version --conventional-graduate --yes
+        run: yarn lerna version --conventional-prerelease --preid next --yes
 
       - name: Release packages to NPM
-        run: yarn lerna publish from-package --yes
+        run: yarn lerna publish from-package --dist-tag next --yes
 

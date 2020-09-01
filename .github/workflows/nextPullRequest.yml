@@ -9,6 +9,13 @@ on:
     branches: [ next ]
 
 jobs:
+  validate-commits:
+    name: Validate commit messages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: webiny/action-conventional-commits@v1.0.2
+
   build-and-test:
     name: Build and test
     runs-on: ubuntu-latest
@@ -17,6 +24,9 @@ jobs:
 
       - name: Install dependencies
         run: yarn --frozen-lockfile
+
+      - name: Check dependencies
+        run: yarn adio
 
       - name: Build packages
         run: yarn build
