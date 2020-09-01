@@ -13,7 +13,8 @@ export default ({
     autoSave,
     refNameField,
     parent,
-    findRefArgs
+    loadRefs,
+    loadRef
 }) => {
     return withProps(props => {
         const { setValue, isDirty, validate, clean } = props;
@@ -628,43 +629,34 @@ export default ({
                     let id = await this.parent.getField("id").getValue();
 
                     if (classes.using.class) {
-                        let finalFindRefArgs;
-
-                        if (findRefArgs) {
-                            if (typeof findRefArgs === "function") {
-                                finalFindRefArgs = findRefArgs();
-                            } else {
-                                finalFindRefArgs = findRefArgs;
-                            }
-
-                            this.initial = await classes.models.class.find(finalFindRefArgs);
+                        if (typeof loadRefs === "function") {
+                            this.links.initial = loadRefs({
+                                Model: classes.using.class,
+                                field: classes.models.field,
+                                id
+                            });
                         } else {
-                            finalFindRefArgs = {
+                            this.links.initial = await classes.using.class.find({
                                 query: { [classes.models.field]: id }
-                            };
+                            });
                         }
-
-                        this.links.initial = await classes.using.class.find(finalFindRefArgs);
 
                         this.initial = new Collection();
                         for (let i = 0; i < this.links.initial.length; i++) {
                             this.initial.push(await this.links.initial[i][classes.using.field]);
                         }
                     } else {
-                        let finalFindRefArgs;
-                        if (findRefArgs) {
-                            if (typeof findRefArgs === "function") {
-                                finalFindRefArgs = findRefArgs();
-                            } else {
-                                finalFindRefArgs = findRefArgs;
-                            }
+                        if (typeof loadRefs === "function") {
+                            this.initial = loadRefs({
+                                Model: classes.models.class,
+                                field: classes.models.field,
+                                id
+                            });
                         } else {
-                            finalFindRefArgs = {
+                            this.initial = await classes.models.class.find({
                                 query: { [classes.models.field]: id }
-                            };
+                            });
                         }
-
-                        this.initial = await classes.models.class.find(finalFindRefArgs);
                     }
 
                     if (!this.isDirty()) {
@@ -712,14 +704,8 @@ export default ({
                     const modelClass = this.getEntityClass();
                     if (modelClass) {
                         let entity;
-                        if (findRefArgs) {
-                            let finalFindRefArgs;
-                            if (typeof findRefArgs === "function") {
-                                finalFindRefArgs = findRefArgs();
-                            } else {
-                                finalFindRefArgs = findRefArgs;
-                            }
-                            entity = await modelClass.findOne(finalFindRefArgs);
+                        if (typeof loadRef === "function") {
+                            entity = await loadRef({ Model: modelClass, id: initial });
                             this.initial = entity;
                         } else {
                             entity = await modelClass.findById(initial);
@@ -743,7 +729,7 @@ export default ({
                 return this.current;
             },
 
-            async deleteInitial(options: {[key: string]: any}) {
+            async deleteInitial(options: { [key: string]: any }) {
                 if (!this.hasInitial()) {
                     return;
                 }
