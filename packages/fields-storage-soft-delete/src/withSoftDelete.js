@@ -1,4 +1,3 @@
-// @flow
 import { withProps, withStaticProps } from "repropose";
 import { withFields, skipOnPopulate, boolean } from "@commodo/fields";
 import { getName as defaultGetName } from "@commodo/name";
@@ -16,7 +15,7 @@ export default () => {
         })(baseFn);
 
         withProps({
-            async delete(options: ?Object) {
+            async delete(options: {[key: string]: any}) {
                 if (this.__withStorage.processing) {
                     return;
                 }
@@ -58,13 +57,13 @@ export default () => {
         })(baseFn);
 
         withStaticProps(({ find, findOne, count }) => ({
-            async find(options: ?Object) {
+            async find(options: {[key: string]: any}) {
                 return find.call(this, applyDeletedFilter(options));
             },
-            async findOne(options: ?Object) {
+            async findOne(options: {[key: string]: any}) {
                 return findOne.call(this, applyDeletedFilter(options));
             },
-            async count(options: ?Object) {
+            async count(options: {[key: string]: any}) {
                 return count.call(this, applyDeletedFilter(options));
             }
         }))(baseFn);

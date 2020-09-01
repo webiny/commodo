@@ -1,4 +1,3 @@
-// @flow
 import { getName } from "@commodo/name";
 import StoragePoolEntry from "./StoragePoolEntry";
 
@@ -42,7 +41,7 @@ class StoragePool {
         return this;
     }
 
-    get(model: Class<$Subtype<CreateModel>> | CreateModel, id: ?mixed): ?CreateModel {
+    get(model: any, id: any): CreateModel {
         const namespace = getName(model);
         if (!this.getPool()[namespace]) {
             return undefined;

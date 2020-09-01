@@ -1,4 +1,3 @@
-// @flow
 class Collection extends Array {
     __model: { params: Object, meta: Object };
 
@@ -33,7 +32,7 @@ class Collection extends Array {
         return this;
     }
 
-    getTotalCount(): ?number {
+    getTotalCount(): number {
         return this.__model.meta.totalCount;
     }
 }

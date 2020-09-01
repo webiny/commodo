@@ -1,11 +1,9 @@
-// @flow
-import { clone } from "ramda";
 import isMongoDbId from "./isMongoDbId";
 
 class MongoDbDriver {
     collections: Object;
     database: Object;
-    aggregateTotalCount: ?boolean;
+    aggregateTotalCount: boolean;
 
     constructor({ database, collections, aggregateTotalCount } = {}) {
         this.aggregateTotalCount = aggregateTotalCount;

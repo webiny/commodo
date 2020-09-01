@@ -1,4 +1,3 @@
-// @flow
 import { withProps } from "repropose";
 
 const executeHookCallbacks = async (callbacks, args, instance) => {
@@ -7,7 +6,7 @@ const executeHookCallbacks = async (callbacks, args, instance) => {
     }
 };
 
-const withHooks = (hooks: ?{ [string]: Function }) => {
+const withHooks = (hooks: { [string]: Function }) => {
     return baseFn => {
         let fn = withProps(props => {
             if (props.__withHooks) {

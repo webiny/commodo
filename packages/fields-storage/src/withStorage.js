@@ -16,7 +16,7 @@ interface IStorageDriver {}
 type Configuration = {
     storagePool?: StoragePool,
     driver?: IStorageDriver,
-    maxPerPage: ?number
+    maxPerPage: number
 };
 
 const defaults = {
@@ -46,18 +46,18 @@ const registerSaveUpdateCreateHooks = async (prefix, { existing, model, options 
     }
 };
 
-const getName = (instance) => {
+const getName = instance => {
     return getStorageName(instance) || defaultGetName(instance);
 };
 
 type FindParams = Object & {
-    query: ?{ [string]: number },
-    sort: ?{ [string]: number },
-    limit: ?number,
-    before: ?string,
-    after: ?string,
-    totalCount: ?boolean,
-    defaultSortField: ?string
+    query?: { [string]: number },
+    sort?: { [string]: number },
+    limit?: number,
+    before?: string,
+    after?: string,
+    totalCount?: boolean,
+    defaultSortField?: string
 };
 
 function cursorFrom(data, keys) {
@@ -106,7 +106,7 @@ const withStorage = (configuration: Configuration) => {
                 this.__withStorage.existing = existing;
                 return this;
             },
-            async save(options: ?SaveParams): Promise<void> {
+            async save(options: SaveParams): Promise<void> {
                 options = { ...options, ...defaults.save };
 
                 if (this.__withStorage.processing) {
@@ -186,7 +186,7 @@ const withStorage = (configuration: Configuration) => {
              * Deletes current and all linked models (if autoDelete on the attribute was enabled).
              * @param options
              */
-            async delete(options: ?Object) {
+            async delete(options: { [key: string]: any }) {
                 if (this.__withStorage.processing) {
                     return;
                 }
@@ -280,7 +280,7 @@ const withStorage = (configuration: Configuration) => {
                     return typeof value === "string" && !!value.match(/^[0-9a-fA-F]{24}$/);
                 },
                 generateId,
-                async find(options: ?FindParams) {
+                async find(options?: FindParams) {
                     if (!options) {
                         options = {};
                     }
@@ -411,7 +411,7 @@ const withStorage = (configuration: Configuration) => {
                         totalCount
                     });
 
-                    const result: ?Array<Object> = results;
+                    const result: Array<Object> = results;
                     if (result instanceof Array) {
                         for (let i = 0; i < result.length; i++) {
                             const pooled = this.getStoragePool().get(this, result[i].id);
@@ -434,7 +434,10 @@ const withStorage = (configuration: Configuration) => {
                  * @param id
                  * @param options
                  */
-                async findById(id: mixed, options: ?Object): Promise<null | Entity> {
+                async findById(
+                    id: mixed,
+                    options?: { [key: string]: any }
+                ): Promise<null | Entity> {
                     if (!id || !this.isId(id)) {
                         return null;
                     }
@@ -456,7 +459,7 @@ const withStorage = (configuration: Configuration) => {
                  * Finds one model matched by given query parameters.
                  * @param options
                  */
-                async findOne(options: ?Object): Promise<null | $Subtype<Entity>> {
+                async findOne(options?: { [key: string]: any }): Promise<null | $Subtype<Entity>> {
                     if (!options) {
                         options = {};
                     }
@@ -476,7 +479,7 @@ const withStorage = (configuration: Configuration) => {
 
                         const model: $Subtype<Entity> = new this();
                         model.setExisting();
-                        await model.populateFromStorage(((result: any): Object));
+                        await model.populateFromStorage(result);
                         this.getStoragePool().add(model);
                         return model;
                     }
@@ -487,7 +490,7 @@ const withStorage = (configuration: Configuration) => {
                  * Counts total number of models matched by given query parameters.
                  * @param options
                  */
-                async count(options: ?Object): Promise<number> {
+                async count(options: {[key: string]: any}): Promise<number> {
                     if (!options) {
                         options = {};
                     }

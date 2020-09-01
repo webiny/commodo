@@ -1,4 +1,3 @@
-// @flow
 import { encodeCursor } from "./cursor";
 
 type PaginationMeta = {
@@ -19,7 +18,7 @@ type Params = {
     totalCount?: number
 };
 
-export default (params: ?Params): PaginationMeta => {
+export default (params: Params): PaginationMeta => {
     const { nextCursor, previousCursor, hasNextPage, hasPreviousPage, ...rest } = params;
 
     const meta: PaginationMeta = {

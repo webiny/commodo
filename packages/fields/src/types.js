@@ -1,4 +1,3 @@
-// @flow
 export type FieldValue = mixed;
 
 export type Field = {
@@ -9,4 +8,4 @@ export type Field = {
     list?: boolean
 };
 
-export type FieldFactory = ({ type: string, list?: boolean, validation?: Function }) => () => Field;
+export type FieldFactory = (args: { type: string, list?: boolean, validation?: Function }) => () => Field;

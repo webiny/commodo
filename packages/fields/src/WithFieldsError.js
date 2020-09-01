@@ -1,4 +1,3 @@
-// @flow
 const FIELD_DATA_TYPE_ERROR = "FIELD_DATA_TYPE_ERROR";
 const POPULATE_FAILED_NOT_OBJECT = "POPULATE_FAILED_NOT_OBJECT";
 const MODEL_CLASS_NOT_SET = "MODEL_CLASS_NOT_SET";
@@ -16,7 +15,7 @@ export default class WithFieldsError extends Error {
 
     message: string;
     code: string;
-    data: ?Object;
+    data: {[key: string]: any};
     constructor(message: string = "", code: string = "", data?: Object) {
         super();
         this.message = message;

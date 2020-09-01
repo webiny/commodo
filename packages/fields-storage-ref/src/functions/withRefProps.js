@@ -306,7 +306,7 @@ export default ({
                 return this.auto.delete;
             },
 
-            getEntityClass(): ?Function {
+            getEntityClass(): Function {
                 if (this.list) {
                     return this.classes.models.class;
                 }
@@ -596,7 +596,7 @@ export default ({
                 notEmpty && (await value.validate());
             },
 
-            isValidInstance(instance: ?Entity) {
+            isValidInstance(instance: Entity) {
                 if (this.hasMultipleEntityClasses()) {
                     return hasFields(instance);
                 }
@@ -743,7 +743,7 @@ export default ({
                 return this.current;
             },
 
-            async deleteInitial(options: ?{}) {
+            async deleteInitial(options: {[key: string]: any}) {
                 if (!this.hasInitial()) {
                     return;
                 }
@@ -903,11 +903,11 @@ export default ({
                 }
             },
 
-            getEntitiesClass(): ?Class<Entity> {
+            getEntitiesClass(): Class<Entity> {
                 return this.classes.models.class;
             },
 
-            getUsingClass(): ?Class<Entity> {
+            getUsingClass(): Class<Entity> {
                 let modelsClass = this.classes.using.class;
                 if (!modelsClass) {
                     return null;
@@ -922,15 +922,15 @@ export default ({
                 }
             },
 
-            getEntitiesField(): ?string {
+            getEntitiesField(): string {
                 return this.classes.models.field;
             },
 
-            getUsingField(): ?string {
+            getUsingField(): string {
                 return this.classes.using.field;
             },
 
-            setUsing(modelClass: Class<Entity>, modelField: ?string) {
+            setUsing(modelClass: Class<Entity>, modelField: string) {
                 this.classes.using.class = modelClass;
                 if (typeof modelField === "undefined") {
                     this.classes.using.field = firstCharacterToLower(

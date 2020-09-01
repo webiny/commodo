@@ -1,4 +1,4 @@
-import { type FieldFactory } from "@commodo/fields/types";
+import { FieldFactory } from "@commodo/fields/types";
 
 const createField: FieldFactory = ({ type, list, validation, get, set, value, ...rest }) => {
     return function(name, parent) {

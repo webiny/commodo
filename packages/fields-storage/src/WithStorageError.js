@@ -1,5 +1,3 @@
-// @flow
-
 const MAX_PER_PAGE_EXCEEDED = "MAX_PER_PAGE_EXCEEDED";
 const POPULATE_FAILED_NOT_OBJECT = "POPULATE_FAILED_NOT_OBJECT";
 const CANNOT_DELETE_NO_ID = "CANNOT_DELETE_NO_ID";
@@ -13,8 +11,8 @@ export default class WithStorageError extends Error {
 
     message: string;
     code: string;
-    data: ?Object;
-    constructor(message: string = "", code: string = "", data: ?Object = null) {
+    data: {[key: string]: any};
+    constructor(message: string = "", code: string = "", data: {[key: string]: any} = null) {
         super();
         this.message = message;
         this.code = code;
