@@ -1,10 +1,10 @@
 import { useModels } from "./models";
 import { getName } from "@commodo/name";
 
-describe("delete test", function() {
+describe("delete test", () => {
     const { models, getDocumentClient } = useModels();
 
-    it("should be able to perform create & update operations", async () => {
+    it("should be able to perform delete operation", async () => {
         const { SimpleModel } = models;
         const simpleModel = new SimpleModel();
         simpleModel.populate({
@@ -37,8 +37,7 @@ describe("delete test", function() {
             }
         });
 
-        simpleModel.name = "Something-1-edited";
-        await simpleModel.save();
+        await simpleModel.delete();
 
         item = await getDocumentClient()
             .get({
@@ -48,16 +47,6 @@ describe("delete test", function() {
             .promise();
 
         expect(item).toEqual({
-            Item: {
-                sk: "something-1",
-                name: "Something-1-edited",
-                pk: "SimpleModel",
-                slug: "something1Edited",
-                enabled: true,
-                age: 55,
-                tags: ["one", "two", "three"]
-            }
         });
-
     });
 });

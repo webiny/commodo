@@ -21,10 +21,10 @@ describe("find test", function() {
         }
     });
 
-    it("should be able to perform basic findOne queries", async () => {
+    it("should be able to perform basic find queries", async () => {
         const { SimpleModel } = models;
 
-        const something0Entry = await SimpleModel.findOne({
+        const [something0Entry] = await SimpleModel.find({
             query: { pk: "SimpleModel", sk: "something-0" }
         });
 
@@ -35,7 +35,7 @@ describe("find test", function() {
         expect(something0Entry.tags).toEqual([0]);
         expect(something0Entry.age).toEqual(0);
 
-        const something4Entry = await SimpleModel.findOne({
+        const [something4Entry] = await SimpleModel.find({
             query: { pk: "SimpleModel", sk: "something-4" }
         });
 
@@ -48,22 +48,34 @@ describe("find test", function() {
     });
 
     it("should be able to use basic comparison query operators", async () => {
-        // Should return something-8 instance.
-        let result = await SimpleModel.findOne({
+        const { SimpleModel } = models;
+
+        // Should return two instances using the $gte operator.
+        let results = await SimpleModel.find({
             query: { pk: "SimpleModel", sk: { $gte: "something-8" } }
         });
 
-        expect(result.pk).toBe("SimpleModel");
-        expect(result.sk).toBe("something-8");
-        expect(result.name).toBe("Something-8");
+        expect(results[0].pk).toBe("SimpleModel");
+        expect(results[0].sk).toBe("something-8");
+        expect(results[0].name).toBe("Something-8");
 
-        result = await SimpleModel.findOne({
-            query: { pk: "SimpleModel", sk: { $gt: "something-8" } }
+        expect(results[1].pk).toBe("SimpleModel");
+        expect(results[1].sk).toBe("something-9");
+        expect(results[1].name).toBe("Something-9");
+
+        // Should return 9 instances (zero-indexed item not included in the result set).
+        results = await SimpleModel.find({
+            query: { pk: "SimpleModel", sk: { $gt: "something-0" } }
         });
 
-        expect(result.pk).toBe("SimpleModel");
-        expect(result.sk).toBe("something-9");
-        expect(result.name).toBe("Something-9");
+        expect(results.length).toBe(9);
+
+        // Should return 10 instances (all items included in the result set).
+        results = await SimpleModel.find({
+            query: { pk: "SimpleModel", sk: { $gte: "something-0" } }
+        });
+
+        expect(results.length).toBe(10);
     });
 
     it("should be able to use both ascending and descending ordering", async () => {
