@@ -1,0 +1,24 @@
+import processStatement from "./processStatement";
+
+export default ({ query, sort, key }) => {
+    const args = {
+        expression: "",
+        attributeNames: {},
+        attributeValues: {}
+    };
+
+    processStatement({ args, query: { $and: query } });
+
+    const output = {
+        KeyConditionExpression: args.expression,
+        ExpressionAttributeNames: args.attributeNames,
+        ExpressionAttributeValues: args.attributeValues
+    };
+
+    const sortKey = key.fields && key.fields[1];
+    if (sort && sort[sortKey.name] === -1) {
+        output.ScanIndexForward = true;
+    }
+
+    return output;
+};

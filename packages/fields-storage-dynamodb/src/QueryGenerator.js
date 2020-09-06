@@ -1,12 +1,13 @@
-import KeyConditionExpression from "./statements/KeyConditionExpression";
-
-// const key = findQueryKey(item.query, item.keys);
-// const keyConditionExpression = new KeyConditionExpression().process(item.query);
+import createKeyConditionExpressionArgs from "./statements/createKeyConditionExpressionArgs";
 
 class QueryGenerator {
-    generate({ query, keys }) {
+    generate({ query, keys, sort, limit, table }) {
         // 1. Which key can we use in this query operation?
         const key = this.findQueryKey(query, keys);
+
+        if (!key) {
+            throw new Error("Cannot perform query - key not found.");
+        }
 
         // 2. Now that we know the key, let's separate the key attributes from the rest.
         const keyAttributesValues = {},
@@ -18,6 +19,14 @@ class QueryGenerator {
                 nonKeyAttributesValues[queryKey] = query[queryKey];
             }
         }
+
+        const keyConditionExpression = createKeyConditionExpressionArgs({
+            query: keyAttributesValues,
+            sort,
+            key
+        });
+
+        return { ...keyConditionExpression, TableName: table, Limit: limit };
     }
 
     findQueryKey(query = {}, keys = []) {
