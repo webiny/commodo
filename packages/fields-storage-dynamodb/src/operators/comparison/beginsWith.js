@@ -2,17 +2,11 @@ const beginsWith = {
     canProcess: ({ value }) => {
         return value && typeof value["$beginsWith"] !== "undefined";
     },
-    process: ({ key, value }) => {
-        return {
-            statement: `begins_with (#${key}, :${key})`,
-            attributeNames: {
-                [`#${key}`]: key
-            },
-            attributeValues: {
-                [`:${key}`]: value["$beginsWith"]
-            }
-        };
+    process: ({ key, value, args }) => {
+        args.expression += `begins_with (#${key}, :${key})`;
+        args.attributeNames[`#${key}`] = key;
+        args.attributeValues[`:${key}`] = value["$beginsWith"];
     }
 };
 
-module.exports = beginsWith;
+export default beginsWith;

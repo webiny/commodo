@@ -2,16 +2,11 @@ const lte = {
     canProcess: ({ value }) => {
         return value && typeof value["$lte"] !== "undefined";
     },
-    process: ({ key, value }) => {
-        return {
-            expression: `#${key} <= :${key}`,
-            attributeNames: {
-                [`#${key}`]: key
-            },
-            attributeValues: {
-                [`:${key}`]: value["$gt"]
-            }
-        };
+    process: ({ key, value, args }) => {
+        args.expression += `#${key} <= :${key}`;
+        args.attributeNames[`#${key}`] = key;
+        args.attributeValues[`:${key}`] = value["$lte"]
     }
 };
-module.exports = lte;
+
+export default lte;

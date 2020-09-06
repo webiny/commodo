@@ -1,13 +1,15 @@
 // Comparison operators (A-Z)
-const $beginsWith = require("./comparison/beginsWith");
-const $between = require("./comparison/between");
-const $gt = require("./comparison/gt");
-const $gte = require("./comparison/gte");
-const $lt = require("./comparison/lt");
-const $lte = require("./comparison/lte");
-const $eq = require("./comparison/eq");
+import $and from "./logical/and";
+import $beginsWith from "./comparison/beginsWith";
+import $between from "./comparison/between";
+import $gt from "./comparison/gt";
+import $gte from "./comparison/gte";
+import $lt from "./comparison/lt";
+import $lte from "./comparison/lte";
+import $eq from "./comparison/eq";
 
 module.exports = {
+    $and,
     $beginsWith,
     $between,
     $eq,

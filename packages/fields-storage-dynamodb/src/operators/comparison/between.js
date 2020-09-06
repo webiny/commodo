@@ -6,15 +6,14 @@ const between = {
         return {
             statement: `#${key} BETWEEN :${key}Gte AND :${key}Lte`,
             attributeNames: {
-                [`#${key}`]: key,
+                [`#${key}`]: key
             },
             attributeValues: {
                 [`:${key}Gte`]: value[0],
                 [`:${key}Lte`]: value[1]
             }
         };
-
     }
 };
 
-module.exports = between;
+export default between;

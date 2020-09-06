@@ -12,17 +12,11 @@ const eq = {
 
         return validTypes.includes(typeof value);
     },
-    process: ({ key, value }) => {
-        return {
-            expression: `#${key} = :${key}`,
-            attributeNames: {
-                [`#${key}`]: key
-            },
-            attributeValues: {
-                [`:${key}`]: value
-            }
-        };
+    process: ({ key, value, args }) => {
+        args.expression += `#${key} = :${key}`;
+        args.attributeNames[`#${key}`] = key;
+        args.attributeValues[`:${key}`] = value;
     }
 };
 
-module.exports = eq;
+export default eq;
