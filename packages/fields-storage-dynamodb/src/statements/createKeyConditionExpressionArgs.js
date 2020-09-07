@@ -20,5 +20,9 @@ export default ({ query, sort, key }) => {
         output.ScanIndexForward = true;
     }
 
+    if (!key.primary) {
+        output.IndexName = key.name;
+    }
+
     return output;
 };
