@@ -1,5 +1,4 @@
 // @flow
-import _ from "lodash";
 import type { Operator } from "../../../types";
 
 const or: Operator = {
