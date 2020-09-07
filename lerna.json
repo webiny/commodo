@@ -15,7 +15,7 @@
         "**/*.md",
         "lerna.json"
       ],
-      "allowBranch": ["master", "next"],
+      "allowBranch": ["master", "next", "beta"],
       "conventionalCommits": true,
       "createRelease": "github",
       "commitHooks": false,
