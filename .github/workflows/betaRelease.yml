@@ -44,7 +44,7 @@ jobs:
         run: git config --global user.name "webiny"
 
       - name: Create a release on GitHub
-        run: yarn lerna version --conventional-prerelease --yes
+        run: yarn lerna version --conventional-prerelease --preid=beta --yes
 
       - name: Release packages to NPM
         run: yarn lerna publish from-package --dist-tag beta --yes
