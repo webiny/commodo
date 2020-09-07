@@ -1,15 +1,15 @@
 import { useModels } from "./models";
 import { Batch } from "@commodo/fields-storage";
 
-describe("save test", function() {
-    const { models, getDocumentClient } = useModels();
+describe("batch save test", function() {
+    const { models, getDocumentClient, id: pk } = useModels();
 
     it("should be able to batch save, create, and update calls", async () => {
         const { SimpleModel } = models;
 
-        const a = new SimpleModel().populate({ pk: "SimpleModel", sk: "a" });
-        const b = new SimpleModel().populate({ pk: "SimpleModel", sk: "b" });
-        const c = new SimpleModel().populate({ pk: "SimpleModel", sk: "c" });
+        const a = new SimpleModel().populate({ pk: pk, sk: "a" });
+        const b = new SimpleModel().populate({ pk: pk, sk: "b" });
+        const c = new SimpleModel().populate({ pk: pk, sk: "c" });
 
         const batchWriteSpy = jest.spyOn(SimpleModel.getStorageDriver().getClient(), "batchWrite");
         const putSpy = jest.spyOn(SimpleModel.getStorageDriver().getClient(), "put");
@@ -25,7 +25,7 @@ describe("save test", function() {
                 TableName: "pk-sk",
                 KeyConditionExpression: "pk = :pk and sk >= :sk",
                 ExpressionAttributeValues: {
-                    ":pk": "SimpleModel",
+                    ":pk": pk,
                     ":sk": "a"
                 }
             })
@@ -33,9 +33,9 @@ describe("save test", function() {
 
         expect(items).toEqual({
             Items: [
-                { sk: "a", enabled: true, pk: "SimpleModel" },
-                { sk: "b", enabled: true, pk: "SimpleModel" },
-                { sk: "c", enabled: true, pk: "SimpleModel" }
+                { sk: "a", enabled: true, pk: pk },
+                { sk: "b", enabled: true, pk: pk },
+                { sk: "c", enabled: true, pk: pk }
             ],
             Count: 3,
             ScannedCount: 3
@@ -43,9 +43,9 @@ describe("save test", function() {
 
         // Now, try to insert an item via the static "create" method.
         batch = new Batch(
-            [SimpleModel, "create", { data: { pk: "SimpleModel", sk: "d" } }],
-            [SimpleModel, "create", { data: { pk: "SimpleModel", sk: "e" } }],
-            [SimpleModel, "create", { data: { pk: "SimpleModel", sk: "f" } }]
+            [SimpleModel, "create", { data: { pk: pk, sk: "d" } }],
+            [SimpleModel, "create", { data: { pk: pk, sk: "e" } }],
+            [SimpleModel, "create", { data: { pk: pk, sk: "f" } }]
         );
 
         await batch.execute();
@@ -57,7 +57,7 @@ describe("save test", function() {
                 TableName: "pk-sk",
                 KeyConditionExpression: "pk = :pk and sk >= :sk",
                 ExpressionAttributeValues: {
-                    ":pk": "SimpleModel",
+                    ":pk": pk,
                     ":sk": "a"
                 }
             })
@@ -68,29 +68,29 @@ describe("save test", function() {
             Items: [
                 {
                     enabled: true,
-                    pk: "SimpleModel",
+                    pk: pk,
                     sk: "a"
                 },
                 {
                     enabled: true,
-                    pk: "SimpleModel",
+                    pk: pk,
                     sk: "b"
                 },
                 {
                     enabled: true,
-                    pk: "SimpleModel",
+                    pk: pk,
                     sk: "c"
                 },
                 {
-                    pk: "SimpleModel",
+                    pk: pk,
                     sk: "d"
                 },
                 {
-                    pk: "SimpleModel",
+                    pk: pk,
                     sk: "e"
                 },
                 {
-                    pk: "SimpleModel",
+                    pk: pk,
                     sk: "f"
                 }
             ],
@@ -111,7 +111,7 @@ describe("save test", function() {
                 TableName: "pk-sk",
                 KeyConditionExpression: "pk = :pk and sk >= :sk",
                 ExpressionAttributeValues: {
-                    ":pk": "SimpleModel",
+                    ":pk": pk,
                     ":sk": "a"
                 }
             })
@@ -124,7 +124,7 @@ describe("save test", function() {
                     age: null,
                     enabled: false,
                     name: null,
-                    pk: "SimpleModel",
+                    pk: pk,
                     sk: "a",
                     slug: null,
                     tags: null
@@ -133,7 +133,7 @@ describe("save test", function() {
                     age: null,
                     enabled: false,
                     name: null,
-                    pk: "SimpleModel",
+                    pk: pk,
                     sk: "b",
                     slug: null,
                     tags: null
@@ -142,21 +142,21 @@ describe("save test", function() {
                     age: null,
                     enabled: false,
                     name: null,
-                    pk: "SimpleModel",
+                    pk: pk,
                     sk: "c",
                     slug: null,
                     tags: null
                 },
                 {
-                    pk: "SimpleModel",
+                    pk: pk,
                     sk: "d"
                 },
                 {
-                    pk: "SimpleModel",
+                    pk: pk,
                     sk: "e"
                 },
                 {
-                    pk: "SimpleModel",
+                    pk: pk,
                     sk: "f"
                 }
             ],
@@ -169,24 +169,24 @@ describe("save test", function() {
                 SimpleModel,
                 "update",
                 {
-                    query: { pk: "SimpleModel", sk: "d" },
-                    data: { pk: "SimpleModel", sk: "d", enabled: false }
+                    query: { pk: pk, sk: "d" },
+                    data: { pk: pk, sk: "d", enabled: false }
                 }
             ],
             [
                 SimpleModel,
                 "update",
                 {
-                    query: { pk: "SimpleModel", sk: "e" },
-                    data: { pk: "SimpleModel", sk: "e", enabled: false }
+                    query: { pk: pk, sk: "e" },
+                    data: { pk: pk, sk: "e", enabled: false }
                 }
             ],
             [
                 SimpleModel,
                 "update",
                 {
-                    query: { pk: "SimpleModel", sk: "f" },
-                    data: { pk: "SimpleModel", sk: "f", enabled: false }
+                    query: { pk: pk, sk: "f" },
+                    data: { pk: pk, sk: "f", enabled: false }
                 }
             ]
         );
@@ -200,7 +200,7 @@ describe("save test", function() {
                 TableName: "pk-sk",
                 KeyConditionExpression: "pk = :pk and sk >= :sk",
                 ExpressionAttributeValues: {
-                    ":pk": "SimpleModel",
+                    ":pk": pk,
                     ":sk": "a"
                 }
             })
@@ -213,7 +213,7 @@ describe("save test", function() {
                     age: null,
                     enabled: false,
                     name: null,
-                    pk: "SimpleModel",
+                    pk: pk,
                     sk: "a",
                     slug: null,
                     tags: null
@@ -222,7 +222,7 @@ describe("save test", function() {
                     age: null,
                     enabled: false,
                     name: null,
-                    pk: "SimpleModel",
+                    pk: pk,
                     sk: "b",
                     slug: null,
                     tags: null
@@ -231,23 +231,23 @@ describe("save test", function() {
                     age: null,
                     enabled: false,
                     name: null,
-                    pk: "SimpleModel",
+                    pk: pk,
                     sk: "c",
                     slug: null,
                     tags: null
                 },
                 {
-                    pk: "SimpleModel",
+                    pk: pk,
                     sk: "d",
                     enabled: false
                 },
                 {
-                    pk: "SimpleModel",
+                    pk: pk,
                     sk: "e",
                     enabled: false
                 },
                 {
-                    pk: "SimpleModel",
+                    pk: pk,
                     sk: "f",
                     enabled: false
                 }

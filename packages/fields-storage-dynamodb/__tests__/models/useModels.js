@@ -2,14 +2,16 @@ import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { withStorage } from "@commodo/fields-storage";
 import { DynamoDbDriver } from "@commodo/fields-storage-dynamodb";
 import { compose } from "ramda";
+import uniqid from "uniqid";
 
 // Models.
 import simpleModel from "./SimpleModel";
 
-export default ({ init = true } = {}) => {
+export default () => {
     const self = {
         models: {},
         documentClient: null,
+        id: uniqid(),
         beforeAll: () => {
             self.documentClient = new DocumentClient({
                 convertEmptyValues: true,
@@ -37,9 +39,7 @@ export default ({ init = true } = {}) => {
         }
     };
 
-    if (init !== false) {
-        beforeAll(self.beforeAll);
-    }
+    beforeAll(self.beforeAll);
 
     return self;
 };

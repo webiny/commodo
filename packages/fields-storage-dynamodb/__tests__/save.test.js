@@ -1,14 +1,13 @@
 import { useModels } from "./models";
-import { getName } from "@commodo/name";
 
 describe("save test", function() {
-    const { models, getDocumentClient } = useModels();
+    const { models, getDocumentClient, id: pk } = useModels();
 
     it("should be able to perform create & update operations", async () => {
         const { SimpleModel } = models;
         const simpleModel = new SimpleModel();
         simpleModel.populate({
-            pk: getName(SimpleModel),
+            pk,
             sk: "something-1",
             name: "Something-1",
             enabled: true,
@@ -21,7 +20,7 @@ describe("save test", function() {
         let item = await getDocumentClient()
             .get({
                 TableName: "pk-sk",
-                Key: { pk: getName(SimpleModel), sk: "something-1" }
+                Key: { pk, sk: "something-1" }
             })
             .promise();
 
@@ -29,7 +28,7 @@ describe("save test", function() {
             Item: {
                 sk: "something-1",
                 name: "Something-1",
-                pk: "SimpleModel",
+                pk: pk,
                 slug: "something1",
                 enabled: true,
                 age: 55,
@@ -43,7 +42,7 @@ describe("save test", function() {
         item = await getDocumentClient()
             .get({
                 TableName: "pk-sk",
-                Key: { pk: getName(SimpleModel), sk: "something-1" }
+                Key: { pk, sk: "something-1" }
             })
             .promise();
 
@@ -51,7 +50,7 @@ describe("save test", function() {
             Item: {
                 sk: "something-1",
                 name: "Something-1-edited",
-                pk: "SimpleModel",
+                pk: pk,
                 slug: "something1Edited",
                 enabled: true,
                 age: 55,

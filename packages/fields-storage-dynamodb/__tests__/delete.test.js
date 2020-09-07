@@ -1,14 +1,14 @@
 import { useModels } from "./models";
-import { getName } from "@commodo/name";
 
 describe("delete test", () => {
-    const { models, getDocumentClient } = useModels();
+    const { models, getDocumentClient, id: pk } = useModels();
 
     it("should be able to perform delete operation", async () => {
         const { SimpleModel } = models;
+
         const simpleModel = new SimpleModel();
         simpleModel.populate({
-            pk: getName(SimpleModel),
+            pk,
             sk: "something-1",
             name: "Something-1",
             enabled: true,
@@ -21,7 +21,7 @@ describe("delete test", () => {
         let item = await getDocumentClient()
             .get({
                 TableName: "pk-sk",
-                Key: { pk: getName(SimpleModel), sk: "something-1" }
+                Key: { pk, sk: "something-1" }
             })
             .promise();
 
@@ -29,7 +29,7 @@ describe("delete test", () => {
             Item: {
                 sk: "something-1",
                 name: "Something-1",
-                pk: "SimpleModel",
+                pk,
                 slug: "something1",
                 enabled: true,
                 age: 55,
@@ -42,11 +42,10 @@ describe("delete test", () => {
         item = await getDocumentClient()
             .get({
                 TableName: "pk-sk",
-                Key: { pk: getName(SimpleModel), sk: "something-1" }
+                Key: { pk, sk: "something-1" }
             })
             .promise();
 
-        expect(item).toEqual({
-        });
+        expect(item).toEqual({});
     });
 });
