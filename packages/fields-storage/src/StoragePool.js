@@ -1,6 +1,20 @@
 // @flow
 import { getName } from "@commodo/name";
 import StoragePoolEntry from "./StoragePoolEntry";
+import getPrimaryKey from "./getPrimaryKey";
+
+function getPoolItemId(model, data) {
+    const primaryKey = getPrimaryKey(model);
+    const output = { namespace: model.getStorageName(), id: [] };
+
+    for (let i = 0; i < primaryKey.fields.length; i++) {
+        let field = primaryKey.fields[i];
+        output.id.push(data ? data[field.name] : model[field.name]);
+    }
+
+    output.id.join(":");
+    return output;
+}
 
 class StoragePool {
     pool: {};
@@ -13,43 +27,32 @@ class StoragePool {
     }
 
     add(model: $Subtype<CreateModel>): this {
-        const namespace = getName(model);
+        const { namespace, id } = getPoolItemId(model);
         if (!this.getPool()[namespace]) {
             this.getPool()[namespace] = {};
         }
 
-        this.getPool()[namespace][model.id] = new StoragePoolEntry(model);
+        this.getPool()[namespace][id] = new StoragePoolEntry(model);
         return this;
     }
 
-    has(model, id): boolean {
-        const namespace = getName(model);
-        if (!this.getPool()[namespace]) {
-            return false;
-        }
-
-        const modelId = id || model.id;
-        return typeof this.getPool()[namespace][modelId] !== "undefined";
-    }
-
     remove(model): this {
-        const namespace = getName(model);
+        const { namespace, id } = getPoolItemId(model);
         if (!this.getPool()[namespace]) {
             return this;
         }
 
-        delete this.getPool()[namespace][model.id];
+        delete this.getPool()[namespace][id];
         return this;
     }
 
-    get(model: Class<$Subtype<CreateModel>> | CreateModel, id: ?mixed): ?CreateModel {
-        const namespace = getName(model);
+    get(model, data: any = null) {
+        const { namespace, id } = getPoolItemId(model, data);
         if (!this.getPool()[namespace]) {
             return undefined;
         }
 
-        const modelId = id || model.id;
-        const poolEntry: StoragePoolEntry = this.getPool()[namespace][modelId];
+        const poolEntry: StoragePoolEntry = this.getPool()[namespace][id];
         if (poolEntry) {
             return poolEntry.getModel();
         }
