@@ -2,8 +2,8 @@
 import { getName as defaultGetName } from "@commodo/name";
 import getStorageName from "./getStorageName";
 import getPrimaryKey from "./getPrimaryKey";
+import getKeys from "./getKeys";
 import { withStaticProps, withProps } from "repropose";
-import cloneDeep from "lodash.clonedeep";
 import { withHooks } from "@commodo/hooks";
 import type { SaveParams } from "@commodo/fields-storage/types";
 import WithStorageError from "./WithStorageError";
@@ -11,12 +11,16 @@ import Collection from "./Collection";
 import StoragePool from "./StoragePool";
 import FieldsStorageAdapter from "./FieldsStorageAdapter";
 import { decodeCursor, encodeCursor } from "./cursor";
+
+// TODO: check faster alternative.
+import cloneDeep from "lodash.clonedeep";
+
 interface IStorageDriver {}
 
 type Configuration = {
     storagePool?: StoragePool,
     driver?: IStorageDriver,
-    maxPerPage: ?number
+    maxLimit: ?number
 };
 
 const defaults = {
@@ -35,7 +39,7 @@ const hook = async (name, { options, model }) => {
     await model.hook(name, { model, options });
 };
 
-const registerSaveUpdateCreateHooks = async (prefix, { existing, model, options }) => {
+const triggerSaveUpdateCreateHooks = async (prefix, { existing, model, options }) => {
     await hook(prefix + "Save", { model, options });
     if (existing) {
         await hook(prefix + "Update", { model, options });
@@ -76,27 +80,12 @@ function cursorFrom(data, keys) {
 
 const withStorage = (configuration: Configuration) => {
     return baseFn => {
-        let fn = withHooks({
-            delete() {
-                if (!this.id) {
-                    throw new WithStorageError(
-                        "Cannot delete before saving to storage.",
-                        WithStorageError.CANNOT_DELETE_NO_ID
-                    );
-                }
-            }
-        })(baseFn);
-
-        fn = withProps(props => ({
+        let fn = withProps(props => ({
             __withStorage: {
                 existing: false,
                 processing: false,
                 fieldsStorageAdapter: new FieldsStorageAdapter()
             },
-            // generateId,
-            // isId(value) {
-            //     return typeof value === "string" && !!value.match(/^[a-zA-Z0-9]*$/);
-            // },
             isExisting() {
                 return this.__withStorage.existing;
             },
@@ -104,7 +93,7 @@ const withStorage = (configuration: Configuration) => {
                 this.__withStorage.existing = existing;
                 return this;
             },
-            async save(options: ?SaveParams): Promise<void> {
+            async save(rawArgs: ?SaveParams): Promise<void> {
                 const primaryKey = getPrimaryKey(this);
                 if (!primaryKey) {
                     throw Error(
@@ -112,7 +101,7 @@ const withStorage = (configuration: Configuration) => {
                     );
                 }
 
-                options = { ...options, ...defaults.save };
+                const args = { ...defaults.save, ...cloneDeep(rawArgs) };
 
                 if (this.__withStorage.processing) {
                     return;
@@ -122,72 +111,78 @@ const withStorage = (configuration: Configuration) => {
 
                 const existing = this.isExisting();
 
-                await registerSaveUpdateCreateHooks("before", { existing, model: this, options });
+                await triggerSaveUpdateCreateHooks("before", {
+                    existing,
+                    model: this,
+                    options: args
+                });
 
                 try {
-                    await hook("__save", { model: this, options });
+                    await hook("__save", { model: this, options: args });
                     if (existing) {
-                        await hook("__update", { model: this, options });
+                        await hook("__update", { model: this, options: args });
                     } else {
-                        await hook("__create", { model: this, options });
+                        await hook("__create", { model: this, options: args });
                     }
 
-                    options.validation !== false && (await this.validate());
+                    args.validation !== false && (await this.validate());
 
-                    await registerSaveUpdateCreateHooks("__before", {
+                    await triggerSaveUpdateCreateHooks("__before", {
                         existing,
                         model: this,
-                        options
+                        options: args
                     });
 
                     if (this.isDirty()) {
-                        // if (!this.id) {
-                        //     this.id = this.constructor.generateId();
-                        // }
+                        const data = await this.toStorage();
 
                         if (existing) {
-                            // const { getId } = options;
-                            // await this.getStorageDriver().update(model[
-                            //     {
-                            //         name: getName(this),
-                            //         query:
-                            //             typeof getId === "function" ? getId(this) : { id: this.id },
-                            //         data: await this.toStorage()
-                            //     }
-                            // ]);
-                            await this.getStorageDriver().update({ model: this, primaryKey });
+                            const query = {};
+                            for (let i = 0; i < primaryKey.fields.length; i++) {
+                                let field = primaryKey.fields[i];
+                                query[field.name] = this[field.name];
+                            }
+
+                            await this.constructor.update({
+                                batch: args.batch,
+                                instance: this,
+                                data,
+                                query
+                            });
                         } else {
-                            await this.getStorageDriver().create({ model: this, primaryKey });
+                            await this.constructor.create({
+                                batch: args.batch,
+                                instance: this,
+                                data
+                            });
                         }
                     }
 
-                    await registerSaveUpdateCreateHooks("__after", {
+                    await triggerSaveUpdateCreateHooks("__after", {
                         existing,
                         model: this,
-                        options
+                        options: args
                     });
 
                     this.setExisting();
                     this.clean();
 
                     this.constructor.getStoragePool().add(this);
-                } catch (e) {
-                    if (!existing) {
-                        // this.getField("id").reset();
-                    }
-                    throw e;
                 } finally {
                     this.__withStorage.processing = null;
                 }
 
-                await registerSaveUpdateCreateHooks("after", { existing, model: this, options });
+                await triggerSaveUpdateCreateHooks("after", {
+                    existing,
+                    model: this,
+                    options: args
+                });
             },
 
             /**
              * Deletes current and all linked models (if autoDelete on the attribute was enabled).
-             * @param options
              */
-            async delete(options: ?Object) {
+            async delete(rawArgs) {
                 const primaryKey = getPrimaryKey(this);
                 if (!primaryKey) {
                     throw Error(
@@ -201,28 +196,28 @@ const withStorage = (configuration: Configuration) => {
 
                 this.__withStorage.processing = "delete";
 
-                options = { ...options, ...defaults.delete };
-
-                let getId;
-
-                ({ getId, ...options } = options);
+                const args = { ...defaults.delete, ...cloneDeep(rawArgs) };
 
                 try {
-                    await this.hook("delete", { options, model: this });
+                    await this.hook("delete", { options: args, model: this });
 
-                    options.validation !== false && (await this.validate());
+                    args.validation !== false && (await this.validate());
 
-                    await this.hook("beforeDelete", { options, model: this });
+                    await this.hook("beforeDelete", { options: args, model: this });
 
-                    await this.getStorageDriver().delete({
-                        name: getName(this),
-                        options: {
-                            query: typeof getId === "function" ? getId(this) : { id: this.id },
-                            ...options
-                        }
+                    const query = {};
+                    for (let i = 0; i < primaryKey.fields.length; i++) {
+                        let field = primaryKey.fields[i];
+                        query[field.name] = this[field.name];
+                    }
+
+                    await this.constructor.delete({
+                        batch: args.batch,
+                        instance: this,
+                        query
                     });
 
-                    await this.hook("afterDelete", { options, model: this });
+                    await this.hook("afterDelete", { options: args, model: this });
 
                     this.constructor.getStoragePool().remove(this);
                 } finally {
@@ -252,7 +247,7 @@ const withStorage = (configuration: Configuration) => {
                     skipDifferenceCheck
                 });
             }
-        }))(fn);
+        }))(baseFn);
 
         fn = withStaticProps(() => {
             const __withStorage = {
@@ -293,76 +288,80 @@ const withStorage = (configuration: Configuration) => {
                 },
 
                 /**
-                 * Finds a single model matched by given ID.
-                 * @param id
-                 * @param options
+                 * Inserts an entry into the database.
                  */
-                // async findById(id: mixed, options: ?Object): Promise<null | Entity> {
-                //     if (!id || !this.isId(id)) {
-                //         return null;
-                //     }
-                //
-                //     const pooled = this.getStoragePool().get(this, id);
-                //     if (pooled) {
-                //         return pooled;
-                //     }
-                //
-                //     if (!options) {
-                //         options = {};
-                //     }
-                //
-                //     const newParams = { ...options, query: { id } };
-                //     return await this.findOne(newParams);
-                // },
+                async create(args) {
+                    const { data, batch, ...rest } = cloneDeep(args);
+
+                    return this.getStorageDriver().create({
+                        ...rest,
+                        model: this,
+                        name: getName(this),
+                        keys: getKeys(this),
+                        primaryKey: getPrimaryKey(this),
+                        data,
+                        batch
+                    });
+                },
+
+                /**
+                 * Updates an existing entry in the database.
+                 */
+                async update(args = {}) {
+                    const { data, query, batch, ...rest } = cloneDeep(args);
+
+                    return this.getStorageDriver().update({
+                        ...rest,
+                        model: this,
+                        name: getName(this),
+                        keys: getKeys(this),
+                        primaryKey: getPrimaryKey(this),
+                        data,
+                        query,
+                        batch
+                    });
+                },
+
+                /**
+                 * Deletes an existing entry in the database.
+                 */
+                async delete(args = {}) {
+                    const { data, query, batch, ...rest } = cloneDeep(args);
+
+                    return this.getStorageDriver().delete({
+                        ...rest,
+                        model: this,
+                        name: getName(this),
+                        keys: getKeys(this),
+                        primaryKey: getPrimaryKey(this),
+                        data,
+                        query,
+                        batch
+                    });
+                },
 
                 /**
                  * Finds one model matched by given query parameters.
                  * @param rawArgs
                  */
-                async findOne(rawArgs: ?Object): Promise<null | $Subtype<Entity>> {
+                async findOne(rawArgs) {
+                    // TODO: don't load if not necessary, check storage poll first.
                     if (!rawArgs) {
                         rawArgs = {};
                     }
 
                     const args = cloneDeep(rawArgs);
-                    //
-                    // {
-                    //     name: getName(this),
-                    //         options: prepared
-                    // }
-                    //
-                    const result = await this.getStorageDriver().findOne({
-                        model: this,
-                        args
-                    });
+                    args.limit = 1;
 
+                    const [result] = await this.find(args);
                     return result;
-                    if (result) {
-                        const pooled = this.getStoragePool().get(this, result.id);
-                        if (pooled) {
-                            return pooled;
-                        }
-
-                        const model: $Subtype<Entity> = new this();
-                        model.setExisting();
-                        await model.populateFromStorage(((result: any): Object));
-                        this.getStoragePool().add(model);
-                        return model;
-                    }
-                    return null;
                 },
-                // isId(value) {
-                //     return typeof value === "string" && !!value.match(/^[0-9a-fA-F]{24}$/);
-                // },
-                // generateId,
-                async find(options: ?FindParams) {
-                    if (!options) {
-                        options = {};
-                    }
 
-                    const maxPerPage = this.__withStorage.maxPerPage || 100;
+                async find(args = {}) {
+                    const maxLimit = this.__withStorage.maxLimit || 100;
 
                     let {
+                        batch,
                         query = {},
                         sort,
                         limit,
@@ -371,17 +370,17 @@ const withStorage = (configuration: Configuration) => {
                         totalCount: countTotal = false,
                         defaultSortField = "id",
                         ...other
-                    } = options;
+                    } = args;
 
                     if (!sort) {
                         sort = {};
                     }
 
-                    limit = Number.isInteger(limit) && limit > 0 ? limit : maxPerPage;
+                    limit = Number.isInteger(limit) && limit > 0 ? limit : maxLimit;
 
-                    if (limit > maxPerPage) {
+                    if (limit > maxLimit) {
                         throw new WithStorageError(
-                            `Cannot query for more than ${maxPerPage} models per page.`,
+                            `Cannot query for more than ${maxLimit} models per page.`,
                             WithStorageError.MAX_PER_PAGE_EXCEEDED
                         );
                     }
@@ -436,10 +435,14 @@ const withStorage = (configuration: Configuration) => {
                     }
 
                     const params = { query, sort, limit: limit + 1, ...other };
-                    let [results, meta] = await this.getStorageDriver().find({
+                    let [results, meta = {}] = await this.getStorageDriver().find({
+                        ...params,
+                        model: this,
                         name: getName(this),
-                        args: params,
-                        model: this
+                        keys: getKeys(this),
+                        primaryKey: getPrimaryKey(this),
+                        query,
+                        batch
                     });
 
                     // Have we reached the last record?
@@ -455,12 +458,9 @@ const withStorage = (configuration: Configuration) => {
                     let totalCount = null;
                     if (countTotal) {
                         totalCount = await this.getStorageDriver().count({
-                            model: this,
-                            name: getName(this),
-                            args: {
-                                query: originalQuery,
-                                ...other
-                            },
+                            query: originalQuery,
+                            ...other,
+                            name: getName(this)
                         });
                     }
 
@@ -491,7 +491,7 @@ const withStorage = (configuration: Configuration) => {
                     const result: ?Array<Object> = results;
                     if (result instanceof Array) {
                         for (let i = 0; i < result.length; i++) {
-                            const pooled = this.getStoragePool().get(this, result[i].id);
+                            const pooled = this.getStoragePool().get(this, result[i]);
                             if (pooled) {
                                 collection.push(pooled);
                             } else {
