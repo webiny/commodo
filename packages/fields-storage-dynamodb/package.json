@@ -14,7 +14,8 @@
     "aws-sdk": "^2.729.0"
   },
   "devDependencies": {
-    "@shelf/jest-dynamodb": "^1.7.0"
+    "@shelf/jest-dynamodb": "^1.7.0",
+    "uniqid": "^5.2.0"
   },
   "publishConfig": {
     "access": "public"
