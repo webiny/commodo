@@ -587,7 +587,7 @@ export default ({ list, instanceOf, using, autoDelete, autoSave, refNameField, p
                 notEmpty && (await value.validate());
             },
 
-            isValidInstance(instance: ?Entity) {
+            isValidInstance(instance) {
                 if (this.hasMultipleEntityClasses()) {
                     return hasFields(instance);
                 }
@@ -778,7 +778,7 @@ export default ({ list, instanceOf, using, autoDelete, autoSave, refNameField, p
             /**
              * Value cannot be set as clean if there is no ID present.
              */
-            clean(): EntityFieldValue {
+            clean() {
                 if (getIdFromValue(this.current)) {
                     clean.call(this);
                 }
@@ -811,7 +811,6 @@ export default ({ list, instanceOf, using, autoDelete, autoSave, refNameField, p
                     this.queue = [];
                 }
             },
-            // tu krece entities
 
             async normalizeSetValues() {
                 // Before returning, let's load all values.
