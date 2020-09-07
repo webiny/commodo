@@ -38,7 +38,6 @@ class NeDbDriver {
     async delete({ name, options }) {
         const clonedOptions = { ...options };
 
-        NeDbDriver.__prepareSearchOption(clonedOptions);
         await this.getDatabase()
             .collection(this.getCollectionName(name))
             .remove(clonedOptions.query, { multi: true });
@@ -48,7 +47,6 @@ class NeDbDriver {
     async find({ name, options }) {
         const clonedOptions = { limit: 0, offset: 0, ...options };
 
-        NeDbDriver.__prepareSearchOption(clonedOptions);
         NeDbDriver.__prepareProjectFields(clonedOptions);
 
         const projection = {};
@@ -70,7 +68,6 @@ class NeDbDriver {
 
     async findOne({ name, options }) {
         const clonedOptions = { ...options };
-        NeDbDriver.__prepareSearchOption(clonedOptions);
         NeDbDriver.__prepareProjectFields(clonedOptions);
 
         const projection = {};
@@ -91,7 +88,6 @@ class NeDbDriver {
 
     async count({ name, options }) {
         const clonedOptions = { ...options };
-        NeDbDriver.__prepareSearchOption(clonedOptions);
 
         return await this.getDatabase()
             .collection(this.getCollectionName(name))
@@ -131,32 +127,6 @@ class NeDbDriver {
         }
 
         return this.collections.prefix + name;
-    }
-
-    static __prepareSearchOption(options) {
-        // Here we handle search (if passed) - we transform received arguments into linked LIKE statements.
-        if (options.search && options.search.query) {
-            const { query, operator, fields } = options.search;
-
-            const searches = [];
-            fields.forEach(field => {
-                searches.push({ [field]: { $regex: `.*${query}.*`, $options: "i" } });
-            });
-
-            const search = {
-                [operator === "and" ? "$and" : "$or"]: searches
-            };
-
-            if (options.query instanceof Object) {
-                options.query = {
-                    $and: [search, options.query]
-                };
-            } else {
-                options.query = search;
-            }
-
-            delete options.search;
-        }
     }
 
     static __prepareProjectFields(options) {

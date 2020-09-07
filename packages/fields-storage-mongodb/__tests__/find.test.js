@@ -1,4 +1,4 @@
-import useModels from "./models/useModels";
+import usesModels from "./models/useModels";
 import createSimpleModelsMock from "./mocks/createSimpleModelsMock";
 
 describe("find test", function() {
@@ -47,24 +47,6 @@ describe("find test", function() {
         expect(records[2].id).toBe(stringIds[0]);
     });
 
-    it("should find models using query, sort and search", async () => {
-        const stringIds = ids.map(x => String(x));
-        const records = await models.SimpleModel.find({
-            sort: { slug: 1 },
-            query: {
-                age: { $gt: 10 }
-            },
-            search: {
-                query: "serverless",
-                fields: ["name", "slug"],
-                operator: "or"
-            }
-        });
-
-        expect(records.length).toBe(2);
-        expect(records[0].id).toBe(stringIds[1]);
-        expect(records[1].id).toBe(stringIds[2]);
-    });
 
     it("should return only specified fields", async () => {
         const [records] = await models.SimpleModel.getStorageDriver().find({

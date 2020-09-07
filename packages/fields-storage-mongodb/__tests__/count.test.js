@@ -11,18 +11,4 @@ describe("count test", function() {
         const count = await models.SimpleModel.count();
         expect(count).toBe(4);
     });
-
-    it("should include search query if passed", async () => {
-        const count = await models.SimpleModel.count({
-            query: {
-                age: { $gt: 30 }
-            },
-            search: {
-                query: "cloud",
-                fields: ["name"]
-            }
-        });
-
-        expect(count).toBe(1);
-    });
 });
