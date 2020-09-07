@@ -13,13 +13,13 @@
     "@commodo/hooks": "^1.1.2-next.6",
     "@commodo/name": "^1.2.2-next.6",
     "mdbid": "^1.0.0",
-    "repropose": "^1.0.2"
+    "repropose": "^1.0.2",
+    "lodash.clonedeep": "^4.5.0"
   },
   "devDependencies": {
     "@commodo/fields": "^1.1.2-next.6",
     "@commodo/fields-storage-mongodb": "^2.0.2-next.6",
     "@shelf/jest-mongodb": "^1.1.5",
-    "lodash.clonedeep": "^4.5.0",
     "mongodb": "^3.5.5",
     "ramda": "^0.27.0",
     "sinon": "^7.3.2"
