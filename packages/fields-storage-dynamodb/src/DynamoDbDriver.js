@@ -2,6 +2,28 @@ import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import BatchProcess from "./BatchProcess";
 import QueryGenerator from "./QueryGenerator";
 
+const propertyIsPartOfUniqueKey = (property, keys) => {
+    for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        if (!key.unique) {
+            continue;
+        }
+
+        let fields = keys[i].fields;
+        if (!Array.isArray(fields)) {
+            continue;
+        }
+
+        for (let j = 0; j < fields.length; j++) {
+            let field = fields[j];
+            if (field.name === property) {
+                return true;
+            }
+        }
+    }
+    return false;
+};
+
 class DynamoDbDriver {
     constructor({ documentClient, tableName } = {}) {
         this.batchProcesses = {};
@@ -35,7 +57,7 @@ class DynamoDbDriver {
         return true;
     }
 
-    async update({ query, data, name, batch, instance }) {
+    async update({ query, data, name, batch, instance, keys }) {
         if (!batch) {
             const update = {
                 UpdateExpression: "SET ",
@@ -69,7 +91,24 @@ class DynamoDbDriver {
         // call is part of an model instance update (not part of SomeModel.save() call), where we can access the
         // toStorage function. So, if that's the case, we'll call it with the skipDifferenceCheck flag enabled.
         // Normally we wouldn't have to do all of this dancing, but it's how DynamoDB works, there's no way around it.
-        let Item = instance ? await instance.toStorage({ skipDifferenceCheck: true }) : data;
+        const storageData = instance
+            ? await instance.toStorage({ skipDifferenceCheck: true })
+            : data;
+
+        // The only problem with the above approach is that it may insert null values into GSI columns,
+        // which immediately gets rejected by DynamoDB. Let's remove those here.
+        const Item = {};
+        for (let property in storageData) {
+            // Check if key is a part of a unique index. If so, and is null, remove it from data.
+            if (!propertyIsPartOfUniqueKey(property, keys)) {
+                Item[property] = storageData[property];
+                continue;
+            }
+
+            if (storageData[property] !== null) {
+                Item[property] = storageData[property];
+            }
+        }
 
         batchProcess.addOperation("PutRequest", {
             TableName: this.tableName || name,
@@ -100,6 +139,7 @@ class DynamoDbDriver {
 
         const batchProcess = this.getBatchProcess(batch);
         batchProcess.addOperation("DeleteRequest", {
+            TableName: this.tableName || name,
             Key: query
         });
 
@@ -127,7 +167,7 @@ class DynamoDbDriver {
             });
 
             const { Items } = await this.documentClient.query(queryParams).promise();
-            return [Items]
+            return [Items];
         }
 
         const batchProcess = this.getBatchProcess(batch);
