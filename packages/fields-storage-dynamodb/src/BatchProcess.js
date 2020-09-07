@@ -36,16 +36,14 @@ class BatchProcess {
         };
 
         for (let i = 0; i < this.operations.length; i++) {
-            let [type, params] = this.operations[i];
+            let [type, { TableName, ...rest }] = this.operations[i];
 
-            if (!batchWriteParams.RequestItems[params.TableName]) {
-                batchWriteParams.RequestItems[params.TableName] = [];
+            if (!batchWriteParams.RequestItems[TableName]) {
+                batchWriteParams.RequestItems[TableName] = [];
             }
 
-            batchWriteParams.RequestItems[params.TableName].push({
-                [type]: {
-                    Item: params.Item
-                }
+            batchWriteParams.RequestItems[TableName].push({
+                [type]: rest
             });
         }
 
