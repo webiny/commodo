@@ -52,16 +52,6 @@ const getName = instance => {
     return getStorageName(instance) || defaultGetName(instance);
 };
 
-type FindParams = Object & {
-    query: ?{ [string]: number },
-    sort: ?{ [string]: number },
-    limit: ?number,
-    before: ?string,
-    after: ?string,
-    totalCount: ?boolean,
-    defaultSortField: ?string
-};
-
 function cursorFrom(data, keys) {
     return encodeCursor(
         keys.reduce(
@@ -524,6 +514,8 @@ const withStorage = (configuration: Configuration) => {
                 }
             };
         })(fn);
+
+        withHooks()(fn);
 
         return fn;
     };
