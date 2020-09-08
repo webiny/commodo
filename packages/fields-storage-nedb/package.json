@@ -1,6 +1,6 @@
 {
   "name": "@commodo/fields-storage-nedb",
-  "version": "2.0.2-next.6",
+  "version": "2.0.2-next.10",
   "main": "index.js",
   "repository": {
     "type": "git",

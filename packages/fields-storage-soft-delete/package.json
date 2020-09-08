@@ -1,6 +1,6 @@
 {
   "name": "@commodo/fields-storage-soft-delete",
-  "version": "2.0.2-beta.0",
+  "version": "2.0.2-beta.10",
   "main": "index.js",
   "repository": {
     "type": "git",
