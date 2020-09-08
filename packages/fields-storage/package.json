@@ -22,7 +22,8 @@
     "@shelf/jest-mongodb": "^1.1.5",
     "mongodb": "^3.5.5",
     "ramda": "^0.27.0",
-    "sinon": "^7.3.2"
+    "sinon": "^7.3.2",
+    "@commodo/fields-storage-nedb": "^2.1.1"
   },
   "license": "MIT",
   "publishConfig": {

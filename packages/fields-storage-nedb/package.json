@@ -12,6 +12,9 @@
   "license": "MIT",
   "dependencies": {
     "@commodo/fields": "^1.1.2-next.6",
+    "@commodo/fields-storage": "^2.1.1",
+    "@commodo/hooks": "^1.2.1",
+    "mdbid": "^1.0.0",
     "nedb-promises": "^4.0.3"
   },
   "publishConfig": {
