@@ -17,7 +17,6 @@
     "repropose": "^1.0.2"
   },
   "devDependencies": {
-    "@commodo/fields-storage-ref": "1.1.0-next.2",
     "@commodo/hooks": "^1.1.2-next.6",
     "@shelf/jest-mongodb": "^1.1.5",
     "camelcase": "^5.2.0",
