@@ -1,13 +1,8 @@
 // @flow
 import { withProps, withStaticProps } from "repropose";
 import { withFields, skipOnPopulate, boolean } from "@commodo/fields";
-import { getName as defaultGetName } from "@commodo/name";
 import applyDeletedFilter from "./functions/applyDeletedFilter";
-import getStorageName from "@commodo/fields-storage/getStorageName";
-
-const getName = instance => {
-    return getStorageName(instance) || defaultGetName(instance);
-};
+import getPrimaryKey from "@commodo/fields-storage/getPrimaryKey";
 
 export default () => {
     return baseFn => {
@@ -16,37 +11,49 @@ export default () => {
         })(baseFn);
 
         withProps({
-            async delete(options: ?Object) {
+            async delete(args) {
+                const primaryKey = getPrimaryKey(this);
+                if (!primaryKey) {
+                    throw Error(
+                        `Cannot delete "${this.getStorageName()}" model, no primary key defined.`
+                    );
+                }
+
                 if (this.__withStorage.processing) {
                     return;
                 }
 
                 this.__withStorage.processing = "delete";
 
-                options = {
-                    ...options,
+                args = {
+                    ...args,
                     hooks: {}
                 };
 
                 try {
-                    await this.hook("delete", { options, model: this });
 
-                    options.validation !== false && (await this.validate());
+                    await this.hook("delete", { options: args, model: this });
 
-                    await this.hook("beforeDelete", { options, model: this });
+                    args.validation !== false && (await this.validate());
+
+                    await this.hook("beforeDelete", { options: args, model: this });
 
                     this.deleted = true;
-                    const { getId } = options;
-                    await this.getStorageDriver().update([
-                        {
-                            name: getName(this),
-                            data: await this.toStorage(),
-                            query: typeof getId === "function" ? getId(this) : { id: this.id },
-                            options
-                        }
-                    ]);
 
-                    await this.hook("afterDelete", { options, model: this });
+                    const query = {};
+                    for (let i = 0; i < primaryKey.fields.length; i++) {
+                        let field = primaryKey.fields[i];
+                        query[field.name] = this[field.name];
+                    }
+
+                    await this.constructor.update({
+                        batch: args.batch,
+                        instance: this,
+                        data: await this.toStorage(),
+                        query
+                    });
+
+                    await this.hook("afterDelete", { options: args, model: this });
 
                     this.constructor.getStoragePool().remove(this);
                 } catch (e) {
