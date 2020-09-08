@@ -1,4 +1,3 @@
-import isNeDbId from "./isId";
 import Database from "./Database";
 
 class NeDbDriver {
@@ -11,25 +10,25 @@ class NeDbDriver {
         };
     }
 
-    async create(items) {
-        for (let i = 0; i < items.length; i++) {
-            const { name, data } = items[i];
-            await this.getDatabase()
-                .collection(this.getCollectionName(name))
-                .insert(data);
-        }
+    getClient() {
+        return this.database;
+    }
+
+    async create(args) {
+        const { name, data } = args;
+        await this.getClient()
+            .collection(this.getCollectionName(name))
+            .insert(data);
 
         return true;
     }
 
-    async update(items) {
-        for (let i = 0; i < items.length; i++) {
-            const { name, query, data } = items[i];
-            const collection = this.getCollectionName(name);
-            await this.getDatabase()
-                .collection(collection)
-                .update(query, { $set: data }, { multi: true });
-        }
+    async update(args) {
+        const { name, query, data } = args;
+        const collection = this.getCollectionName(name);
+        await this.getClient()
+            .collection(collection)
+            .update(query, { $set: data }, { multi: true });
 
         return true;
     }
@@ -38,68 +37,32 @@ class NeDbDriver {
     async delete({ name, options }) {
         const clonedOptions = { ...options };
 
-        await this.getDatabase()
+        await this.getClient()
             .collection(this.getCollectionName(name))
             .remove(clonedOptions.query, { multi: true });
         return true;
     }
 
-    async find({ name, options }) {
-        const clonedOptions = { limit: 0, offset: 0, ...options };
+    async find(args) {
+        const { name, options } = args;
+        const clonedArgs = { limit: 0, offset: 0, ...options };
 
-        NeDbDriver.__prepareProjectFields(clonedOptions);
-
-        const projection = {};
-        if (Array.isArray(options.fields) && options.fields.length > 0) {
-            for (let i = 0; i < options.fields.length; i++) {
-                projection[options.fields[i]] = 1;
-            }
-        }
-
-        const result = await this.getDatabase()
+        const result = await this.getClient()
             .collection(this.getCollectionName(name))
-            .find(clonedOptions.query, projection)
-            .limit(clonedOptions.limit)
-            .skip(clonedOptions.offset)
-            .sort(clonedOptions.sort);
+            .find(clonedArgs.query)
+            .limit(clonedArgs.limit)
+            .skip(clonedArgs.offset)
+            .sort(clonedArgs.sort);
 
         return [result, {}];
-    }
-
-    async findOne({ name, options }) {
-        const clonedOptions = { ...options };
-        NeDbDriver.__prepareProjectFields(clonedOptions);
-
-        const projection = {};
-        if (Array.isArray(options.fields) && options.fields.length > 0) {
-            for (let i = 0; i < options.fields.length; i++) {
-                projection[options.fields[i]] = 1;
-            }
-        }
-
-        const [result] = await this.getDatabase()
-            .collection(this.getCollectionName(name))
-            .find(clonedOptions.query, projection)
-            .limit(1)
-            .sort(clonedOptions.sort);
-
-        return result;
     }
 
     async count({ name, options }) {
         const clonedOptions = { ...options };
 
-        return await this.getDatabase()
+        return await this.getClient()
             .collection(this.getCollectionName(name))
             .count(clonedOptions.query);
-    }
-
-    isId(value) {
-        return isNeDbId(value);
-    }
-
-    getDatabase() {
-        return this.database;
     }
 
     setCollectionPrefix(collectionPrefix) {
@@ -127,21 +90,6 @@ class NeDbDriver {
         }
 
         return this.collections.prefix + name;
-    }
-
-    static __prepareProjectFields(options) {
-        // Here we convert requested fields into a "project" parameter
-        if (options.fields) {
-            options.project = options.fields.reduce(
-                (acc, item) => {
-                    acc[item] = 1;
-                    return acc;
-                },
-                { id: 1 }
-            );
-
-            delete options.fields;
-        }
     }
 }
 
