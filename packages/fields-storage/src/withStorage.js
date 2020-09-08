@@ -10,7 +10,6 @@ import WithStorageError from "./WithStorageError";
 import Collection from "./Collection";
 import StoragePool from "./StoragePool";
 import FieldsStorageAdapter from "./FieldsStorageAdapter";
-import { decodeCursor, encodeCursor } from "./cursor";
 
 // TODO: check faster alternative.
 import cloneDeep from "lodash.clonedeep";
@@ -52,22 +51,6 @@ const getName = instance => {
     return getStorageName(instance) || defaultGetName(instance);
 };
 
-function cursorFrom(data, keys) {
-    return encodeCursor(
-        keys.reduce(
-            (acc, key) => {
-                if (key === "id") {
-                    return acc;
-                }
-
-                acc[key] = data[key];
-                return acc;
-            },
-            { id: data.id }
-        )
-    );
-}
-
 const withStorage = (configuration: Configuration) => {
     return baseFn => {
         let fn = withProps(props => ({
@@ -91,8 +74,6 @@ const withStorage = (configuration: Configuration) => {
                     );
                 }
 
-                const args = { ...defaults.save, ...cloneDeep(rawArgs) };
-
                 if (this.__withStorage.processing) {
                     return;
                 }
@@ -100,6 +81,8 @@ const withStorage = (configuration: Configuration) => {
                 this.__withStorage.processing = "save";
 
                 const existing = this.isExisting();
+
+                const args = { ...defaults.save, ...cloneDeep(rawArgs) };
 
                 await triggerSaveUpdateCreateHooks("before", {
                     existing,
@@ -335,7 +318,11 @@ const withStorage = (configuration: Configuration) => {
                  * @param rawArgs
                  */
                 async findOne(rawArgs) {
-                    // TODO: don't load if not necessary, check storage poll first.
+                    const cached = this.getStoragePool().get(this, rawArgs.query);
+                    if (cached) {
+                        return cached;
+                    }
+
                     if (!rawArgs) {
                         rawArgs = {};
                     }
@@ -344,87 +331,24 @@ const withStorage = (configuration: Configuration) => {
                     args.limit = 1;
 
                     const [result] = await this.find(args);
-                    return result;
+                    return result || null;
                 },
 
-                async find(args = {}) {
+                async find(rawArgs = {}) {
                     const maxLimit = this.__withStorage.maxLimit || 100;
 
-                    let {
-                        batch,
-                        query = {},
-                        sort,
-                        limit,
-                        before,
-                        after,
-                        totalCount: countTotal = false,
-                        defaultSortField = "id",
-                        ...other
-                    } = args;
-
-                    if (!sort) {
-                        sort = {};
-                    }
+                    let { batch, query = {}, sort = {}, limit, ...other } = rawArgs;
 
                     limit = Number.isInteger(limit) && limit > 0 ? limit : maxLimit;
 
                     if (limit > maxLimit) {
                         throw new WithStorageError(
-                            `Cannot query for more than ${maxLimit} models per page.`,
+                            `Cannot set a limit greater than ${maxLimit}. Please adjust the "maxLimit" argument if needed.`,
                             WithStorageError.MAX_PER_PAGE_EXCEEDED
                         );
                     }
 
-                    // Keep a backup of query for optional total count
-                    const originalQuery = cloneDeep(query);
-
-                    let forward = Boolean(after || !before);
-                    const cursor = decodeCursor(after || before);
-
-                    const op = forward ? "$lt" : "$gt";
-
-                    if (cursor) {
-                        if (!query.$and) {
-                            query["$and"] = [];
-                        }
-
-                        const { id, ...fields } = cursor;
-                        const sortFields = [Object.keys(fields).shift()].filter(Boolean);
-
-                        if (sortFields.length) {
-                            query["$and"].push({
-                                $or: [
-                                    // Build condition from cursor fields
-                                    sortFields.reduce((acc, key) => {
-                                        acc[key] = { [op]: fields[key] };
-                                        return acc;
-                                    }, {}),
-                                    // Add condition to handle "exact match" records
-                                    sortFields.reduce(
-                                        (acc, key) => {
-                                            acc[key] = fields[key];
-                                            return acc;
-                                        },
-                                        { id: { [op]: id } }
-                                    )
-                                ]
-                            });
-                        } else {
-                            query["$and"].push({ id: { [op]: id } });
-                        }
-                    }
-
-                    if (!forward) {
-                        Object.keys(sort).forEach(key => {
-                            sort[key] *= -1;
-                        });
-                    }
-
-                    if (sort && !sort[defaultSortField]) {
-                        sort[defaultSortField] = forward ? -1 : 1;
-                    }
-
-                    const params = { query, sort, limit: limit + 1, ...other };
+                    const params = { query, sort, limit, ...other };
                     let [results, meta = {}] = await this.getStorageDriver().find({
                         ...params,
                         model: this,
@@ -435,48 +359,7 @@ const withStorage = (configuration: Configuration) => {
                         batch
                     });
 
-                    // Have we reached the last record?
-                    const hasMore = results.length > limit;
-
-                    if (hasMore) {
-                        results.pop();
-                    }
-
-                    const hasNextPage = !!before || hasMore;
-                    const hasPreviousPage = !!after || !!(before && hasMore);
-
-                    let totalCount = null;
-                    if (countTotal) {
-                        totalCount = await this.getStorageDriver().count({
-                            query: originalQuery,
-                            ...other,
-                            name: getName(this)
-                        });
-                    }
-
-                    const lastIndex = results.length - 1;
-                    const nextCursor = hasNextPage
-                        ? cursorFrom(forward ? results[lastIndex] : results[0], Object.keys(sort))
-                        : null;
-
-                    const previousCursor = hasPreviousPage
-                        ? cursorFrom(forward ? results[0] : results[lastIndex], Object.keys(sort))
-                        : null;
-
-                    if (!forward) {
-                        results = results.reverse();
-                    }
-
-                    const collection = new Collection().setParams(params).setMeta({
-                        ...meta,
-                        cursors: {
-                            next: nextCursor,
-                            previous: previousCursor
-                        },
-                        hasPreviousPage,
-                        hasNextPage,
-                        totalCount
-                    });
+                    const collection = new Collection().setParams(params).setMeta(meta);
 
                     const result: ?Array<Object> = results;
                     if (result instanceof Array) {

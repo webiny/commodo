@@ -1,4 +1,3 @@
-// @flow
 import { getName } from "@commodo/name";
 import { withStaticProps } from "repropose";
 
@@ -7,7 +6,7 @@ export default () => {
         aggregate(pipeline) {
             const driver = this.getStorageDriver();
             return driver
-                .getDatabase()
+                .getClient()
                 .collection(driver.getCollectionName(getName(this)))
                 .aggregate(pipeline)
                 .toArray();

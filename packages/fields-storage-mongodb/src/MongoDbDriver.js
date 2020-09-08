@@ -1,7 +1,3 @@
-// @flow
-import { clone } from "ramda";
-import isMongoDbId from "./isMongoDbId";
-
 class MongoDbDriver {
     collections: Object;
     database: Object;
@@ -17,94 +13,58 @@ class MongoDbDriver {
         };
     }
 
-    async create(items: Array<Object>) {
-        for (let i = 0; i < items.length; i++) {
-            const { name, data } = items[i];
-            await this.getDatabase()
-                .collection(this.getCollectionName(name))
-                .insertOne(data);
-        }
+    getClient() {
+        return this.database;
+    }
+
+    async create(args) {
+        const { name, data } = args;
+        await this.getClient()
+            .collection(this.getCollectionName(name))
+            .insertOne(data);
 
         return true;
     }
 
-    async update(items: Array<Object>) {
-        for (let i = 0; i < items.length; i++) {
-            const { name, query, data } = items[i];
-            const collection = this.getCollectionName(name);
-            await this.getDatabase()
-                .collection(collection)
-                .updateOne(query, { $set: data });
-        }
-
-        return true;
+    async update(args) {
+        const { name, query, data } = args;
+        const collection = this.getCollectionName(name);
+        await this.getClient()
+            .collection(collection)
+            .updateOne(query, { $set: data });
     }
 
     // eslint-disable-next-line
-    async delete({ name, options }) {
-        const clonedOptions = { ...options };
-
-        await this.getDatabase()
+    async delete({ name, query }) {
+        await this.getClient()
             .collection(this.getCollectionName(name))
-            .deleteMany(clonedOptions.query);
+            .deleteMany(query);
         return true;
     }
 
-    async find({ name, options }) {
-        const clonedOptions = { limit: 0, offset: 0, ...options };
-
-        MongoDbDriver.__prepareProjectFields(clonedOptions);
-
-        const database = await this.getDatabase()
+    async find({ name, query, limit, offset, sort }) {
+        const database = await this.getClient()
             .collection(this.getCollectionName(name))
-            .find(clonedOptions.query)
-            .limit(clonedOptions.limit)
-            .skip(clonedOptions.offset);
+            .find(query)
+            .limit(limit);
 
-        if (Array.isArray(options.fields) && options.fields.length > 0) {
-            database.project(clonedOptions.project);
+        if (offset > 0) {
+            database.skip(offset);
         }
 
-        if (clonedOptions.sort && Object.keys(clonedOptions.sort).length > 0) {
-            database.sort(clonedOptions.sort);
+        if (sort && Object.keys(sort).length > 0) {
+            database.sort(sort);
         }
 
         return [await database.toArray(), {}];
     }
 
-    async findOne({ name, options }) {
-        const clonedOptions = { ...options };
-        MongoDbDriver.__prepareProjectFields(clonedOptions);
-
-        const database = await this.getDatabase()
-            .collection(this.getCollectionName(name))
-            .find(clonedOptions.query)
-            .limit(1)
-            .sort(clonedOptions.sort);
-
-        if (Array.isArray(options.fields) && options.fields.length > 0) {
-            database.project(clonedOptions.project);
-        }
-
-        const result = await database.toArray();
-
-        return result[0];
-    }
-
     async count({ name, options }) {
         const clonedOptions = { ...options };
 
-        return await this.getDatabase()
+        return await this.getClient()
             .collection(this.getCollectionName(name))
             .countDocuments(clonedOptions.query);
-    }
-
-    isId(value: any): boolean {
-        return isMongoDbId(value);
-    }
-
-    getDatabase() {
-        return this.database;
     }
 
     setCollectionPrefix(collectionPrefix) {
@@ -132,21 +92,6 @@ class MongoDbDriver {
         }
 
         return this.collections.prefix + name;
-    }
-
-    static __prepareProjectFields(options) {
-        // Here we convert requested fields into a "project" parameter
-        if (options.fields) {
-            options.project = options.fields.reduce(
-                (acc, item) => {
-                    acc[item] = 1;
-                    return acc;
-                },
-                { id: 1 }
-            );
-
-            delete options.fields;
-        }
     }
 }
 
