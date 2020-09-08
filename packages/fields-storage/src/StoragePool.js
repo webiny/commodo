@@ -1,4 +1,3 @@
-// @flow
 import StoragePoolEntry from "./StoragePoolEntry";
 import getPrimaryKey from "./getPrimaryKey";
 
@@ -25,7 +24,7 @@ class StoragePool {
         return this.pool;
     }
 
-    add(model: $Subtype<CreateModel>): this {
+    add(model) {
         const { namespace, id } = getPoolItemId(model);
         if (!this.getPool()[namespace]) {
             this.getPool()[namespace] = {};
@@ -35,7 +34,7 @@ class StoragePool {
         return this;
     }
 
-    remove(model): this {
+    remove(model) {
         const { namespace, id } = getPoolItemId(model);
         if (!this.getPool()[namespace]) {
             return this;
