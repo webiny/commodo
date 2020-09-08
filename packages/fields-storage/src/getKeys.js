@@ -1,4 +1,4 @@
-const getPrimaryKey = model => {
+const getKeys = model => {
     if (!model) {
         return [];
     }
@@ -14,4 +14,4 @@ const getPrimaryKey = model => {
     return [];
 };
 
-export default getPrimaryKey;
+export default getKeys;
