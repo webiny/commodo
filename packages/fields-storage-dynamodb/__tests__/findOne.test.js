@@ -75,7 +75,21 @@ describe("find test", function() {
     });
 
     it("should be able to use both ascending and descending ordering", async () => {
-        // TODO
+        const { SimpleModel } = models;
+
+        let result = await SimpleModel.findOne({
+            query: { pk, sk: { $beginsWith: "something" } }
+        });
+
+        expect(result.sk).toBe("something-0");
+
+        // Let's test descending.
+        result = await SimpleModel.findOne({
+            query: { pk, sk: { $beginsWith: "something" } },
+            sort: { sk: -1 }
+        });
+
+        expect(result.sk).toBe("something-9");
     });
 
     it("should be able query GSIs", async () => {

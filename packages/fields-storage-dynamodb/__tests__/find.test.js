@@ -83,7 +83,23 @@ describe("find test", function() {
     });
 
     it("should be able to use both ascending and descending ordering", async () => {
-        // TODO
+        const { SimpleModel } = models;
+
+        let results = await SimpleModel.find({
+            query: { pk, sk: { $beginsWith: "something" } }
+        });
+
+        expect(results[0].sk).toBe("something-0");
+        expect(results[9].sk).toBe("something-9");
+
+        // Let's test descending.
+        results = await SimpleModel.find({
+            query: { pk, sk: { $beginsWith: "something" } },
+            sort: { sk: -1 }
+        });
+
+        expect(results[0].sk).toBe("something-9");
+        expect(results[9].sk).toBe("something-0");
     });
 
     it("should be able to apply limits", async () => {
@@ -98,15 +114,11 @@ describe("find test", function() {
         expect(results[2].sk).toBe("something-2");
     });
 
-    it("should be able to paginate results", async () => {
-        // TODO:
-    });
-
     it("should be able query GSIs", async () => {
         const { SimpleModel } = models;
 
         let results = await SimpleModel.find({
-            query: { gsi1pk: "gsi1-SimpleModel", gsi1sk: { $beginsWith: "gsi1-something" } }
+            query: { gsi1pk: `gsi1-${pk}`, gsi1sk: { $beginsWith: "gsi1-something" } }
         });
 
         expect(results.length).toBe(10);
@@ -116,7 +128,7 @@ describe("find test", function() {
         expect(results[9].sk).toBe("something-9");
 
         results = await SimpleModel.find({
-            query: { gsi2pk: "gsi2-SimpleModel", gsi2sk: { $lte: "gsi2-something-3" } }
+            query: { gsi2pk: `gsi2-${pk}`, gsi2sk: { $lte: "gsi2-something-3" } }
         });
 
         expect(results.length).toBe(4);

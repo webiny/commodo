@@ -17,7 +17,7 @@ export default ({ query, sort, key }) => {
 
     const sortKey = key.fields && key.fields[1];
     if (sort && sort[sortKey.name] === -1) {
-        output.ScanIndexForward = true;
+        output.ScanIndexForward = false;
     }
 
     if (!key.primary) {
