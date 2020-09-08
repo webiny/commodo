@@ -136,5 +136,17 @@ describe("find test", function() {
         expect(results[0].sk).toBe("something-0");
         expect(results[2].sk).toBe("something-2");
         expect(results[3].sk).toBe("something-3");
+
+        // Should be able to apply sorting as well.
+        results = await SimpleModel.find({
+            query: { gsi2pk: `gsi2-${pk}`, gsi2sk: { $lte: "gsi2-something-3" } },
+            sort: { gsi2sk: -1 },
+            limit: 4
+        });
+
+        expect(results.length).toBe(4);
+        expect(results[0].sk).toBe("something-3");
+        expect(results[2].sk).toBe("something-1");
+        expect(results[3].sk).toBe("something-0");
     });
 });
