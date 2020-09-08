@@ -31,7 +31,7 @@ jobs:
       - name: Build packages
         run: yarn build
 
-       - name: Run tests
+      - name: Run tests
         run: yarn test:dist
 
       - name: Prepare packages
