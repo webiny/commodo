@@ -19,7 +19,7 @@
   "devDependencies": {
     "ramda": "^0.25.0",
     "sinon": "^7.3.2",
-    "@commodo/fields-storage-nedb": "^2.0.2-next.6"
+    "@commodo/fields-storage-nedb": "^2.0.2-beta.6"
   },
   "publishConfig": {
     "access": "public"
