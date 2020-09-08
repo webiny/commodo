@@ -1,5 +1,4 @@
 // @flow
-import { getName } from "@commodo/name";
 import StoragePoolEntry from "./StoragePoolEntry";
 import getPrimaryKey from "./getPrimaryKey";
 
