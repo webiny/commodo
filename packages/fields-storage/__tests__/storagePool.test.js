@@ -12,51 +12,51 @@ describe("model pool test", () => {
         const A = mdbid();
         const user = new User();
         user.age = 30;
-        sandbox.stub(user.getStorageDriver(), "create").callsFake((items) => {
-            items[0].data.id = A;
+        sandbox.stub(user.getStorageDriver(), "create").callsFake(args => {
+            args.data.id = A;
             return true;
         });
 
-        expect(User.getStoragePool().has(user)).toEqual(false);
         expect(User.getStoragePool().get(user)).toEqual(undefined);
         await user.save();
         expect(User.getStoragePool().get(user)).toBeInstanceOf(User);
-        expect(User.getStoragePool().has(user)).toEqual(true);
 
         sandbox.stub(user.getStorageDriver(), "delete").callsFake(() => true);
         await user.delete();
 
-        expect(User.getStoragePool().has(user)).toEqual(false);
         expect(User.getStoragePool().get(user)).toEqual(undefined);
     });
 
-    test("has and get methods should return true / false correctly (whether is called with a model class or an instance)", async () => {
+    test("get methods should return correctly (whether is called with a model class or an instance)", async () => {
         const A = mdbid();
 
         const user = new User();
         user.age = 30;
         user.id = A;
 
-        expect(User.getStoragePool().has(user)).toEqual(false);
-        expect(User.getStoragePool().has(User, A)).toEqual(false);
+        expect(User.getStoragePool().get(user)).toEqual(undefined);
+        expect(User.getStoragePool().get(User, { id: A })).toEqual(undefined);
+
         await user.save();
-        expect(User.getStoragePool().has(user)).toEqual(true);
-        expect(User.getStoragePool().has(User, A)).toEqual(true);
+        expect(User.getStoragePool().get(user)).not.toEqual(undefined);
+        expect(User.getStoragePool().get(User, { id: A })).not.toEqual(undefined);
     });
 
-    test("findById must add to the pool and consequent findById calls must utilize it", async () => {
+    test("findOne must add to the pool and consequent findById calls must utilize it", async () => {
         const A = mdbid();
-        const modelFindById = sandbox.stub(User.getStorageDriver(), "findOne").callsFake(() => {
-            return { id: A };
+        const modelFind = sandbox.stub(User.getStorageDriver(), "find").callsFake(() => {
+            return [[{ id: A }], {}];
         });
 
-        expect(User.getStoragePool().has(User, A)).toEqual(false);
-        const user1 = await User.findById(A);
-        expect(User.getStoragePool().has(User, A)).toEqual(true);
-        expect(modelFindById.callCount).toEqual(1);
+        expect(User.getStoragePool().get(User, { id: A })).toEqual(undefined);
 
-        const user2 = await User.findById(A);
-        expect(modelFindById.callCount).toEqual(1);
+        const user1 = await User.findOne({ query: { id: A } });
+        expect(User.getStoragePool().get(User, { id: A })).not.toEqual(undefined);
+
+        expect(modelFind.callCount).toEqual(1);
+
+        const user2 = await User.findOne({ query: { id: A } });
+        expect(modelFind.callCount).toEqual(1);
 
         expect(user1).toEqual(user2);
     });
@@ -70,13 +70,13 @@ describe("model pool test", () => {
             return [[{ id: A }, { id: B }, { id: C }]];
         });
 
-        expect(User.getStoragePool().has(User, A)).toEqual(false);
-        expect(User.getStoragePool().has(User, B)).toEqual(false);
-        expect(User.getStoragePool().has(User, C)).toEqual(false);
+        expect(User.getStoragePool().get(User, { id: A })).toEqual(undefined);
+        expect(User.getStoragePool().get(User, { id: B })).toEqual(undefined);
+        expect(User.getStoragePool().get(User, { id: C })).toEqual(undefined);
         const users1 = await User.find({});
-        expect(User.getStoragePool().has(User, A)).toEqual(true);
-        expect(User.getStoragePool().has(User, B)).toEqual(true);
-        expect(User.getStoragePool().has(User, C)).toEqual(true);
+        expect(User.getStoragePool().get(User, { id: A })).not.toEqual(undefined);
+        expect(User.getStoragePool().get(User, { id: B })).not.toEqual(undefined);
+        expect(User.getStoragePool().get(User, { id: C })).not.toEqual(undefined);
 
         expect(modelFind.callCount).toEqual(1);
         const users2 = await User.find({});
@@ -92,29 +92,31 @@ describe("model pool test", () => {
     });
 
     test("flush method must empty the pool", async () => {
-        const A = mdbid(), B = mdbid(), C= mdbid();
+        const A = mdbid(),
+            B = mdbid(),
+            C = mdbid();
 
         sandbox
-            .stub(User.getStorageDriver(), "findOne")
+            .stub(User.getStorageDriver(), "find")
             .onCall(0)
             .callsFake(() => {
-                return { id: A };
+                return [[{ id: A }], {}];
             })
             .onCall(1)
             .callsFake(() => {
-                return { id: B };
+                return [[{ id: B }], {}];
             })
             .onCall(2)
             .callsFake(() => {
-                return { id: C };
+                return [[{ id: C }], {}];
             });
 
-        await User.findById(A);
-        await User.findById(B);
-        await User.findById(C);
-        expect(User.getStoragePool().has(User, A)).toEqual(true);
-        expect(User.getStoragePool().has(User, B)).toEqual(true);
-        expect(User.getStoragePool().has(User, C)).toEqual(true);
+        await User.findOne({ query: { id: A } });
+        await User.findOne({ query: { id: B } });
+        await User.findOne({ query: { id: C } });
+        expect(User.getStoragePool().get(User, { id: A })).not.toEqual(undefined);
+        expect(User.getStoragePool().get(User, { id: B })).not.toEqual(undefined);
+        expect(User.getStoragePool().get(User, { id: C })).not.toEqual(undefined);
 
         User.getStoragePool().flush();
         expect(User.getStoragePool().pool).toBeEmpty;
@@ -122,13 +124,13 @@ describe("model pool test", () => {
 
     test("findOne must return from pool if possible", async () => {
         const A = mdbid();
-        const modelFindOne = sandbox.stub(User.getStorageDriver(), "findOne").callsFake(() => {
-            return { id: A };
+        const modelFindOne = sandbox.stub(User.getStorageDriver(), "find").callsFake(() => {
+            return [[{ id: A }], {}];
         });
 
-        expect(User.getStoragePool().has(User, A)).toEqual(false);
+        expect(User.getStoragePool().get(User, { id: A })).toEqual(undefined);
         const foundUser = await User.findOne({});
-        expect(User.getStoragePool().has(User, A)).toEqual(true);
+        expect(User.getStoragePool().get(User, { id: A })).not.toEqual(undefined);
         expect(modelFindOne.callCount).toEqual(1);
 
         const againFoundUser = await User.findOne({});

@@ -1,6 +1,5 @@
 import { withFields, string, fields, boolean } from "@commodo/fields";
 import { withName } from "@commodo/name";
-import { ref } from "@commodo/fields-storage-ref";
 import { compose } from "ramda";
 
 export default base => {
@@ -24,25 +23,15 @@ export default base => {
         })
     )();
 
-    const RefModel = compose(
-        withFields(() => ({
-            name: string(),
-            complexModel: ref({ instanceOf: ComplexModel })
-        })),
-        withName("RefModel")
-    )(base());
-
     const ComplexModel = compose(
         withFields(() => ({
             firstName: string(),
             lastName: string(),
             verification: fields({ instanceOf: VerificationModel }),
             tags: fields({ list: true, instanceOf: TagModel }),
-            simpleModel: ref({ instanceOf: RefModel }),
-            simpleModels: ref({ list: true, instanceOf: RefModel })
         })),
         withName("ComplexModel")
     )(base());
 
-    return { VerificationModel, TagModel, ComplexModel, RefModel };
+    return { VerificationModel, TagModel, ComplexModel };
 };

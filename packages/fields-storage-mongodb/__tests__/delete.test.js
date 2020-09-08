@@ -1,4 +1,3 @@
-import { WithStorageError } from "@commodo/fields-storage";
 import useModels from "./models/useModels";
 import createSimpleModelsMock from "./mocks/createSimpleModelsMock";
 
@@ -10,21 +9,10 @@ describe("delete test", function() {
 
     it("should delete a record", async () => {
         const id = String(ids[0]);
-        let record = await models.SimpleModel.findById(id);
+        let record = await models.SimpleModel.findOne({ query: { id } });
         await record.delete();
 
-        record = await models.SimpleModel.findById(id);
+        record = await models.SimpleModel.findOne({ query: { id } });
         expect(record).toBeNull();
-    });
-
-    it("should throw an exception because model was not previously saved", async () => {
-        try {
-            const simpleModel = new models.SimpleModel();
-            await simpleModel.delete();
-        } catch (e) {
-            expect(e.code).toBe(WithStorageError.CANNOT_DELETE_NO_ID);
-            return;
-        }
-        throw Error(`Error should've been thrown.`);
     });
 });

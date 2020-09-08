@@ -31,15 +31,8 @@ describe("find test", () => {
                         enabled: false
                     }
                 ],
-
                 {
-                    cursors: {
-                        next: null,
-                        previous: null
-                    },
-                    hasNextPage: null,
-                    hasPreviousPage: null,
-                    totalCount: 3
+                    test: 123
                 }
             ];
         });
@@ -49,13 +42,7 @@ describe("find test", () => {
 
         expect(results.length).toBe(3);
         expect(results.getMeta()).toEqual({
-            cursors: {
-                next: null,
-                previous: null
-            },
-            hasNextPage: false,
-            hasPreviousPage: false,
-            totalCount: 3
+            test: 123
         });
     });
 

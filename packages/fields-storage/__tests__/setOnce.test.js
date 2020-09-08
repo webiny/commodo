@@ -17,13 +17,18 @@ describe("setOnce test", () => {
             })
         )(createModel());
 
-        let modelFindById = sandbox.stub(SomeModel.getStorageDriver(), "findOne").callsFake(() => ({
-            id,
-            slug: "slug-test",
-            name: "name-test"
-        }));
+        sandbox.stub(SomeModel.getStorageDriver(), "find").callsFake(() => [
+            [
+                {
+                    id,
+                    slug: "slug-test",
+                    name: "name-test"
+                }
+            ],
+            {}
+        ]);
 
-        const someModel1 = await SomeModel.findById(id);
+        const someModel1 = await SomeModel.findOne({ query: { id } });
 
         expect(someModel1.getField("slug").current).toBe("slug-test");
         expect(someModel1.getField("slug").state.set).toBe(true);
@@ -44,16 +49,7 @@ describe("setOnce test", () => {
         await someModel1.save();
 
         expect(saveSpy.callCount).toEqual(1);
-        expect(saveSpy.getCall(0).args[0]).toEqual([
-            {
-                query: {
-                    id
-                },
-                data: {
-                    name: "name-test-2"
-                },
-                name: "SomeModel"
-            }
-        ]);
+        expect(saveSpy.getCall(0).args[0].query).toEqual({ id });
+        expect(saveSpy.getCall(0).args[0].data).toEqual({ name: "name-test-2" });
     });
 });

@@ -20,7 +20,7 @@ describe("save test", function() {
         items = await getCollection("SimpleModel")
             .find()
             .toSimpleArray();
-        
+
         expect(items).toMatchObject([
             { id: simpleModel.id, enabled: true, name: "test2", slug: "test2" }
         ]);
@@ -32,7 +32,6 @@ describe("save test", function() {
         await simpleModel.save();
 
         expect(simpleModel.id.length).toBe(24);
-        expect(SimpleModel.isId(simpleModel.id)).toBe(true);
     });
 
     it(`"id" should be the same after update`, async () => {

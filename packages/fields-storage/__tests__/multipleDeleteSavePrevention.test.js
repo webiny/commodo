@@ -1,14 +1,12 @@
 import sinon from "sinon";
-const sandbox = sinon.createSandbox();
 import { withFields } from "@commodo/fields";
 import { withName } from "@commodo/name";
 import { compose } from "ramda";
 import createModel from "./resources/models/createModel";
+import mdbid from "mdbid";
 
-const User = compose(
-    withFields({}),
-    withName("User")
-)(createModel());
+const sandbox = sinon.createSandbox();
+const User = compose(withFields({}), withName("User"))(createModel());
 
 describe("multiple delete / save prevention test", () => {
     afterEach(() => sandbox.restore());
@@ -31,7 +29,7 @@ describe("multiple delete / save prevention test", () => {
 
     test("should only call delete once", async () => {
         const user = new User();
-        user.id = "asd";
+        user.id = mdbid();
 
         const deleteOperation = sandbox.spy(User.getStorageDriver(), "delete");
 

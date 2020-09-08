@@ -1,4 +1,4 @@
-import usesModels from "./models/useModels";
+import useModels from "./models/useModels";
 import createSimpleModelsMock from "./mocks/createSimpleModelsMock";
 
 describe("find test", function() {
@@ -45,19 +45,5 @@ describe("find test", function() {
         expect(records[0].id).toBe(stringIds[1]);
         expect(records[1].id).toBe(stringIds[3]);
         expect(records[2].id).toBe(stringIds[0]);
-    });
-
-
-    it("should return only specified fields", async () => {
-        const [records] = await models.SimpleModel.getStorageDriver().find({
-            name: "SimpleModel",
-            options: {
-                limit: 1,
-                fields: ["name", "slug"]
-            }
-        });
-
-        expect(records.length).toBe(1);
-        expect(Object.keys(records[0])).toStrictEqual(["_id", "id", "name", "slug"]);
     });
 });

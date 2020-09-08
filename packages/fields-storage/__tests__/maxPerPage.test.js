@@ -2,7 +2,7 @@ import { withFields, string } from "@commodo/fields";
 import { withStorage } from "@commodo/fields-storage";
 import { withName } from "@commodo/name";
 import { compose } from "ramda";
-import { CustomDriver } from "./resources/CustomDriver";
+import { NeDbDriver } from "@commodo/fields-storage-nedb";
 
 const EntityWithoutMaxLimit = compose(
     withFields({
@@ -10,7 +10,7 @@ const EntityWithoutMaxLimit = compose(
     }),
     withName("EntityWithoutMaxLimit"),
     withStorage({
-        driver: new CustomDriver()
+        driver: new NeDbDriver()
     })
 )();
 
@@ -20,7 +20,7 @@ const EntityWithMaxLimit = compose(
     }),
     withName("EntityWithMaxLimit"),
     withStorage({
-        driver: new CustomDriver(),
+        driver: new NeDbDriver(),
         maxLimit: 500
     })
 )();
@@ -31,7 +31,7 @@ const EntityWithMaxLimitSetToNull = compose(
     }),
     withName("EntityWithMaxLimit"),
     withStorage({
-        driver: new CustomDriver(),
+        driver: new NeDbDriver(),
         maxLimit: null
     })
 )();
@@ -48,7 +48,7 @@ describe("maxLimit test", () => {
             error = e;
         }
 
-        expect(error.message).toBe("Cannot query for more than 100 models per page.");
+        expect(error.message).toBe(`Cannot set a limit greater than 100. Please adjust the "maxLimit" argument if needed.`);
 
         await EntityWithMaxLimit.find({ limit: 499 });
         await EntityWithMaxLimit.find({ limit: 500 });
@@ -60,7 +60,7 @@ describe("maxLimit test", () => {
             error = e;
         }
 
-        expect(error.message).toBe("Cannot query for more than 500 models per page.");
+        expect(error.message).toBe(`Cannot set a limit greater than 500. Please adjust the "maxLimit" argument if needed.`);
 
         await EntityWithMaxLimitSetToNull.find({ limit: 100 });
 
@@ -71,6 +71,6 @@ describe("maxLimit test", () => {
             error = e;
         }
 
-        expect(error.message).toBe("Cannot query for more than 100 models per page.");
+        expect(error.message).toBe(`Cannot set a limit greater than 100. Please adjust the "maxLimit" argument if needed.`);
     });
 });
