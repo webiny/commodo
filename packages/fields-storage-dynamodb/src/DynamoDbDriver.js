@@ -46,7 +46,7 @@ class DynamoDbDriver {
         batchProcess.addOperation("PutRequest", { TableName: this.tableName || name, Item: data });
 
         if (batchProcess.allOperationsAdded()) {
-            batchProcess.execute();
+            batchProcess.startExecution();
             batchProcess.markAsReady();
         } else {
             await batchProcess.waitForOperationsAdded();
@@ -116,7 +116,7 @@ class DynamoDbDriver {
         });
 
         if (batchProcess.allOperationsAdded()) {
-            batchProcess.execute();
+            batchProcess.startExecution();
             batchProcess.markAsReady();
         } else {
             await batchProcess.waitForOperationsAdded();
@@ -144,7 +144,7 @@ class DynamoDbDriver {
         });
 
         if (batchProcess.allOperationsAdded()) {
-            batchProcess.execute();
+            batchProcess.startExecution();
             batchProcess.markAsReady();
         } else {
             await batchProcess.waitForOperationsAdded();
@@ -176,7 +176,7 @@ class DynamoDbDriver {
         });
 
         if (batchProcess.allOperationsAdded()) {
-            batchProcess.execute();
+            batchProcess.startExecution();
             batchProcess.markAsReady();
         } else {
             await batchProcess.waitForOperationsAdded();
