@@ -170,8 +170,9 @@ class DynamoDbDriver {
             return [Items];
         }
 
+        // DynamoDb doesn't support batch queries, so we can immediately assume the GetRequest operation.
         const batchProcess = this.getBatchProcess(batch);
-        batchProcess.addOperation("DeleteRequest", {
+        batchProcess.addOperation("GetRequest", {
             Key: query
         });
 
