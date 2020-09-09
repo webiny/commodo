@@ -8,9 +8,11 @@ class BatchProcess {
             this.queryBuildResolveFunction = resolve;
         });
 
-        this.queryExecutionResolveFunction = null;
-        this.queryExecution = new Promise(resolve => {
-            this.queryExecutionResolveFunction = resolve;
+        this.resolveExecution = null;
+        this.rejectExecution = null;
+        this.queryExecution = new Promise((resolve, reject) => {
+            this.resolveExecution = resolve;
+            this.rejectExecution = reject;
         });
 
         this.operations = [];
@@ -30,13 +32,22 @@ class BatchProcess {
         this.queryBuildResolveFunction();
     }
 
-    async execute() {
+    startExecution() {
         const batchWriteParams = {
             RequestItems: {}
         };
 
+        let initialType;
         for (let i = 0; i < this.operations.length; i++) {
             let [type, { TableName, ...rest }] = this.operations[i];
+            if (!initialType) {
+                initialType = type;
+            } else if (type !== initialType) {
+                this.rejectExecution({
+                    message: `Cannot batch operations - all operations must be of the same type (the initial operation type was "${initialType}", and operation type on index "${i}" is "${type}").`
+                });
+                return;
+            }
 
             if (!batchWriteParams.RequestItems[TableName]) {
                 batchWriteParams.RequestItems[TableName] = [];
@@ -47,9 +58,14 @@ class BatchProcess {
             });
         }
 
-        this.results = await this.documentClient.batchWrite(batchWriteParams).promise();
-        this.queryExecutionResolveFunction();
-        return [];
+        this.documentClient
+            .batchWrite(batchWriteParams)
+            .promise()
+            .catch(this.rejectExecution)
+            .then(results => {
+                this.results = results;
+                this.resolveExecution();
+            });
     }
 
     waitForOperationsAdded() {
