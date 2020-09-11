@@ -346,7 +346,7 @@ const withStorage = (configuration: Configuration) => {
                     if (maxLimit && limit > maxLimit) {
                         throw new WithStorageError(
                             `Cannot set a limit greater than "${maxLimit}". Please adjust the "maxLimit" argument if needed.`,
-                            WithStorageError.MAX_PER_PAGE_EXCEEDED
+                            WithStorageError.MAX_LIMIT_EXCEEDED
                         );
                     }
 
