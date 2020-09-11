@@ -1,7 +1,7 @@
 import createKeyConditionExpressionArgs from "./statements/createKeyConditionExpressionArgs";
 
 class QueryGenerator {
-    generate({ query, keys, sort, limit, table }) {
+    generate({ query, keys, sort, limit, tableName }) {
         // 1. Which key can we use in this query operation?
         const key = this.findQueryKey(query, keys);
 
@@ -26,7 +26,7 @@ class QueryGenerator {
             key
         });
 
-        return { ...keyConditionExpression, TableName: table, Limit: limit };
+        return { ...keyConditionExpression, TableName: tableName, Limit: limit };
     }
 
     findQueryKey(query = {}, keys = []) {

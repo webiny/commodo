@@ -330,8 +330,9 @@ const withStorage = (configuration: Configuration) => {
                     const args = cloneDeep(rawArgs);
                     args.limit = 1;
 
-                    const [result] = await this.find(args);
-                    return result || null;
+                    const aaa = await this.find(args);
+
+                    return aaa[0] || null;
                 },
 
                 async find(rawArgs = {}) {
@@ -362,8 +363,12 @@ const withStorage = (configuration: Configuration) => {
                     const collection = new Collection().setParams(params).setMeta(meta);
 
                     const result: ?Array<Object> = results;
-                    if (result instanceof Array) {
+                    if (Array.isArray(result)) {
                         for (let i = 0; i < result.length; i++) {
+                            if (!result[i]) {
+                                continue;
+                            }
+
                             const pooled = this.getStoragePool().get(this, result[i]);
                             if (pooled) {
                                 collection.push(pooled);

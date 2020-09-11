@@ -36,28 +36,28 @@ class DynamoDbDriver {
     }
 
     async create({ name, data, batch }) {
+        const tableName = this.tableName || name;
         if (!batch) {
-            return await this.documentClient
-                .put({ TableName: this.tableName || name, Item: data })
-                .promise();
+            return await this.documentClient.put({ TableName: tableName, Item: data }).promise();
         }
 
         const batchProcess = this.getBatchProcess(batch);
-        batchProcess.addOperation("PutRequest", { TableName: this.tableName || name, Item: data });
+        const getResult = batchProcess.addBatchWrite({ tableName, data });
 
         if (batchProcess.allOperationsAdded()) {
             batchProcess.startExecution();
-            batchProcess.markAsReady();
         } else {
-            await batchProcess.waitForOperationsAdded();
+            await batchProcess.waitStartExecution();
         }
 
-        await batchProcess.waitForQueryExecution();
+        await batchProcess.waitExecution();
 
         return true;
     }
 
     async update({ query, data, name, batch, instance, keys }) {
+        const tableName = this.tableName || name;
+
         if (!batch) {
             const update = {
                 UpdateExpression: "SET ",
@@ -76,7 +76,7 @@ class DynamoDbDriver {
 
             return await this.documentClient
                 .update({
-                    TableName: this.tableName || name,
+                    TableName: tableName,
                     Key: query,
                     ...update
                 })
@@ -110,52 +110,54 @@ class DynamoDbDriver {
             }
         }
 
-        batchProcess.addOperation("PutRequest", {
-            TableName: this.tableName || name,
-            Item
+        const getResult = batchProcess.addBatchWrite({
+            tableName,
+            data: Item
         });
 
         if (batchProcess.allOperationsAdded()) {
             batchProcess.startExecution();
-            batchProcess.markAsReady();
         } else {
-            await batchProcess.waitForOperationsAdded();
+            await batchProcess.waitStartExecution();
         }
 
-        await batchProcess.waitForQueryExecution();
+        await batchProcess.waitExecution();
 
         return true;
     }
 
     async delete({ query, name, batch }) {
+        const tableName = this.tableName || name;
+
         if (!batch) {
             return await this.documentClient
                 .delete({
-                    TableName: this.tableName || name,
+                    TableName: tableName,
                     Key: query
                 })
                 .promise();
         }
 
         const batchProcess = this.getBatchProcess(batch);
-        batchProcess.addOperation("DeleteRequest", {
-            TableName: this.tableName || name,
-            Key: query
+        const getResult = batchProcess.addBatchDelete({
+            tableName,
+            query
         });
 
         if (batchProcess.allOperationsAdded()) {
             batchProcess.startExecution();
-            batchProcess.markAsReady();
         } else {
-            await batchProcess.waitForOperationsAdded();
+            await batchProcess.waitStartExecution();
         }
 
-        await batchProcess.waitForQueryExecution();
+        await batchProcess.waitExecution();
 
         return true;
     }
 
     async find({ name, query, sort, limit, batch, keys }) {
+        const tableName = this.tableName || name;
+
         if (!batch) {
             const queryGenerator = new QueryGenerator();
             const queryParams = queryGenerator.generate({
@@ -163,7 +165,7 @@ class DynamoDbDriver {
                 keys,
                 sort,
                 limit,
-                table: this.tableName || name
+                tableName
             });
 
             const { Items } = await this.documentClient.query(queryParams).promise();
@@ -172,20 +174,25 @@ class DynamoDbDriver {
 
         // DynamoDb doesn't support batch queries, so we can immediately assume the GetRequest operation.
         const batchProcess = this.getBatchProcess(batch);
-        batchProcess.addOperation("GetRequest", {
-            Key: query
+        const getResult = batchProcess.addBatchGet({
+            tableName,
+            query
         });
 
         if (batchProcess.allOperationsAdded()) {
             batchProcess.startExecution();
-            batchProcess.markAsReady();
         } else {
-            await batchProcess.waitForOperationsAdded();
+            await batchProcess.waitStartExecution();
         }
 
-        await batchProcess.waitForQueryExecution();
+        await batchProcess.waitExecution();
 
-        return true;
+        const result = getResult();
+        if (result) {
+            return [[result], {}];
+        }
+
+        return [[], {}];
     }
 
     async count() {
