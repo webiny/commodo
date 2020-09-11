@@ -45,8 +45,11 @@ class MongoDbDriver {
     async find({ name, query, limit, offset, sort }) {
         const database = await this.getClient()
             .collection(this.getCollectionName(name))
-            .find(query)
-            .limit(limit);
+            .find(query);
+
+        if (limit > 0) {
+            database.limit(limit);
+        }
 
         if (offset > 0) {
             database.skip(offset);
