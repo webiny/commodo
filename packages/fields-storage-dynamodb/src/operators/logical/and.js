@@ -1,4 +1,21 @@
-const isObject = value => value && typeof value === "object";
+const processQuery = (query, andArgs, processStatement) => {
+    const args = {
+        expression: "",
+        attributeNames: {},
+        attributeValues: {}
+    };
+
+    processStatement({ args: args, query });
+
+    Object.assign(andArgs.attributeNames, args.attributeNames);
+    Object.assign(andArgs.attributeValues, args.attributeValues);
+
+    if (andArgs.expression === "") {
+        andArgs.expression = args.expression;
+    } else {
+        andArgs.expression += " and " + args.expression;
+    }
+};
 
 const and = {
     canProcess: ({ key }) => {
@@ -11,46 +28,14 @@ const and = {
             attributeValues: {}
         };
 
-        switch (true) {
-            /*  case Array.isArray(value):
-                value.forEach(object => {
-                    for (const [andKey, andValue] of Object.entries(object)) {
-                        if (andArgs.expression === "") {
-                            processStatement({
-                                args: andArgs,
-                                query: { [andKey]: andValue }
-                            });
-                        } else {
-                            andExpression +=
-                                " AND " + processStatement({ args: andArgs, query: { [andKey]: andValue } });
-
-                        }
-                    }
-                });
-                break;*/
-            case isObject(value): {
-                for (const [andKey, andValue] of Object.entries(value)) {
-                    const currentArgs = {
-                        expression: "",
-                        attributeNames: {},
-                        attributeValues: {}
-                    };
-
-                    processStatement({ args: currentArgs, query: { [andKey]: andValue } });
-
-                    Object.assign(andArgs.attributeNames, currentArgs.attributeNames);
-                    Object.assign(andArgs.attributeValues, currentArgs.attributeValues);
-
-                    if (andArgs.expression === "") {
-                        andArgs.expression = currentArgs.expression;
-                    } else {
-                        andArgs.expression += " and " + currentArgs.expression;
-                    }
-                }
-                break;
+        if (Array.isArray(value)) {
+            for (let i = 0; i < value.length; i++) {
+                processQuery(value[i], andArgs, processStatement);
             }
-            default:
-                throw Error("$and operator must receive an object or an array.");
+        } else {
+            for (const [andKey, andValue] of Object.entries(value)) {
+                processQuery({ [andKey]: andValue }, andArgs, processStatement);
+            }
         }
 
         args.expression += "(" + andArgs.expression + ")";
