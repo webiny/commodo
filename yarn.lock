@@ -811,38 +811,6 @@
     "@commodo/name" "^1.2.0-next.2"
     repropose "^1.0.2"
 
-"@commodo/fields-storage@^2.0.0-next.15":
-  version "2.0.1"
-  resolved "https://registry.npmjs.org/@commodo/fields-storage/-/fields-storage-2.0.1.tgz#e985efb0e3069a8ea5ec2136e0c61f09bc58cf25"
-  integrity sha512-0b4ZoW1oT03wVFsVvKsczIJLnE4KuW1dHAM4bHBbpCDcMlmLg5o+zPrvbYo25Ow6B+/rEW+0j6xWAC01LFnNKA==
-  dependencies:
-    "@commodo/hooks" "^1.1.1"
-    "@commodo/name" "^1.2.1"
-    mdbid "^1.0.0"
-    repropose "^1.0.2"
-
-"@commodo/fields@^1.1.0-next.2":
-  version "1.1.1"
-  resolved "https://registry.npmjs.org/@commodo/fields/-/fields-1.1.1.tgz#aec8419a2d6b3f5173f5a98cb718cd35bdd0d580"
-  integrity sha512-l/qpXKbvWjDStwMUsbirhbkymai4yYnhTbT4WH/GNBMtIEaTlt3xmAPyYFdbhGwHaZ913VoJKFOSFmCbj+yXUA==
-  dependencies:
-    "@commodo/name" "^1.2.1"
-    repropose "^1.0.2"
-
-"@commodo/hooks@^1.1.0-next.2", "@commodo/hooks@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.npmjs.org/@commodo/hooks/-/hooks-1.1.1.tgz#e0cb5c0ba617536b20494709514d6af35393ac34"
-  integrity sha512-GYOuldt/KZGvQmJKyo4tDirk3nPiVGvARwVNgjsNOcArll00sEQDsWrdBNQ+E5UCLb/YbFqEqj9s8+JXA4FxXA==
-  dependencies:
-    repropose "^1.0.2"
-
-"@commodo/name@^1.2.0-next.2", "@commodo/name@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.npmjs.org/@commodo/name/-/name-1.2.1.tgz#811f1a6359409f283687bdddfdeefc15d730c47a"
-  integrity sha512-xO8ST3b8OvbsaiAkWKUoAA5tSmF3Sm31E0ufsBNBGdPXwmYtXiq4i+1fM+EbSs9StPLqADYK794dk5jczyUXxA==
-  dependencies:
-    repropose "^1.0.2"
-
 "@evocateur/libnpmaccess@^3.1.2":
   version "3.1.2"
   resolved "https://registry.npmjs.org/@evocateur/libnpmaccess/-/libnpmaccess-3.1.2.tgz#ecf7f6ce6b004e9f942b098d92200be4a4b1c845"
@@ -7077,9 +7045,9 @@ node-fetch-npm@^2.0.2:
     safe-buffer "^5.1.1"
 
 node-fetch@^2.3.0, node-fetch@^2.5.0:
-  version "2.6.0"
-  resolved "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.0.tgz#e633456386d4aa55863f676a7ab0daa8fdecb0fd"
-  integrity sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA==
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
+  integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
 
 node-gyp@^5.0.2:
   version "5.1.0"
