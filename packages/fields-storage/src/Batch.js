@@ -18,9 +18,7 @@ class Batch {
             promises.push(model[operation]({ ...args, batch: this }));
         }
 
-        await Promise.all(promises);
-
-        return this;
+        return await Promise.all(promises);
     }
 }
 
