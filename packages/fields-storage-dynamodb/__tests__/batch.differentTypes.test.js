@@ -1,7 +1,7 @@
 import { useModels } from "./models";
 import { Batch } from "@commodo/fields-storage";
 
-describe("same batch type test", function() {
+describe("different batch types test", function() {
     const { models, id: pk } = useModels();
 
     it("should not be able to continue with different batch operation types", async () => {
@@ -19,7 +19,7 @@ describe("same batch type test", function() {
         }
 
         expect(error.message).toBe(
-            `Cannot batch operations - all operations must be of the same type (the initial operation type was "GetRequest", and operation type on index "1" is "PutRequest").`
+            `Cannot batch operations - all operations must be of the same type (the initial operation type was "batchGet", and operation type on index "1" is "batchWrite").`
         );
     });
 });
