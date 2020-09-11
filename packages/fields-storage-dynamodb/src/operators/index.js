@@ -1,5 +1,5 @@
-// Comparison operators (A-Z)
 import $and from "./logical/and";
+import $or from "./logical/or";
 import $beginsWith from "./comparison/beginsWith";
 import $between from "./comparison/between";
 import $gt from "./comparison/gt";
@@ -10,6 +10,7 @@ import $eq from "./comparison/eq";
 
 module.exports = {
     $and,
+    $or,
     $beginsWith,
     $between,
     $eq,
