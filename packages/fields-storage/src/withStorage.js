@@ -330,21 +330,22 @@ const withStorage = (configuration: Configuration) => {
                     const args = cloneDeep(rawArgs);
                     args.limit = 1;
 
-                    const aaa = await this.find(args);
+                    const result = await this.find(args);
+                    if (result) {
+                        return result[0] || null;
+                    }
 
-                    return aaa[0] || null;
+                    return null;
                 },
 
                 async find(rawArgs = {}) {
-                    const maxLimit = this.__withStorage.maxLimit || 100;
+                    const maxLimit = this.__withStorage.maxLimit;
 
                     let { batch, query = {}, sort = {}, limit, ...other } = rawArgs;
 
-                    limit = Number.isInteger(limit) && limit > 0 ? limit : maxLimit;
-
-                    if (limit > maxLimit) {
+                    if (maxLimit && limit > maxLimit) {
                         throw new WithStorageError(
-                            `Cannot set a limit greater than ${maxLimit}. Please adjust the "maxLimit" argument if needed.`,
+                            `Cannot set a limit greater than "${maxLimit}". Please adjust the "maxLimit" argument if needed.`,
                             WithStorageError.MAX_PER_PAGE_EXCEEDED
                         );
                     }
