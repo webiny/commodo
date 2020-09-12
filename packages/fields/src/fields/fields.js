@@ -102,6 +102,8 @@ const fields: FieldFactory = ({ list, instanceOf, ...rest }: Object) => {
 
         return {
             instanceOf,
+            instanceOfModels,
+            instanceOfModelField,
             isDirty() {
                 if (isDirty.call(this)) {
                     return true;
