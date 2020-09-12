@@ -317,7 +317,7 @@ const withStorage = (configuration: Configuration) => {
                  * Finds one model matched by given query parameters.
                  * @param rawArgs
                  */
-                async findOne(rawArgs) {
+                async findOne(rawArgs = {}) {
                     const cached = this.getStoragePool().get(this, rawArgs.query);
                     if (cached) {
                         return cached;
