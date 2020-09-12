@@ -1,4 +1,3 @@
-// @flow
 import type { FieldFactory } from "@commodo/fields/types";
 import WithFieldsError from "./../WithFieldsError";
 import { withProps } from "repropose";
@@ -7,25 +6,73 @@ import { getName, hasName } from "@commodo/name";
 import withFieldDataTypeValidation from "./withFieldDataTypeValidation";
 import createField from "./createField";
 
-const prepareValue = ({ value, instanceOf }) => {
-    let newValue = null;
-    if (value) {
-        if (hasFields(value)) {
-            newValue = value;
-        } else {
-            newValue = new instanceOf();
-            if (typeof newValue.populate === "function") {
-                newValue.populate(value);
-            } else {
+const prepareValue = ({ value, instanceOf, instanceOfModels, instanceOfModelField }) => {
+    if (!value) {
+        return null;
+    }
+
+    let returnValue;
+
+    if (hasFields(value)) {
+        // We already know the value is a valid model instance (see "withFieldDataTypeValidation" below).
+        returnValue = value;
+        if (instanceOfModelField) {
+            returnValue[instanceOfModelField] = getName(returnValue);
+        }
+    } else {
+        let Model = instanceOf;
+        if (instanceOfModels) {
+            const instanceOfModelFieldValue = value[instanceOfModelField];
+            if (!instanceOfModelFieldValue) {
                 throw new WithFieldsError(
-                    `Cannot populate model "${instanceOf}" - "populate" method missing. Forgot to use "withFields"?`,
-                    WithFieldsError.MODEL_POPULATE_MISSING
+                    `Cannot set value to a "fields" field - the "${instanceOfModelField}" property of the received plain object is missing.`,
+                    WithFieldsError.RECEIVED_DATA_OBJECT_TYPE_VALUE_IS_MISSING
+                );
+            }
+
+            Model = instanceOfModels.find(Model => {
+                return getName(Model) === instanceOfModelFieldValue;
+            });
+
+            if (!Model) {
+                throw new WithFieldsError(
+                    `Cannot set value to a "fields" field - the "${instanceOfModelField}" property of the received plain object contains an invalid value ${instanceOfModelFieldValue}.`,
+                    WithFieldsError.RECEIVED_DATA_OBJECT_CONTAINS_INVALID_TYPE_VALUE
                 );
             }
         }
+
+        returnValue = new Model();
+
+        if (typeof returnValue.populate === "function") {
+            returnValue.populate(value);
+        } else {
+            throw new WithFieldsError(
+                `Cannot populate model "${instanceOf}" - "populate" method missing. Forgot to use "withFields"?`,
+                WithFieldsError.MODEL_POPULATE_MISSING
+            );
+        }
+
+        if (instanceOfModelField) {
+            returnValue[instanceOfModelField] = getName(returnValue);
+        }
     }
 
-    return newValue;
+    // We did already assign a value to the "instanceOfModelField" field on the "returnValue" model instance above.
+    // But, was that really a field that was defined on the model instance? Let's just try to get the field, and
+    // ensure that was really a field that we were assigning a value to.
+    if (instanceOfModelField) {
+        if (!returnValue.getField(instanceOfModelField)) {
+            throw new WithFieldsError(
+                `Cannot set value to a "fields" field - the "${getName(
+                    returnValue
+                )}" should contain the "${instanceOfModelField}" string field, but it does not.`,
+                WithFieldsError.DATA_MODEL_MODEL_TYPE_FIELD_DOES_NOT_EXIST
+            );
+        }
+    }
+
+    return returnValue;
 };
 
 const fields: FieldFactory = ({ list, instanceOf, ...rest }: Object) => {
@@ -34,6 +81,19 @@ const fields: FieldFactory = ({ list, instanceOf, ...rest }: Object) => {
             `When defining a "fields" field, "instanceOf" argument must be set.`,
             WithFieldsError.MODEL_FIELD_INSTANCEOF_NOT_SET
         );
+    }
+
+    let instanceOfModels;
+    let instanceOfModelField;
+    if (Array.isArray(instanceOf)) {
+        instanceOfModels = [...instanceOf];
+        [instanceOfModelField] = instanceOfModels.splice(-1, 1);
+        if (typeof instanceOfModelField !== "string") {
+            throw new WithFieldsError(
+                `Invalid "fields" field - when passing "instanceOf" as an array, the last item must be a string, marking the field name that will contain the model type.`,
+                WithFieldsError.INSTANCE_OF_ARRAY_LAST_ITEM_NOT_STRING
+            );
+        }
     }
 
     const field = createField({ ...rest, list, type: "fields" });
@@ -93,12 +153,24 @@ const fields: FieldFactory = ({ list, instanceOf, ...rest }: Object) => {
                 if (this.list) {
                     const preparedValues = [];
                     value.forEach(item =>
-                        preparedValues.push(prepareValue({ value: item, instanceOf }))
+                        preparedValues.push(
+                            prepareValue({
+                                value: item,
+                                instanceOf,
+                                instanceOfModels,
+                                instanceOfModelField
+                            })
+                        )
                     );
                     return setValue.call(this, preparedValues);
                 }
 
-                const preparedValue = prepareValue({ value, instanceOf });
+                const preparedValue = prepareValue({
+                    value,
+                    instanceOf,
+                    instanceOfModels,
+                    instanceOfModelField
+                });
                 return setValue.call(this, preparedValue);
             },
             async validate() {
@@ -122,18 +194,27 @@ const fields: FieldFactory = ({ list, instanceOf, ...rest }: Object) => {
     })(field);
 
     withFieldDataTypeValidation(value => {
-        if (typeof value === "object") {
-            if (hasFields(value)) {
-                // If both received value and instanceOf has a name attached, let's compare by it.
-                if (hasName(value) && hasName(instanceOf)) {
-                    return getName(value) === getName(instanceOf);
-                }
+        if (typeof value !== "object") {
+            return false;
+        }
 
-                return value instanceof instanceOf;
-            }
+        // If a plain object was set, just return true (the data will be used to populate a new model instance).
+        if (!hasFields(value)) {
             return true;
         }
-        return false;
+
+        let normalizedInstanceOf = instanceOfModels || [instanceOf];
+        return Boolean(
+            normalizedInstanceOf.find(Model => {
+                // If both received value and instanceOf has a name attached, let's compare by it.
+                if (hasName(value) && hasName(Model)) {
+                    return getName(value) === getName(Model);
+                }
+
+                // Otherwise, just do a good old instanceof check.
+                return value instanceof Model;
+            })
+        );
     })(field);
 
     return field;
