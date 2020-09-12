@@ -1,3 +1,5 @@
+import { getName } from "@commodo/name";
+
 class FieldsStorageAdapter {
     constructor() {
         this.fields = {
@@ -34,7 +36,26 @@ class FieldsStorageAdapter {
                         const output = [];
                         for (let i = 0; i < value.length; i++) {
                             let valueElement = value[i];
-                            const newModel = new field.instanceOf();
+                            let Model;
+                            if (field.instanceOfModels) {
+                                for (let i = 0; i < field.instanceOfModels.length; i++) {
+                                    let current = field.instanceOfModels[i];
+                                    if (getName(current) === valueElement[field.instanceOfModelField]) {
+                                        Model = current;
+                                        break;
+                                    }
+                                }
+
+                                // TODO: maybe this can be handled smarter?
+                                // If no model was chosen, just select the first one.
+                                if (!Model) {
+                                    Model = field.instanceOfModels[0];
+                                }
+                            } else {
+                                Model = new field.instanceOf();
+                            }
+
+                            const newModel = new Model();
                             await this.fromStorage({
                                 data: valueElement,
                                 fields: newModel.getFields()
@@ -44,7 +65,26 @@ class FieldsStorageAdapter {
                         return output;
                     }
 
-                    const newModel = new field.instanceOf();
+                    let Model;
+                    if (field.instanceOfModels) {
+                        for (let i = 0; i < field.instanceOfModels.length; i++) {
+                            let current = field.instanceOfModels[i];
+                            if (getName(current) === value[field.instanceOfModelField]) {
+                                Model = current;
+                                break;
+                            }
+                        }
+
+                        // TODO: maybe this can be handled smarter?
+                        // If no model was chosen, just select the first one.
+                        if (!Model) {
+                            Model = field.instanceOfModels[0];
+                        }
+                    } else {
+                        Model = new field.instanceOf();
+                    }
+
+                    const newModel = new Model();
                     await this.fromStorage({
                         data: value,
                         fields: newModel.getFields()
