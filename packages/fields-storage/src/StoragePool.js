@@ -7,7 +7,10 @@ function getPoolItemId(model, data) {
 
     for (let i = 0; i < primaryKey.fields.length; i++) {
         let field = primaryKey.fields[i];
-        output.id.push(data ? data[field.name] : model[field.name]);
+        let partOfId = data ? data[field.name] : model[field.name];
+        if (partOfId) {
+            partOfId && output.id.push(partOfId);
+        }
     }
 
     output.id.join(":");
@@ -46,15 +49,18 @@ class StoragePool {
 
     get(model, data: any = null) {
         const { namespace, id } = getPoolItemId(model, data);
+        if (!namespace || id.length === 0) {
+            return;
+        }
+
         if (!this.getPool()[namespace]) {
-            return undefined;
+            return;
         }
 
         const poolEntry: StoragePoolEntry = this.getPool()[namespace][id];
         if (poolEntry) {
             return poolEntry.getModel();
         }
-        return undefined;
     }
 
     flush(): this {
