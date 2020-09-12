@@ -5,12 +5,12 @@ import { withName } from "@commodo/name";
 describe("fields field should allow setting multiple models via  the instanceOf arg", () => {
     // Some test models for the tests below.
     const ModelA = compose(
-        withFields({ modelAField1: string(), __type: string() }),
-        withName("modelA")
+        withFields({ ModelAField1: string(), __type: string() }),
+        withName("ModelA")
     )();
     const ModelB = compose(
-        withFields({ modelBField1: string(), __type: string() }),
-        withName("modelB")
+        withFields({ ModelBField1: string(), __type: string() }),
+        withName("ModelB")
     )();
     const InvalidModel = compose(withFields(), withName("InvalidModel"))();
     const NamelessModel = compose(withFields(), withName("NamelessModel"))();
@@ -22,16 +22,16 @@ describe("fields field should allow setting multiple models via  the instanceOf 
 
     test("should be able to receive different model instances", async () => {
         const testModel = new Model();
-        testModel.someModels = new ModelA().populate({ modelAField1: "A" });
+        testModel.someModels = new ModelA().populate({ ModelAField1: "A" });
 
-        expect(testModel.someModels.modelAField1).toBe("A");
-        expect(testModel.someModels.__type).toBe("modelA");
+        expect(testModel.someModels.ModelAField1).toBe("A");
+        expect(testModel.someModels.__type).toBe("ModelA");
         expect(testModel.someModels).toBeInstanceOf(ModelA);
 
-        testModel.someModels = new ModelB().populate({ modelBField1: "B" });
+        testModel.someModels = new ModelB().populate({ ModelBField1: "B" });
 
-        expect(testModel.someModels.modelBField1).toBe("B");
-        expect(testModel.someModels.__type).toBe("modelB");
+        expect(testModel.someModels.ModelBField1).toBe("B");
+        expect(testModel.someModels.__type).toBe("ModelB");
         expect(testModel.someModels).toBeInstanceOf(ModelB);
 
         testModel.someModels = null;
@@ -40,16 +40,16 @@ describe("fields field should allow setting multiple models via  the instanceOf 
 
     test(`should be able to receive plain objects with "__type" property set`, async () => {
         const testModel = new Model();
-        testModel.someModels = { modelAField1: "A", __type: "modelA" };
+        testModel.someModels = { ModelAField1: "A", __type: "ModelA" };
 
-        expect(testModel.someModels.modelAField1).toBe("A");
-        expect(testModel.someModels.__type).toBe("modelA");
+        expect(testModel.someModels.ModelAField1).toBe("A");
+        expect(testModel.someModels.__type).toBe("ModelA");
         expect(testModel.someModels).toBeInstanceOf(ModelA);
 
-        testModel.someModels = { modelBField1: "B", __type: "modelB" };
+        testModel.someModels = { ModelBField1: "B", __type: "ModelB" };
 
-        expect(testModel.someModels.modelBField1).toBe("B");
-        expect(testModel.someModels.__type).toBe("modelB");
+        expect(testModel.someModels.ModelBField1).toBe("B");
+        expect(testModel.someModels.__type).toBe("ModelB");
         expect(testModel.someModels).toBeInstanceOf(ModelB);
 
         testModel.someModels = null;
@@ -60,7 +60,7 @@ describe("fields field should allow setting multiple models via  the instanceOf 
         const testModel = new Model();
         let error = null;
         try {
-            testModel.someModels = { modelAField1: "A" };
+            testModel.someModels = { ModelAField1: "A" };
         } catch (e) {
             error = e;
         }
@@ -74,7 +74,7 @@ describe("fields field should allow setting multiple models via  the instanceOf 
         const testModel = new Model();
         let error = null;
         try {
-            testModel.someModels = { modelAField1: "A", __type: "XYZ" };
+            testModel.someModels = { ModelAField1: "A", __type: "XYZ" };
         } catch (e) {
             error = e;
         }
