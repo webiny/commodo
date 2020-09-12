@@ -52,7 +52,7 @@ class FieldsStorageAdapter {
                                     Model = field.instanceOfModels[0];
                                 }
                             } else {
-                                Model = new field.instanceOf();
+                                Model = field.instanceOf;
                             }
 
                             const newModel = new Model();
@@ -81,7 +81,7 @@ class FieldsStorageAdapter {
                             Model = field.instanceOfModels[0];
                         }
                     } else {
-                        Model = new field.instanceOf();
+                        Model = field.instanceOf;
                     }
 
                     const newModel = new Model();
