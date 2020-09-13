@@ -1,6 +1,6 @@
 {
   "name": "@commodo/fields-storage",
-  "version": "2.0.2-beta.14",
+  "version": "2.0.2-beta.15",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -10,16 +10,16 @@
     "Adrian Smijulj <adrian@webiny.com>"
   ],
   "dependencies": {
-    "@commodo/hooks": "^1.1.2-beta.14",
-    "@commodo/name": "^1.2.2-beta.14",
+    "@commodo/hooks": "^1.1.2-beta.15",
+    "@commodo/name": "^1.2.2-beta.15",
     "lodash.clonedeep": "^4.5.0",
     "mdbid": "^1.0.0",
     "repropose": "^1.0.2"
   },
   "devDependencies": {
-    "@commodo/fields": "^1.1.2-beta.14",
-    "@commodo/fields-storage-mongodb": "^2.0.2-beta.14",
-    "@commodo/fields-storage-nedb": "^2.0.2-beta.14",
+    "@commodo/fields": "^1.1.2-beta.15",
+    "@commodo/fields-storage-mongodb": "^2.0.2-beta.15",
+    "@commodo/fields-storage-nedb": "^2.0.2-beta.15",
     "@shelf/jest-mongodb": "^1.1.5",
     "mongodb": "^3.5.5",
     "ramda": "^0.27.0",
