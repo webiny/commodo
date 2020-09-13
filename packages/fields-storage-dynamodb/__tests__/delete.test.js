@@ -67,6 +67,6 @@ describe("delete test", () => {
         const [result, meta] = await simpleModel.delete({ meta: true });
 
         expect(result).toBe(true);
-        expect(meta.response.error).toBeNull();
+        expect(meta.operation.response.error).toBeNull();
     });
 });

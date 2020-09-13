@@ -159,8 +159,8 @@ describe("find test", function() {
         });
 
         expect(results.length).toBe(10);
-        expect(meta.response.data.Count).toBe(10);
-        expect(meta.response.data.ScannedCount).toBe(10);
+        expect(meta.operation.response.data.Count).toBe(10);
+        expect(meta.operation.response.data.ScannedCount).toBe(10);
 
     });
 });

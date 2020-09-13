@@ -41,7 +41,7 @@ describe("find test", () => {
         findStub.restore();
 
         expect(results.length).toBe(3);
-        expect(meta).toEqual({
+        expect(meta.operation).toEqual({
             test: 123
         });
     });

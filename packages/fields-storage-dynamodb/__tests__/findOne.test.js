@@ -119,7 +119,7 @@ describe("find test", function() {
         });
 
         expect(result.sk).toBe("something-3");
-        expect(meta.response.data.Count).toBe(1);
-        expect(meta.response.data.ScannedCount).toBe(1);
+        expect(meta.operation.response.data.Count).toBe(1);
+        expect(meta.operation.response.data.ScannedCount).toBe(1);
     });
 });

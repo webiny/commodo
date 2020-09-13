@@ -74,7 +74,7 @@ describe("save test", function() {
         let [result, meta] = await simpleModel.save({ meta: true });
 
         expect(result).toBe(true);
-        expect(meta.response.error).toBe(null);
+        expect(meta.operation.response.error).toBe(null);
 
         let item = await getDocumentClient()
             .get({
@@ -118,6 +118,6 @@ describe("save test", function() {
         });
 
         expect(result).toBe(true);
-        expect(meta.response.error).toBe(null);
+        expect(meta.operation.response.error).toBe(null);
     });
 });

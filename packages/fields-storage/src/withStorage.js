@@ -277,7 +277,7 @@ const withStorage = (configuration: Configuration) => {
                     });
 
                     if (args.meta) {
-                        return result;
+                        return [result[0], { operation: result[1] }];
                     }
 
                     return result[0];
@@ -351,17 +351,13 @@ const withStorage = (configuration: Configuration) => {
                     const args = cloneDeep(rawArgs);
                     args.limit = 1;
 
-                    const meta = { returnedFromStoragePool: true };
-
                     const cached = this.getStoragePool().get(this, args.query);
                     if (cached) {
                         if (args.meta) {
-                            return [cached, meta];
+                            return [cached, { operation: null }];
                         }
                         return cached;
                     }
-
-                    meta.returnedFromStoragePool = false;
 
                     if (args.meta) {
                         const [result, meta] = await this.find(args);
