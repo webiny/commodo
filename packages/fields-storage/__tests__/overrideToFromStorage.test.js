@@ -40,7 +40,7 @@ describe("override toStorage / fromStorage field methods test", function() {
 
         const id = mdbid();
 
-        const findOneStub = sandbox.stub(Model.getStorageDriver(), "find").callsFake(() => {
+        const findOneStub = sandbox.stub(Model.getStorageDriver(), "read").callsFake(() => {
             return [
                 [
                     {

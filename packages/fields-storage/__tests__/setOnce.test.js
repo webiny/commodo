@@ -17,7 +17,7 @@ describe("setOnce test", () => {
             })
         )(createModel());
 
-        sandbox.stub(SomeModel.getStorageDriver(), "find").callsFake(() => [
+        sandbox.stub(SomeModel.getStorageDriver(), "read").callsFake(() => [
             [
                 {
                     id,

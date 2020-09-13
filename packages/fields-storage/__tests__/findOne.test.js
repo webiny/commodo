@@ -7,7 +7,7 @@ describe("findOne test", function() {
     afterEach(() => sandbox.restore());
 
     it("findOne - must NOT throw an error if storage data is invalid", async () => {
-        const findOneStub = sandbox.stub(User.getStorageDriver(), "find").callsFake(() => {
+        const findOneStub = sandbox.stub(User.getStorageDriver(), "read").callsFake(() => {
             return [
                 [
                     {

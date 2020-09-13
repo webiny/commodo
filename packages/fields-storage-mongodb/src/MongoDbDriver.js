@@ -45,7 +45,7 @@ class MongoDbDriver {
         return [true];
     }
 
-    async find({ name, query, limit, offset, sort }) {
+    async read({ name, query, limit, offset, sort }) {
         const database = await this.getClient()
             .collection(this.getCollectionName(name))
             .find(query);

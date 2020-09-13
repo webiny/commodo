@@ -28,7 +28,7 @@ describe("fields field - multiple models with instanceOf as array", function() {
             })
         )(createModel());
 
-        let findOneStub = sandbox.stub(Model.getStorageDriver(), "find").callsFake(() => {
+        let findOneStub = sandbox.stub(Model.getStorageDriver(), "read").callsFake(() => {
             return [
                 [
                     {
@@ -49,7 +49,7 @@ describe("fields field - multiple models with instanceOf as array", function() {
         expect(model.someModels.modelAField1).toBe("modelAField1-value");
         findOneStub.restore();
 
-        findOneStub = sandbox.stub(Model.getStorageDriver(), "find").callsFake(() => {
+        findOneStub = sandbox.stub(Model.getStorageDriver(), "read").callsFake(() => {
             return [
                 [
                     {
@@ -80,7 +80,7 @@ describe("fields field - multiple models with instanceOf as array", function() {
             })
         )(createModel());
 
-        let findOneStub = sandbox.stub(Model.getStorageDriver(), "find").callsFake(() => {
+        let findOneStub = sandbox.stub(Model.getStorageDriver(), "read").callsFake(() => {
             return [
                 [
                     {

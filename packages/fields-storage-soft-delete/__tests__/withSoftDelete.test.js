@@ -46,7 +46,7 @@ describe("withSoftDelete test", () => {
     });
 
     test(`must apply deleted filter to "find" method`, async () => {
-        const findSpy = sandbox.spy(Model.getStorageDriver(), "find");
+        const findSpy = sandbox.spy(Model.getStorageDriver(), "read");
         await Model.find();
         await Model.find({ query: { age: 25 } });
         await Model.find({ sort: { age: -1 } });
@@ -75,39 +75,10 @@ describe("withSoftDelete test", () => {
     });
 
     test(`must apply deleted filter to "findOne" method`, async () => {
-        const findSpy = sandbox.spy(Model.getStorageDriver(), "find");
+        const findSpy = sandbox.spy(Model.getStorageDriver(), "read");
         await Model.findOne();
         await Model.findOne({ query: { age: 25 } });
         await Model.findOne({ sort: { age: -1 } });
-
-        let call = findSpy.getCall(0);
-        expect(call.args[0].query).toEqual({
-            deleted: {
-                $ne: true
-            }
-        });
-
-        call = findSpy.getCall(1);
-        expect(call.args[0].query).toEqual({
-            age: 25,
-            deleted: {
-                $ne: true
-            }
-        });
-
-        call = findSpy.getCall(2);
-        expect(call.args[0].query).toEqual({
-            deleted: {
-                $ne: true
-            }
-        });
-    });
-
-    test(`must apply deleted filter to "count" method`, async () => {
-        const findSpy = sandbox.spy(Model.getStorageDriver(), "count");
-        await Model.count();
-        await Model.count({ query: { age: 25 } });
-        await Model.count({ sort: { age: -1 } });
 
         let call = findSpy.getCall(0);
         expect(call.args[0].query).toEqual({

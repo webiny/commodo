@@ -12,7 +12,7 @@ describe("find test", () => {
         const B = mdbid();
         const C = mdbid();
 
-        const findStub = sandbox.stub(User.getStorageDriver(), "find").callsFake(() => {
+        const findStub = sandbox.stub(User.getStorageDriver(), "read").callsFake(() => {
             return [
                 [
                     {
@@ -47,7 +47,7 @@ describe("find test", () => {
     });
 
     test("find - must NOT throw an error if storage data is invalid", async () => {
-        const findStub = sandbox.stub(User.getStorageDriver(), "find").callsFake(() => {
+        const findStub = sandbox.stub(User.getStorageDriver(), "read").callsFake(() => {
             return [
                 [
                     {

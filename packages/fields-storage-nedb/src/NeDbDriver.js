@@ -43,7 +43,7 @@ class NeDbDriver {
         return [true, {}];
     }
 
-    async find(args) {
+    async read(args) {
         const { name, options } = args;
         const clonedArgs = { limit: 0, offset: 0, ...options };
 

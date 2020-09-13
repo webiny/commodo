@@ -43,7 +43,7 @@ describe("model pool test", () => {
 
     test("findOne must add to the pool and consequent findById calls must utilize it", async () => {
         const A = mdbid();
-        const modelFind = sandbox.stub(User.getStorageDriver(), "find").callsFake(() => {
+        const modelFind = sandbox.stub(User.getStorageDriver(), "read").callsFake(() => {
             return [[{ id: A }], {}];
         });
 
@@ -65,7 +65,7 @@ describe("model pool test", () => {
         const B = mdbid();
         const C = mdbid();
 
-        const modelFind = sandbox.stub(User.getStorageDriver(), "find").callsFake(() => {
+        const modelFind = sandbox.stub(User.getStorageDriver(), "read").callsFake(() => {
             return [[{ id: A }, { id: B }, { id: C }]];
         });
 
@@ -96,7 +96,7 @@ describe("model pool test", () => {
             C = mdbid();
 
         sandbox
-            .stub(User.getStorageDriver(), "find")
+            .stub(User.getStorageDriver(), "read")
             .onCall(0)
             .callsFake(() => {
                 return [[{ id: A }], {}];
@@ -123,7 +123,7 @@ describe("model pool test", () => {
 
     test("findOne must return from pool if possible", async () => {
         const A = mdbid();
-        const modelFindOne = sandbox.stub(User.getStorageDriver(), "find").callsFake(() => {
+        const modelFindOne = sandbox.stub(User.getStorageDriver(), "read").callsFake(() => {
             return [[{ id: A }], {}];
         });
 

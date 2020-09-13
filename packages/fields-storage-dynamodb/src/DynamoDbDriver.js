@@ -162,7 +162,7 @@ class DynamoDbDriver {
         return [true, { response: batchProcess.response }];
     }
 
-    async find({ name, query, sort, limit, batch, keys }) {
+    async read({ name, query, sort, limit, batch, keys }) {
         const tableName = this.tableName || name;
 
         if (!batch) {
@@ -200,10 +200,6 @@ class DynamoDbDriver {
         }
 
         return [[], {}];
-    }
-
-    async count() {
-        throw new Error(`Cannot run "count" operation - not supported.`);
     }
 
     getBatchProcess(batch) {
