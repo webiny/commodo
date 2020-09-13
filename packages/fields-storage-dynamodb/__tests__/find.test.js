@@ -149,4 +149,18 @@ describe("find test", function() {
         expect(results[2].sk).toBe("something-1");
         expect(results[3].sk).toBe("something-0");
     });
+
+    it("should be able to get meta data", async () => {
+        const { SimpleModel } = models;
+
+        let [results, meta] = await SimpleModel.find({
+            query: { gsi1pk: `gsi1-${pk}`, gsi1sk: { $beginsWith: "gsi1-something" } },
+            meta: true
+        });
+
+        expect(results.length).toBe(10);
+        expect(meta.response.data.Count).toBe(10);
+        expect(meta.response.data.ScannedCount).toBe(10);
+
+    });
 });

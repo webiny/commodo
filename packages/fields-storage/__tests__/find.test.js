@@ -37,11 +37,11 @@ describe("find test", () => {
             ];
         });
 
-        const results = await User.find({ totalCount: true });
+        const [results, meta] = await User.find({ meta: true, totalCount: true });
         findStub.restore();
 
         expect(results.length).toBe(3);
-        expect(results.getMeta()).toEqual({
+        expect(meta).toEqual({
             test: 123
         });
     });

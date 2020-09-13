@@ -48,4 +48,25 @@ describe("delete test", () => {
 
         expect(item).toEqual({});
     });
+
+    it("should be able to perform delete operation and get meta data", async () => {
+        const { SimpleModel } = models;
+
+        const simpleModel = new SimpleModel();
+        simpleModel.populate({
+            pk,
+            sk: "something-1",
+            name: "Something-1",
+            enabled: true,
+            tags: ["one", "two", "three"],
+            age: 55
+        });
+
+        await simpleModel.save();
+
+        const [result, meta] = await simpleModel.delete({ meta: true });
+
+        expect(result).toBe(true);
+        expect(meta.response.error).toBeNull();
+    });
 });

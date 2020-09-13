@@ -38,11 +38,14 @@ class DynamoDbDriver {
     async create({ name, data, batch }) {
         const tableName = this.tableName || name;
         if (!batch) {
-            return await this.documentClient.put({ TableName: tableName, Item: data }).promise();
+            const result = await this.documentClient
+                .put({ TableName: tableName, Item: data })
+                .promise();
+            return [true, { response: result.$response }];
         }
 
         const batchProcess = this.getBatchProcess(batch);
-        const getResult = batchProcess.addBatchWrite({ tableName, data });
+        batchProcess.addBatchWrite({ tableName, data });
 
         if (batchProcess.allOperationsAdded()) {
             batchProcess.startExecution();
@@ -52,7 +55,7 @@ class DynamoDbDriver {
 
         await batchProcess.waitExecution();
 
-        return true;
+        return [true, { response: batchProcess.$response }];
     }
 
     async update({ query, data, name, batch, instance, keys }) {
@@ -74,13 +77,15 @@ class DynamoDbDriver {
 
             update.UpdateExpression += updateExpression.join(", ");
 
-            return await this.documentClient
+            const result = await this.documentClient
                 .update({
                     TableName: tableName,
                     Key: query,
                     ...update
                 })
                 .promise();
+
+            return [true, { response: result.$response }];
         }
 
         const batchProcess = this.getBatchProcess(batch);
@@ -110,7 +115,7 @@ class DynamoDbDriver {
             }
         }
 
-        const getResult = batchProcess.addBatchWrite({
+        batchProcess.addBatchWrite({
             tableName,
             data: Item
         });
@@ -123,19 +128,21 @@ class DynamoDbDriver {
 
         await batchProcess.waitExecution();
 
-        return true;
+        return [true, { response: batchProcess.response }];
     }
 
     async delete({ query, name, batch }) {
         const tableName = this.tableName || name;
 
         if (!batch) {
-            return await this.documentClient
+            const result = await this.documentClient
                 .delete({
                     TableName: tableName,
                     Key: query
                 })
                 .promise();
+
+            return [true, { response: result.$response }];
         }
 
         const batchProcess = this.getBatchProcess(batch);
@@ -152,7 +159,7 @@ class DynamoDbDriver {
 
         await batchProcess.waitExecution();
 
-        return true;
+        return [true, { response: batchProcess.response }];
     }
 
     async find({ name, query, sort, limit, batch, keys }) {
@@ -168,8 +175,8 @@ class DynamoDbDriver {
                 tableName
             });
 
-            const { Items } = await this.documentClient.query(queryParams).promise();
-            return [Items];
+            const response = await this.documentClient.query(queryParams).promise();
+            return [response.Items, { response: response.$response }];
         }
 
         // DynamoDb doesn't support batch queries, so we can immediately assume the GetRequest operation.

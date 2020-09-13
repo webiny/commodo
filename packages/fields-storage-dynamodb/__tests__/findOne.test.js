@@ -99,14 +99,27 @@ describe("find test", function() {
             query: { gsi1pk: "gsi1-SimpleModel", gsi1sk: "gsi1-something-3" }
         });
 
-        result.sk = 'something-3';
-        result.gsi1sk = 'gsi1-something-3';
+        result.sk = "something-3";
+        result.gsi1sk = "gsi1-something-3";
 
         result = await SimpleModel.findOne({
             query: { gsi2pk: "gsi2-SimpleModel", gsi2sk: { $lt: "gsi2-something-3" } }
         });
 
-        result.sk = 'something-2';
-        result.gsi1sk = 'gsi1-something-2';
+        result.sk = "something-2";
+        result.gsi1sk = "gsi1-something-2";
+    });
+
+    it("should be able to get meta data", async () => {
+        const { SimpleModel } = models;
+
+        let [result, meta] = await SimpleModel.findOne({
+            meta: true,
+            query: { gsi1pk: "gsi1-SimpleModel", gsi1sk: "gsi1-something-3" }
+        });
+
+        expect(result.sk).toBe("something-3");
+        expect(meta.response.data.Count).toBe(1);
+        expect(meta.response.data.ScannedCount).toBe(1);
     });
 });

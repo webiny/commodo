@@ -110,32 +110,25 @@ describe("withSoftDelete test", () => {
         await Model.count({ sort: { age: -1 } });
 
         let call = findSpy.getCall(0);
-        expect(call.args[0].options).toEqual({
-            query: {
-                deleted: {
-                    $ne: true
-                }
+        expect(call.args[0].query).toEqual({
+            deleted: {
+                $ne: true
             }
         });
 
         call = findSpy.getCall(1);
-        expect(call.args[0].options).toEqual({
-            query: {
-                age: 25,
-                deleted: {
-                    $ne: true
-                }
+        expect(call.args[0].query).toEqual({
+            age: 25,
+            deleted: {
+                $ne: true
             }
         });
 
         call = findSpy.getCall(2);
-        expect(call.args[0].options).toEqual({
-            query: {
-                deleted: {
-                    $ne: true
-                }
-            },
-            sort: { age: -1 }
+        expect(call.args[0].query).toEqual({
+            deleted: {
+                $ne: true
+            }
         });
     });
 });

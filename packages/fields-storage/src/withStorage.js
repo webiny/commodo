@@ -1,13 +1,10 @@
-// @flow
 import { getName as defaultGetName } from "@commodo/name";
 import getStorageName from "./getStorageName";
 import getPrimaryKey from "./getPrimaryKey";
 import getKeys from "./getKeys";
 import { withStaticProps, withProps } from "repropose";
 import { withHooks } from "@commodo/hooks";
-import type { SaveParams } from "@commodo/fields-storage/types";
 import WithStorageError from "./WithStorageError";
-import Collection from "./Collection";
 import StoragePool from "./StoragePool";
 import FieldsStorageAdapter from "./FieldsStorageAdapter";
 
@@ -66,7 +63,7 @@ const withStorage = (configuration: Configuration) => {
                 this.__withStorage.existing = existing;
                 return this;
             },
-            async save(rawArgs: ?SaveParams): Promise<void> {
+            async save(rawArgs = {}): Promise<void> {
                 const primaryKey = getPrimaryKey(this);
                 if (!primaryKey) {
                     throw Error(
@@ -89,6 +86,8 @@ const withStorage = (configuration: Configuration) => {
                     model: this,
                     options: args
                 });
+
+                let result = [];
 
                 try {
                     await hook("__save", { model: this, options: args });
@@ -116,15 +115,15 @@ const withStorage = (configuration: Configuration) => {
                                 query[field.name] = this[field.name];
                             }
 
-                            await this.constructor.update({
-                                batch: args.batch,
+                            result = await this.constructor.update({
+                                ...args,
                                 instance: this,
                                 data,
                                 query
                             });
                         } else {
-                            await this.constructor.create({
-                                batch: args.batch,
+                            result = await this.constructor.create({
+                                ...args,
                                 instance: this,
                                 data
                             });
@@ -141,21 +140,27 @@ const withStorage = (configuration: Configuration) => {
                     this.clean();
 
                     this.constructor.getStoragePool().add(this);
+
+                    await triggerSaveUpdateCreateHooks("after", {
+                        existing,
+                        model: this,
+                        options: args
+                    });
+
+                    if (args.meta) {
+                        return result;
+                    }
+
+                    return result[0];
                 } finally {
                     this.__withStorage.processing = null;
                 }
-
-                await triggerSaveUpdateCreateHooks("after", {
-                    existing,
-                    model: this,
-                    options: args
-                });
             },
 
             /**
              * Deletes current and all linked models (if autoDelete on the attribute was enabled).
              */
-            async delete(rawArgs) {
+            async delete(rawArgs = {}) {
                 const primaryKey = getPrimaryKey(this);
                 if (!primaryKey) {
                     throw Error(
@@ -169,7 +174,7 @@ const withStorage = (configuration: Configuration) => {
 
                 this.__withStorage.processing = "delete";
 
-                const args = { ...defaults.delete, ...cloneDeep(rawArgs) };
+                const args = cloneDeep(rawArgs);
 
                 try {
                     await this.hook("delete", { options: args, model: this });
@@ -184,8 +189,8 @@ const withStorage = (configuration: Configuration) => {
                         query[field.name] = this[field.name];
                     }
 
-                    await this.constructor.delete({
-                        batch: args.batch,
+                    const result = await this.constructor.delete({
+                        ...args,
                         instance: this,
                         query
                     });
@@ -193,6 +198,12 @@ const withStorage = (configuration: Configuration) => {
                     await this.hook("afterDelete", { options: args, model: this });
 
                     this.constructor.getStoragePool().remove(this);
+
+                    if (args.meta) {
+                        return result;
+                    }
+
+                    return result[0];
                 } finally {
                     props.__withStorage.processing = null;
                 }
@@ -263,54 +274,62 @@ const withStorage = (configuration: Configuration) => {
                 /**
                  * Inserts an entry into the database.
                  */
-                async create(args) {
-                    const { data, batch, ...rest } = cloneDeep(args);
-
-                    return this.getStorageDriver().create({
-                        ...rest,
+                async create(rawArgs = {}) {
+                    const args = cloneDeep(rawArgs);
+                    const result = await this.getStorageDriver().create({
+                        ...args,
                         model: this,
                         name: getName(this),
                         keys: getKeys(this),
-                        primaryKey: getPrimaryKey(this),
-                        data,
-                        batch
+                        primaryKey: getPrimaryKey(this)
                     });
+
+                    if (args.meta) {
+                        return result;
+                    }
+
+                    return result[0];
                 },
 
                 /**
                  * Updates an existing entry in the database.
                  */
-                async update(args = {}) {
-                    const { data, query, batch, ...rest } = cloneDeep(args);
-
-                    return this.getStorageDriver().update({
-                        ...rest,
+                async update(rawArgs = {}) {
+                    const args = cloneDeep(rawArgs);
+                    const result = await this.getStorageDriver().update({
+                        ...args,
                         model: this,
                         name: getName(this),
                         keys: getKeys(this),
-                        primaryKey: getPrimaryKey(this),
-                        data,
-                        query,
-                        batch
+                        primaryKey: getPrimaryKey(this)
                     });
+
+                    if (args.meta) {
+                        return result;
+                    }
+
+                    return result[0];
                 },
 
                 /**
                  * Deletes an existing entry in the database.
                  */
-                async delete(args = {}) {
-                    const { data, query, batch, ...rest } = cloneDeep(args);
+                async delete(rawArgs = {}) {
+                    const args = cloneDeep(rawArgs);
 
-                    return this.getStorageDriver().delete({
-                        ...rest,
+                    const result = await this.getStorageDriver().delete({
+                        ...args,
                         model: this,
                         name: getName(this),
                         keys: getKeys(this),
-                        primaryKey: getPrimaryKey(this),
-                        data,
-                        query,
-                        batch
+                        primaryKey: getPrimaryKey(this)
                     });
+
+                    if (args.meta) {
+                        return result;
+                    }
+
+                    return result[0];
                 },
 
                 /**
@@ -318,88 +337,88 @@ const withStorage = (configuration: Configuration) => {
                  * @param rawArgs
                  */
                 async findOne(rawArgs = {}) {
-                    const cached = this.getStoragePool().get(this, rawArgs.query);
+                    const args = cloneDeep(rawArgs);
+                    args.limit = 1;
+
+                    const cached = this.getStoragePool().get(this, args.query);
                     if (cached) {
                         return cached;
                     }
 
-                    if (!rawArgs) {
-                        rawArgs = {};
+                    if (args.meta) {
+                        const [result, meta] = await this.find(args);
+                        return [result[0] || null, meta];
                     }
-
-                    const args = cloneDeep(rawArgs);
-                    args.limit = 1;
 
                     const result = await this.find(args);
-                    if (result) {
-                        return result[0] || null;
-                    }
-
-                    return null;
+                    return result[0] || null;
                 },
 
                 async find(rawArgs = {}) {
                     const maxLimit = this.__withStorage.maxLimit;
+                    const args = cloneDeep(rawArgs);
 
-                    let { batch, query = {}, sort = {}, limit, ...other } = rawArgs;
-
-                    if (maxLimit && limit > maxLimit) {
+                    if (maxLimit && args.limit > maxLimit) {
                         throw new WithStorageError(
                             `Cannot set a limit greater than "${maxLimit}". Please adjust the "maxLimit" argument if needed.`,
                             WithStorageError.MAX_LIMIT_EXCEEDED
                         );
                     }
 
-                    const params = { query, sort, limit, ...other };
-                    let [results, meta = {}] = await this.getStorageDriver().find({
-                        ...params,
+                    let [results, meta] = await this.getStorageDriver().find({
+                        ...args,
                         model: this,
                         name: getName(this),
                         keys: getKeys(this),
-                        primaryKey: getPrimaryKey(this),
-                        query,
-                        batch
+                        primaryKey: getPrimaryKey(this)
                     });
 
-                    const collection = new Collection().setParams(params).setMeta(meta);
+                    const collection = [];
 
-                    const result: ?Array<Object> = results;
-                    if (Array.isArray(result)) {
-                        for (let i = 0; i < result.length; i++) {
-                            if (!result[i]) {
+                    if (Array.isArray(results)) {
+                        for (let i = 0; i < results.length; i++) {
+                            if (!results[i]) {
                                 continue;
                             }
 
-                            const pooled = this.getStoragePool().get(this, result[i]);
+                            const pooled = this.getStoragePool().get(this, results[i]);
                             if (pooled) {
                                 collection.push(pooled);
                             } else {
                                 const model = new this();
                                 model.setExisting();
-                                await model.populateFromStorage(result[i]);
+                                await model.populateFromStorage(results[i]);
                                 this.getStoragePool().add(model);
                                 collection.push(model);
                             }
                         }
                     }
 
+                    if (args.meta) {
+                        return [collection, meta];
+                    }
+
                     return collection;
                 },
                 /**
                  * Counts total number of models matched by given query parameters.
-                 * @param options
                  */
-                async count(options: ?Object): Promise<number> {
-                    if (!options) {
-                        options = {};
+                async count(rawArgs = {}) {
+                    const args = cloneDeep(rawArgs);
+
+                    const results = await this.getStorageDriver().count({
+                        ...args,
+                        model: this,
+                        name: getName(this),
+                        keys: getKeys(this),
+                        primaryKey: getPrimaryKey(this)
+                    });
+
+                    if (args.meta) {
+                        return results;
                     }
 
-                    const prepared = { ...options };
-
-                    return await this.getStorageDriver().count({
-                        name: getName(this),
-                        options: prepared
-                    });
+                    return results[0];
                 }
             };
         })(fn);

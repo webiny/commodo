@@ -13,15 +13,14 @@ describe("model pool test", () => {
         const user = new User();
         user.age = 30;
         sandbox.stub(user.getStorageDriver(), "create").callsFake(args => {
-            args.data.id = A;
-            return true;
+            return [true, {}];
         });
 
         expect(User.getStoragePool().get(user)).toEqual(undefined);
         await user.save();
         expect(User.getStoragePool().get(user)).toBeInstanceOf(User);
 
-        sandbox.stub(user.getStorageDriver(), "delete").callsFake(() => true);
+        sandbox.stub(user.getStorageDriver(), "delete").callsFake(() => [true, {}]);
         await user.delete();
 
         expect(User.getStoragePool().get(user)).toEqual(undefined);
