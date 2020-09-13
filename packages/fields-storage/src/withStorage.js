@@ -156,10 +156,6 @@ const withStorage = (configuration: Configuration) => {
                     this.__withStorage.processing = null;
                 }
             },
-
-            /**
-             * Deletes current and all linked models (if autoDelete on the attribute was enabled).
-             */
             async delete(rawArgs = {}) {
                 const primaryKey = getPrimaryKey(this);
                 if (!primaryKey) {
@@ -270,13 +266,9 @@ const withStorage = (configuration: Configuration) => {
                 getStorageName() {
                     return getName(this);
                 },
-
-                /**
-                 * Inserts an entry into the database.
-                 */
-                async create(rawArgs = {}) {
+                async query(crudOperation, rawArgs) {
                     const args = cloneDeep(rawArgs);
-                    const result = await this.getStorageDriver().create({
+                    const result = await this.getStorageDriver()[crudOperation]({
                         ...args,
                         model: this,
                         name: getName(this),
@@ -291,67 +283,17 @@ const withStorage = (configuration: Configuration) => {
                     return result[0];
                 },
 
-                /**
-                 * Updates an existing entry in the database.
-                 */
-                async update(rawArgs = {}) {
-                    const args = cloneDeep(rawArgs);
-                    const result = await this.getStorageDriver().update({
-                        ...args,
-                        model: this,
-                        name: getName(this),
-                        keys: getKeys(this),
-                        primaryKey: getPrimaryKey(this)
-                    });
-
-                    if (args.meta) {
-                        return result;
-                    }
-
-                    return result[0];
+                async create(args = {}) {
+                    return this.query("create", args);
                 },
-
-                /**
-                 * Deletes an existing entry in the database.
-                 */
-                async delete(rawArgs = {}) {
-                    const args = cloneDeep(rawArgs);
-
-                    const result = await this.getStorageDriver().delete({
-                        ...args,
-                        model: this,
-                        name: getName(this),
-                        keys: getKeys(this),
-                        primaryKey: getPrimaryKey(this)
-                    });
-
-                    if (args.meta) {
-                        return result;
-                    }
-
-                    return result[0];
+                async read(args = {}) {
+                    return this.query("read", args);
                 },
-
-                /**
-                 * Finds one model matched by given query parameters.
-                 * @param rawArgs
-                 */
-                async findOne(rawArgs = {}) {
-                    const args = cloneDeep(rawArgs);
-                    args.limit = 1;
-
-                    const cached = this.getStoragePool().get(this, args.query);
-                    if (cached) {
-                        return cached;
-                    }
-
-                    if (args.meta) {
-                        const [result, meta] = await this.find(args);
-                        return [result[0] || null, meta];
-                    }
-
-                    const result = await this.find(args);
-                    return result[0] || null;
+                async update(args = {}) {
+                    return this.query("update", args);
+                },
+                async delete(args = {}) {
+                    return this.query("delete", args);
                 },
 
                 async find(rawArgs = {}) {
@@ -365,7 +307,7 @@ const withStorage = (configuration: Configuration) => {
                         );
                     }
 
-                    let [results, meta] = await this.getStorageDriver().find({
+                    let results = await this.read({
                         ...args,
                         model: this,
                         name: getName(this),
@@ -373,52 +315,61 @@ const withStorage = (configuration: Configuration) => {
                         primaryKey: getPrimaryKey(this)
                     });
 
-                    const collection = [];
-
-                    if (Array.isArray(results)) {
-                        for (let i = 0; i < results.length; i++) {
-                            if (!results[i]) {
+                    const storageItems = args.meta ? results[0] : results;
+                    const returnItems = [];
+                    if (Array.isArray(storageItems)) {
+                        for (let i = 0; i < storageItems.length; i++) {
+                            if (!storageItems[i]) {
                                 continue;
                             }
 
-                            const pooled = this.getStoragePool().get(this, results[i]);
+                            const pooled = this.getStoragePool().get(this, storageItems[i]);
                             if (pooled) {
-                                collection.push(pooled);
+                                returnItems.push(pooled);
                             } else {
                                 const model = new this();
                                 model.setExisting();
-                                await model.populateFromStorage(results[i]);
+                                await model.populateFromStorage(storageItems[i]);
                                 this.getStoragePool().add(model);
-                                collection.push(model);
+                                returnItems.push(model);
                             }
                         }
                     }
 
                     if (args.meta) {
-                        return [collection, meta];
+                        return [returnItems, results[1]];
                     }
 
-                    return collection;
+                    return returnItems;
                 },
-                /**
-                 * Counts total number of models matched by given query parameters.
-                 */
-                async count(rawArgs = {}) {
-                    const args = cloneDeep(rawArgs);
 
-                    const results = await this.getStorageDriver().count({
-                        ...args,
-                        model: this,
-                        name: getName(this),
-                        keys: getKeys(this),
-                        primaryKey: getPrimaryKey(this)
-                    });
+                /**
+                 * Finds one model matched by given query parameters.
+                 * @param rawArgs
+                 */
+                async findOne(rawArgs = {}) {
+                    const args = cloneDeep(rawArgs);
+                    args.limit = 1;
+
+                    const meta = { returnedFromStoragePool: true };
+
+                    const cached = this.getStoragePool().get(this, args.query);
+                    if (cached) {
+                        if (args.meta) {
+                            return [cached, meta];
+                        }
+                        return cached;
+                    }
+
+                    meta.returnedFromStoragePool = false;
 
                     if (args.meta) {
-                        return results;
+                        const [result, meta] = await this.find(args);
+                        return [result[0] || null, meta];
                     }
 
-                    return results[0];
+                    const result = await this.find(args);
+                    return result[0] || null;
                 }
             };
         })(fn);
