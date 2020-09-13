@@ -28,19 +28,19 @@ const defaults = {
     }
 };
 
-const hook = async (name, { options, model }) => {
-    if (options.hooks[name] === false) {
+const hook = async (name, { args, model }) => {
+    if (args.hooks[name] === false) {
         return;
     }
-    await model.hook(name, { model, options });
+    await model.hook(name, { model, args });
 };
 
-const triggerSaveUpdateCreateHooks = async (prefix, { existing, model, options }) => {
-    await hook(prefix + "Save", { model, options });
+const triggerSaveUpdateCreateHooks = async (prefix, { existing, model, args }) => {
+    await hook(prefix + "Save", { model, args });
     if (existing) {
-        await hook(prefix + "Update", { model, options });
+        await hook(prefix + "Update", { model, args });
     } else {
-        await hook(prefix + "Create", { model, options });
+        await hook(prefix + "Create", { model, args });
     }
 };
 
@@ -84,17 +84,17 @@ const withStorage = (configuration: Configuration) => {
                 await triggerSaveUpdateCreateHooks("before", {
                     existing,
                     model: this,
-                    options: args
+                    args
                 });
 
                 let result = [];
 
                 try {
-                    await hook("__save", { model: this, options: args });
+                    await hook("__save", { model: this, args });
                     if (existing) {
-                        await hook("__update", { model: this, options: args });
+                        await hook("__update", { model: this, args });
                     } else {
-                        await hook("__create", { model: this, options: args });
+                        await hook("__create", { model: this, args });
                     }
 
                     args.validation !== false && (await this.validate());
@@ -102,7 +102,7 @@ const withStorage = (configuration: Configuration) => {
                     await triggerSaveUpdateCreateHooks("__before", {
                         existing,
                         model: this,
-                        options: args
+                        args
                     });
 
                     if (this.isDirty()) {
@@ -133,7 +133,7 @@ const withStorage = (configuration: Configuration) => {
                     await triggerSaveUpdateCreateHooks("__after", {
                         existing,
                         model: this,
-                        options: args
+                        args
                     });
 
                     this.setExisting();
@@ -144,7 +144,7 @@ const withStorage = (configuration: Configuration) => {
                     await triggerSaveUpdateCreateHooks("after", {
                         existing,
                         model: this,
-                        options: args
+                        args
                     });
 
                     if (args.meta) {
@@ -177,11 +177,11 @@ const withStorage = (configuration: Configuration) => {
                 const args = cloneDeep(rawArgs);
 
                 try {
-                    await this.hook("delete", { options: args, model: this });
+                    await this.hook("delete", { args, model: this });
 
                     args.validation !== false && (await this.validate());
 
-                    await this.hook("beforeDelete", { options: args, model: this });
+                    await this.hook("beforeDelete", { args, model: this });
 
                     const query = {};
                     for (let i = 0; i < primaryKey.fields.length; i++) {
@@ -195,7 +195,7 @@ const withStorage = (configuration: Configuration) => {
                         query
                     });
 
-                    await this.hook("afterDelete", { options: args, model: this });
+                    await this.hook("afterDelete", { args, model: this });
 
                     this.constructor.getStoragePool().remove(this);
 
