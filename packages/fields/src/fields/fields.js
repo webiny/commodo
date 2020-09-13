@@ -183,9 +183,26 @@ const fields: FieldFactory = ({ list, instanceOf, ...rest }: Object) => {
                 }
 
                 if (this.list) {
+                    const errors = [];
                     for (let i = 0; i < this.current.length; i++) {
                         const current = this.current[i];
-                        current && (await current.validate());
+                        try {
+                            current && (await current.validate());
+                        } catch (e) {
+                            errors.push({
+                                code: e.code,
+                                data: { index: i, ...e.data },
+                                message: e.message
+                            });
+                        }
+                    }
+
+                    if (errors.length > 0) {
+                        throw new WithFieldsError(
+                            "Validation failed.",
+                            WithFieldsError.VALIDATION_FAILED_INVALID_FIELD,
+                            errors
+                        );
                     }
                     return;
                 }

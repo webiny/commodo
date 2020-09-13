@@ -76,34 +76,100 @@ describe("field models test", () => {
             expect(e.data).toEqual({
                 invalidFields: {
                     field1: {
-                        code: "VALIDATION_FAILED_INVALID_FIELDS",
-                        data: {
-                            invalidFields: {
-                                name: {
-                                    code: "VALIDATION_FAILED_INVALID_FIELD",
-                                    data: null,
-                                    message: "Where is the value?"
-                                }
+                        code: "VALIDATION_FAILED_INVALID_FIELD",
+                        data: [
+                            {
+                                code: "VALIDATION_FAILED_INVALID_FIELDS",
+                                data: {
+                                    index: 0,
+                                    invalidFields: {
+                                        name: {
+                                            code: "VALIDATION_FAILED_INVALID_FIELD",
+                                            data: null,
+                                            message: "Where is the value?"
+                                        }
+                                    }
+                                },
+                                message: "Validation failed."
+                            },
+                            {
+                                code: "VALIDATION_FAILED_INVALID_FIELDS",
+                                data: {
+                                    index: 1,
+                                    invalidFields: {
+                                        name: {
+                                            code: "VALIDATION_FAILED_INVALID_FIELD",
+                                            data: null,
+                                            message: "Where is the value?"
+                                        }
+                                    }
+                                },
+                                message: "Validation failed."
                             }
-                        },
+                        ],
                         message: "Validation failed."
                     },
                     field2: {
-                        code: "VALIDATION_FAILED_INVALID_FIELDS",
-                        data: {
-                            invalidFields: {
-                                firstName: {
-                                    code: "VALIDATION_FAILED_INVALID_FIELD",
-                                    data: null,
-                                    message: "First name not defined."
+                        code: "VALIDATION_FAILED_INVALID_FIELD",
+                        data: [
+                            {
+                                code: "VALIDATION_FAILED_INVALID_FIELDS",
+                                data: {
+                                    index: 0,
+                                    invalidFields: {
+                                        firstName: {
+                                            code: "VALIDATION_FAILED_INVALID_FIELD",
+                                            data: null,
+                                            message: "First name not defined."
+                                        },
+                                        lastName: {
+                                            code: "VALIDATION_FAILED_INVALID_FIELD",
+                                            data: null,
+                                            message: "Last name not defined."
+                                        }
+                                    }
                                 },
-                                lastName: {
-                                    code: "VALIDATION_FAILED_INVALID_FIELD",
-                                    data: null,
-                                    message: "Last name not defined."
-                                }
+                                message: "Validation failed."
+                            },
+                            {
+                                code: "VALIDATION_FAILED_INVALID_FIELDS",
+                                data: {
+                                    index: 1,
+                                    invalidFields: {
+                                        firstName: {
+                                            code: "VALIDATION_FAILED_INVALID_FIELD",
+                                            data: null,
+                                            message: "First name not defined."
+                                        },
+                                        lastName: {
+                                            code: "VALIDATION_FAILED_INVALID_FIELD",
+                                            data: null,
+                                            message: "Last name not defined."
+                                        }
+                                    }
+                                },
+                                message: "Validation failed."
+                            },
+                            {
+                                code: "VALIDATION_FAILED_INVALID_FIELDS",
+                                data: {
+                                    index: 2,
+                                    invalidFields: {
+                                        firstName: {
+                                            code: "VALIDATION_FAILED_INVALID_FIELD",
+                                            data: null,
+                                            message: "First name not defined."
+                                        },
+                                        lastName: {
+                                            code: "VALIDATION_FAILED_INVALID_FIELD",
+                                            data: null,
+                                            message: "Last name not defined."
+                                        }
+                                    }
+                                },
+                                message: "Validation failed."
                             }
-                        },
+                        ],
                         message: "Validation failed."
                     }
                 }
@@ -146,16 +212,23 @@ describe("field models test", () => {
             expect(e.data).toEqual({
                 invalidFields: {
                     field1: {
-                        code: "VALIDATION_FAILED_INVALID_FIELDS",
-                        data: {
-                            invalidFields: {
-                                type: {
-                                    code: "VALIDATION_FAILED_INVALID_FIELD",
-                                    data: null,
-                                    message: "Type must be cat, dog, mouse or parrot."
-                                }
+                        code: "VALIDATION_FAILED_INVALID_FIELD",
+                        data: [
+                            {
+                                code: "VALIDATION_FAILED_INVALID_FIELDS",
+                                data: {
+                                    index: 2,
+                                    invalidFields: {
+                                        type: {
+                                            code: "VALIDATION_FAILED_INVALID_FIELD",
+                                            data: null,
+                                            message: "Type must be cat, dog, mouse or parrot."
+                                        }
+                                    }
+                                },
+                                message: "Validation failed."
                             }
-                        },
+                        ],
                         message: "Validation failed."
                     }
                 }
@@ -237,7 +310,10 @@ describe("field models test", () => {
             }
         });
 
-        newModel.field1 = [{ name: "Enlai", type: "dog" }, { name: "Enlai", type: "dog" }];
+        newModel.field1 = [
+            { name: "Enlai", type: "dog" },
+            { name: "Enlai", type: "dog" }
+        ];
         await newModel.validate();
     });
 
