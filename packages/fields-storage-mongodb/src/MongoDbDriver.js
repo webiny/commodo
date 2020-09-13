@@ -23,7 +23,7 @@ class MongoDbDriver {
             .collection(this.getCollectionName(name))
             .insertOne(data);
 
-        return true;
+        return [true];
     }
 
     async update(args) {
@@ -32,6 +32,8 @@ class MongoDbDriver {
         await this.getClient()
             .collection(collection)
             .updateOne(query, { $set: data });
+
+        return [true];
     }
 
     // eslint-disable-next-line
@@ -39,7 +41,8 @@ class MongoDbDriver {
         await this.getClient()
             .collection(this.getCollectionName(name))
             .deleteMany(query);
-        return true;
+
+        return [true];
     }
 
     async find({ name, query, limit, offset, sort }) {
@@ -65,9 +68,11 @@ class MongoDbDriver {
     async count({ name, options }) {
         const clonedOptions = { ...options };
 
-        return await this.getClient()
+        const result = await this.getClient()
             .collection(this.getCollectionName(name))
             .countDocuments(clonedOptions.query);
+
+        return [result, {}];
     }
 
     setCollectionPrefix(collectionPrefix) {

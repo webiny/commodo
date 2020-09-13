@@ -20,7 +20,7 @@ class NeDbDriver {
             .collection(this.getCollectionName(name))
             .insert(data);
 
-        return true;
+        return [true, {}];
     }
 
     async update(args) {
@@ -30,7 +30,7 @@ class NeDbDriver {
             .collection(collection)
             .update(query, { $set: data }, { multi: true });
 
-        return true;
+        return [true, {}];
     }
 
     // eslint-disable-next-line
@@ -40,7 +40,7 @@ class NeDbDriver {
         await this.getClient()
             .collection(this.getCollectionName(name))
             .remove(clonedOptions.query, { multi: true });
-        return true;
+        return [true, {}];
     }
 
     async find(args) {
@@ -60,9 +60,11 @@ class NeDbDriver {
     async count({ name, options }) {
         const clonedOptions = { ...options };
 
-        return await this.getClient()
+        const result = await this.getClient()
             .collection(this.getCollectionName(name))
             .count(clonedOptions.query);
+
+        return [result, {}];
     }
 
     setCollectionPrefix(collectionPrefix) {
