@@ -10,7 +10,7 @@ const User = compose(withFields({}), withName("User"))(createModel());
 
 describe("multiple delete / save prevention test", () => {
     afterEach(() => sandbox.restore());
-    beforeEach(() => User.getStoragePool().flush());
+    beforeEach(() => User.getStorageCache().flush());
 
     test("should only call save once", async () => {
         const user = new User();

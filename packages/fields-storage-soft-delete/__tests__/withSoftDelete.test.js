@@ -6,7 +6,7 @@ const sandbox = sinon.createSandbox();
 const Model = createModel();
 
 describe("withSoftDelete test", () => {
-    beforeEach(() => Model.getStoragePool().flush());
+    beforeEach(() => Model.getStorageCache().flush());
     afterEach(() => sandbox.restore());
 
     test(`deleted flag must by default be set to "false"`, async () => {

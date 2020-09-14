@@ -5,13 +5,13 @@ import getKeys from "./getKeys";
 import { withStaticProps, withProps } from "repropose";
 import { withHooks } from "@commodo/hooks";
 import WithStorageError from "./WithStorageError";
-import StoragePool from "./StoragePool";
+import StorageCache from "./StorageCache";
 import FieldsStorageAdapter from "./FieldsStorageAdapter";
 
 interface IStorageDriver {}
 
 type Configuration = {
-    storagePool?: StoragePool,
+    storageCache?: StorageCache,
     driver?: IStorageDriver,
     maxLimit: ?number
 };
@@ -142,7 +142,7 @@ const withStorage = (configuration: Configuration) => {
                     this.setExisting();
                     this.clean();
 
-                    this.constructor.getStoragePool().add(this);
+                    this.constructor.getStorageCache().add(this);
 
                     await triggerSaveUpdateCreateHooks("after", {
                         existing,
@@ -194,7 +194,7 @@ const withStorage = (configuration: Configuration) => {
 
                     await this.hook("afterDelete", { args, model: this });
 
-                    this.constructor.getStoragePool().remove(this);
+                    this.constructor.getStorageCache().remove(this);
 
                     if (args.meta) {
                         return result;
@@ -248,18 +248,18 @@ const withStorage = (configuration: Configuration) => {
                     : __withStorage.driver;
 
             if (configuration.pool) {
-                __withStorage.storagePool =
+                __withStorage.storageCache =
                     typeof __withStorage.pool === "function"
                         ? __withStorage.pool(this)
                         : __withStorage.pool;
             } else {
-                __withStorage.storagePool = new StoragePool();
+                __withStorage.storageCache = new StorageCache();
             }
 
             return {
                 __withStorage,
-                getStoragePool() {
-                    return this.__withStorage.storagePool;
+                getStorageCache() {
+                    return this.__withStorage.storageCache;
                 },
                 getStorageDriver() {
                     return this.__withStorage.driver;
@@ -332,14 +332,14 @@ const withStorage = (configuration: Configuration) => {
                                 continue;
                             }
 
-                            const pooled = this.getStoragePool().get(this, storageItems[i]);
+                            const pooled = this.getStorageCache().get(this, storageItems[i]);
                             if (pooled) {
                                 returnItems.push(pooled);
                             } else {
                                 const model = new this();
                                 model.setExisting();
                                 await model.populateFromStorage(storageItems[i]);
-                                this.getStoragePool().add(model);
+                                this.getStorageCache().add(model);
                                 returnItems.push(model);
                             }
                         }
@@ -358,7 +358,7 @@ const withStorage = (configuration: Configuration) => {
                 async findOne(args = {}) {
                     args.limit = 1;
 
-                    const cached = this.getStoragePool().get(this, args.query);
+                    const cached = this.getStorageCache().get(this, args.query);
                     if (cached) {
                         if (args.__batch) {
                             const { instance: batch, operation } = args.__batch;

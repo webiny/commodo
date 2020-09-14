@@ -1,4 +1,4 @@
-import StoragePoolEntry from "./StoragePoolEntry";
+import StorageCacheEntry from "./StorageCacheEntry";
 import getPrimaryKey from "./getPrimaryKey";
 
 function getPoolItemId(model, data) {
@@ -17,7 +17,7 @@ function getPoolItemId(model, data) {
     return output;
 }
 
-class StoragePool {
+class StorageCache {
     pool: {};
     constructor() {
         this.pool = {};
@@ -33,7 +33,7 @@ class StoragePool {
             this.getPool()[namespace] = {};
         }
 
-        this.getPool()[namespace][id] = new StoragePoolEntry(model);
+        this.getPool()[namespace][id] = new StorageCacheEntry(model);
         return this;
     }
 
@@ -57,7 +57,7 @@ class StoragePool {
             return;
         }
 
-        const poolEntry: StoragePoolEntry = this.getPool()[namespace][id];
+        const poolEntry: StorageCacheEntry = this.getPool()[namespace][id];
         if (poolEntry) {
             return poolEntry.getModel();
         }
@@ -69,4 +69,4 @@ class StoragePool {
     }
 }
 
-export default StoragePool;
+export default StorageCache;

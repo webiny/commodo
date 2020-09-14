@@ -55,7 +55,7 @@ export default () => {
 
                     await this.hook("afterDelete", { options: args, model: this });
 
-                    this.constructor.getStoragePool().remove(this);
+                    this.constructor.getStorageCache().remove(this);
                 } catch (e) {
                     throw e;
                 } finally {

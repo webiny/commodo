@@ -1,7 +1,7 @@
 // @flow
 import { Model } from ".";
 
-class StoragePoolEntry {
+class StorageCacheEntry {
     model: Model;
     meta: Object;
 
@@ -31,4 +31,4 @@ class StoragePoolEntry {
     }
 }
 
-export default StoragePoolEntry;
+export default StorageCacheEntry;

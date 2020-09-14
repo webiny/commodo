@@ -1,9 +1,9 @@
-import { withStorage, StoragePool } from "@commodo/fields-storage";
+import { withStorage, StorageCache } from "@commodo/fields-storage";
 import { NeDbDriver, withId } from "@commodo/fields-storage-nedb";
 import { compose } from "ramda";
 
 // All entity classes share the same pool.
-const globalStoragePool = new StoragePool();
+const globalStorageCache = new StorageCache();
 const globalStorageDriver = new NeDbDriver();
 
 const createModel = () =>
@@ -11,7 +11,7 @@ const createModel = () =>
         withId(),
         withStorage({
             driver: globalStorageDriver,
-            pool: globalStoragePool
+            pool: globalStorageCache
         })
     )();
 

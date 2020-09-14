@@ -5,7 +5,7 @@ import mdbid from "mdbid";
 const sandbox = sinon.createSandbox();
 
 describe("model pool test", () => {
-    beforeEach(() => User.getStoragePool().flush());
+    beforeEach(() => User.getStorageCache().flush());
     afterEach(() => sandbox.restore());
 
     test("after save, model should be present in the pool and after delete it must be removed", async () => {
@@ -16,14 +16,14 @@ describe("model pool test", () => {
             return [true, {}];
         });
 
-        expect(User.getStoragePool().get(user)).toEqual(undefined);
+        expect(User.getStorageCache().get(user)).toEqual(undefined);
         await user.save();
-        expect(User.getStoragePool().get(user)).toBeInstanceOf(User);
+        expect(User.getStorageCache().get(user)).toBeInstanceOf(User);
 
         sandbox.stub(user.getStorageDriver(), "delete").callsFake(() => [true, {}]);
         await user.delete();
 
-        expect(User.getStoragePool().get(user)).toEqual(undefined);
+        expect(User.getStorageCache().get(user)).toEqual(undefined);
     });
 
     test("get methods should return correctly (whether is called with a model class or an instance)", async () => {
@@ -33,12 +33,12 @@ describe("model pool test", () => {
         user.age = 30;
         user.id = A;
 
-        expect(User.getStoragePool().get(user)).toEqual(undefined);
-        expect(User.getStoragePool().get(User, { id: A })).toEqual(undefined);
+        expect(User.getStorageCache().get(user)).toEqual(undefined);
+        expect(User.getStorageCache().get(User, { id: A })).toEqual(undefined);
 
         await user.save();
-        expect(User.getStoragePool().get(user)).not.toEqual(undefined);
-        expect(User.getStoragePool().get(User, { id: A })).not.toEqual(undefined);
+        expect(User.getStorageCache().get(user)).not.toEqual(undefined);
+        expect(User.getStorageCache().get(User, { id: A })).not.toEqual(undefined);
     });
 
     test("findOne must add to the pool and consequent findById calls must utilize it", async () => {
@@ -47,10 +47,10 @@ describe("model pool test", () => {
             return [[{ id: A }], {}];
         });
 
-        expect(User.getStoragePool().get(User, { id: A })).toEqual(undefined);
+        expect(User.getStorageCache().get(User, { id: A })).toEqual(undefined);
 
         const user1 = await User.findOne({ query: { id: A } });
-        expect(User.getStoragePool().get(User, { id: A })).not.toEqual(undefined);
+        expect(User.getStorageCache().get(User, { id: A })).not.toEqual(undefined);
 
         expect(modelFind.callCount).toEqual(1);
 
@@ -69,13 +69,13 @@ describe("model pool test", () => {
             return [[{ id: A }, { id: B }, { id: C }]];
         });
 
-        expect(User.getStoragePool().get(User, { id: A })).toEqual(undefined);
-        expect(User.getStoragePool().get(User, { id: B })).toEqual(undefined);
-        expect(User.getStoragePool().get(User, { id: C })).toEqual(undefined);
+        expect(User.getStorageCache().get(User, { id: A })).toEqual(undefined);
+        expect(User.getStorageCache().get(User, { id: B })).toEqual(undefined);
+        expect(User.getStorageCache().get(User, { id: C })).toEqual(undefined);
         const users1 = await User.find({});
-        expect(User.getStoragePool().get(User, { id: A })).not.toEqual(undefined);
-        expect(User.getStoragePool().get(User, { id: B })).not.toEqual(undefined);
-        expect(User.getStoragePool().get(User, { id: C })).not.toEqual(undefined);
+        expect(User.getStorageCache().get(User, { id: A })).not.toEqual(undefined);
+        expect(User.getStorageCache().get(User, { id: B })).not.toEqual(undefined);
+        expect(User.getStorageCache().get(User, { id: C })).not.toEqual(undefined);
 
         expect(modelFind.callCount).toEqual(1);
         const users2 = await User.find({});
@@ -85,9 +85,9 @@ describe("model pool test", () => {
     });
 
     test("remove method must exist if class was not inserted before", async () => {
-        expect(User.getStoragePool().pool).toBeEmpty;
-        User.getStoragePool().remove(new User());
-        expect(User.getStoragePool().pool).toBeEmpty;
+        expect(User.getStorageCache().pool).toBeEmpty;
+        User.getStorageCache().remove(new User());
+        expect(User.getStorageCache().pool).toBeEmpty;
     });
 
     test("flush method must empty the pool", async () => {
@@ -113,12 +113,12 @@ describe("model pool test", () => {
         await User.findOne({ query: { id: A } });
         await User.findOne({ query: { id: B } });
         await User.findOne({ query: { id: C } });
-        expect(User.getStoragePool().get(User, { id: A })).not.toEqual(undefined);
-        expect(User.getStoragePool().get(User, { id: B })).not.toEqual(undefined);
-        expect(User.getStoragePool().get(User, { id: C })).not.toEqual(undefined);
+        expect(User.getStorageCache().get(User, { id: A })).not.toEqual(undefined);
+        expect(User.getStorageCache().get(User, { id: B })).not.toEqual(undefined);
+        expect(User.getStorageCache().get(User, { id: C })).not.toEqual(undefined);
 
-        User.getStoragePool().flush();
-        expect(User.getStoragePool().pool).toBeEmpty;
+        User.getStorageCache().flush();
+        expect(User.getStorageCache().pool).toBeEmpty;
     });
 
     test("findOne must return from pool if possible", async () => {
@@ -127,9 +127,9 @@ describe("model pool test", () => {
             return [[{ id: A }], {}];
         });
 
-        expect(User.getStoragePool().get(User, { id: A })).toEqual(undefined);
+        expect(User.getStorageCache().get(User, { id: A })).toEqual(undefined);
         const foundUser = await User.findOne({});
-        expect(User.getStoragePool().get(User, { id: A })).not.toEqual(undefined);
+        expect(User.getStorageCache().get(User, { id: A })).not.toEqual(undefined);
         expect(modelFindOne.callCount).toEqual(1);
 
         const againFoundUser = await User.findOne({});
