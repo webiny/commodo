@@ -18,7 +18,7 @@ describe("batch save test", function() {
         }
     });
 
-    it("should be able to batch save, create, and update calls", async () => {
+    it("should be able to batch find and findOne calls", async () => {
         const { SimpleModel } = models;
 
         const batch = new Batch(

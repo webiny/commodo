@@ -19,7 +19,7 @@ describe("different batch types test", function() {
         }
 
         expect(error.message).toBe(
-            `Cannot batch operations - all operations must be of the same type (the initial operation type was "batchGet", and operation type on index "1" is "batchWrite").`
+            `Cannot batch operations - all operations must be of the same type (the initial operation type was "batchWrite", and operation type on index "1" is "batchGet").`
         );
     });
 });

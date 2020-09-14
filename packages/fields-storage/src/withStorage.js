@@ -8,9 +8,6 @@ import WithStorageError from "./WithStorageError";
 import StoragePool from "./StoragePool";
 import FieldsStorageAdapter from "./FieldsStorageAdapter";
 
-// TODO: check faster alternative.
-import cloneDeep from "lodash.clonedeep";
-
 interface IStorageDriver {}
 
 type Configuration = {
@@ -19,17 +16,8 @@ type Configuration = {
     maxLimit: ?number
 };
 
-const defaults = {
-    save: {
-        hooks: {}
-    },
-    delete: {
-        hooks: {}
-    }
-};
-
 const hook = async (name, { args, model }) => {
-    if (args.hooks[name] === false) {
+    if (args.hooks && args.hooks[name] === false) {
         return;
     }
     await model.hook(name, { model, args });
@@ -63,7 +51,7 @@ const withStorage = (configuration: Configuration) => {
                 this.__withStorage.existing = existing;
                 return this;
             },
-            async save(rawArgs = {}): Promise<void> {
+            async save(args = {}): Promise<void> {
                 const primaryKey = getPrimaryKey(this);
                 if (!primaryKey) {
                     throw Error(
@@ -79,15 +67,13 @@ const withStorage = (configuration: Configuration) => {
 
                 const existing = this.isExisting();
 
-                const args = { ...defaults.save, ...cloneDeep(rawArgs) };
-
                 await triggerSaveUpdateCreateHooks("before", {
                     existing,
                     model: this,
                     args
                 });
 
-                let result = [];
+                let result;
 
                 try {
                     await hook("__save", { model: this, args });
@@ -128,6 +114,23 @@ const withStorage = (configuration: Configuration) => {
                                 data
                             });
                         }
+                    } else if (args.__batch) {
+                        const { instance: batch, operation } = args.__batch;
+                        operation.ready = true;
+                        operation.skipStorageDriver = true;
+                        if (batch.allOperationsMarkedAsReady()) {
+                            batch.markBatchAsReady();
+                        } else {
+                            await batch.waitBatchReady();
+                        }
+                    }
+
+                    if (!result) {
+                        if (args.meta) {
+                            result = [true, { operation: null }];
+                        } else {
+                            result = true;
+                        }
                     }
 
                     await triggerSaveUpdateCreateHooks("__after", {
@@ -151,12 +154,12 @@ const withStorage = (configuration: Configuration) => {
                         return result;
                     }
 
-                    return result[0];
+                    return result;
                 } finally {
                     this.__withStorage.processing = null;
                 }
             },
-            async delete(rawArgs = {}) {
+            async delete(args = {}) {
                 const primaryKey = getPrimaryKey(this);
                 if (!primaryKey) {
                     throw Error(
@@ -169,8 +172,6 @@ const withStorage = (configuration: Configuration) => {
                 }
 
                 this.__withStorage.processing = "delete";
-
-                const args = cloneDeep(rawArgs);
 
                 try {
                     await this.hook("delete", { args, model: this });
@@ -266,8 +267,17 @@ const withStorage = (configuration: Configuration) => {
                 getStorageName() {
                     return getName(this);
                 },
-                async query(crudOperation, rawArgs) {
-                    const args = cloneDeep(rawArgs);
+                async query(crudOperation, args) {
+                    if (args.__batch) {
+                        const { instance: batch, operation } = args.__batch;
+                        operation.ready = true;
+                        if (batch.allOperationsMarkedAsReady()) {
+                            batch.markBatchAsReady();
+                        } else {
+                            await batch.waitBatchReady();
+                        }
+                    }
+
                     const result = await this.getStorageDriver()[crudOperation]({
                         ...args,
                         model: this,
@@ -296,9 +306,8 @@ const withStorage = (configuration: Configuration) => {
                     return this.query("delete", args);
                 },
 
-                async find(rawArgs = {}) {
+                async find(args = {}) {
                     const maxLimit = this.__withStorage.maxLimit;
-                    const args = cloneDeep(rawArgs);
 
                     if (maxLimit && args.limit > maxLimit) {
                         throw new WithStorageError(
@@ -345,14 +354,23 @@ const withStorage = (configuration: Configuration) => {
 
                 /**
                  * Finds one model matched by given query parameters.
-                 * @param rawArgs
                  */
-                async findOne(rawArgs = {}) {
-                    const args = cloneDeep(rawArgs);
+                async findOne(args = {}) {
                     args.limit = 1;
 
                     const cached = this.getStoragePool().get(this, args.query);
                     if (cached) {
+                        if (args.__batch) {
+                            const { instance: batch, operation } = args.__batch;
+                            operation.ready = true;
+                            operation.skipStorageDriver = true;
+                            if (batch.allOperationsMarkedAsReady()) {
+                                batch.markBatchAsReady();
+                            } else {
+                                await batch.waitBatchReady();
+                            }
+                        }
+
                         if (args.meta) {
                             return [cached, { operation: null }];
                         }

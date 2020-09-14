@@ -262,4 +262,82 @@ describe("batch save test", function() {
         putSpy.mockRestore();
         updateSpy.mockRestore();
     });
+
+    it("should be able to batch save, create, and update calls (with meta data)", async () => {
+        const { SimpleModel } = models;
+
+        const pk = "save-create-update-batched";
+        const a = new SimpleModel().populate({ pk: pk, sk: "a" });
+        const b = new SimpleModel().populate({ pk: pk, sk: "b" });
+
+        let batch = new Batch(
+            [a, "save", { meta: true }],
+            [b, "save"],
+            [SimpleModel, "create", { data: { pk: pk, sk: "statically-saved-1" } }],
+            [SimpleModel, "create", { meta: true, data: { pk: pk, sk: "statically-saved-2" } }]
+        );
+
+        let [r0, r1, r2, r3] = await batch.execute();
+        expect(r0[0]).toBe(true);
+        expect(r1).toBe(true);
+        expect(r2).toBe(true);
+        expect(r3[0]).toBe(true);
+
+        batch = new Batch(
+            [a, "save", { meta: true }],
+            [b, "save"],
+            [SimpleModel, "create", { data: { pk: pk, sk: "statically-saved-3" } }],
+            [SimpleModel, "create", { meta: true, data: { pk: pk, sk: "statically-saved-4" } }]
+        );
+
+        [r0, r1, r2, r3] = await batch.execute();
+        expect(r0[0]).toBe(true);
+        expect(r1).toBe(true);
+        expect(r2).toBe(true);
+        expect(r3[0]).toBe(true);
+
+        const items = await getDocumentClient()
+            .query({
+                TableName: "pk-sk",
+                KeyConditionExpression: "pk = :pk and sk >= :sk",
+                ExpressionAttributeValues: {
+                    ":pk": pk,
+                    ":sk": " "
+                }
+            })
+            .promise();
+
+        expect(items).toEqual({
+            "Count": 6,
+            "Items": [
+                {
+                    "enabled": true,
+                    "pk": "save-create-update-batched",
+                    "sk": "a"
+                },
+                {
+                    "enabled": true,
+                    "pk": "save-create-update-batched",
+                    "sk": "b"
+                },
+                {
+                    "pk": "save-create-update-batched",
+                    "sk": "statically-saved-1"
+                },
+                {
+                    "pk": "save-create-update-batched",
+                    "sk": "statically-saved-2"
+                },
+                {
+                    "pk": "save-create-update-batched",
+                    "sk": "statically-saved-3"
+                },
+                {
+                    "pk": "save-create-update-batched",
+                    "sk": "statically-saved-4"
+                }
+            ],
+            "ScannedCount": 6
+        });
+    });
 });

@@ -62,7 +62,7 @@ class BatchProcess {
     }
 
     allOperationsAdded() {
-        return this.operations.length === this.batch.operations.length;
+        return this.operations.length === this.batch.getStorageDriverOperations().length;
     }
 
     startExecution() {

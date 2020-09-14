@@ -37,13 +37,6 @@ const withHooks = (hooks: ?{ [string]: Function }) => {
                         }
                     };
                 },
-                registerHookCallback(...args) {
-                    // eslint-disable-next-line
-                    console.warn(
-                        `DEPRECATION WARNING: this will be removed in next major release, use "this.hook" instead, where 2nd argument is a callback.`
-                    );
-                    return this.__registerHookCallback(...args);
-                },
                 hook(...args) {
                     const [name, ...rest] = args;
 
