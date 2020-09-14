@@ -69,7 +69,7 @@ class BatchProcess {
         this.resolveBuild();
 
         const documentClientArgs = {
-            ReturnConsumedCapacity: "INDEXES"
+            ReturnConsumedCapacity: "TOTAL"
         };
 
         let reject = e => {

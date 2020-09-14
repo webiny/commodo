@@ -35,11 +35,15 @@ class DynamoDbDriver {
         return this.documentClient;
     }
 
-    async create({ name, data, __batch: batch }) {
+    async create({ name, data, meta, __batch: batch }) {
         const tableName = this.tableName || name;
         if (!batch) {
             const result = await this.documentClient
-                .put({ TableName: tableName, Item: data })
+                .put({
+                    TableName: tableName,
+                    Item: data,
+                    ReturnConsumedCapacity: meta ? "TOTAL" : "NONE"
+                })
                 .promise();
             return [true, { response: result.$response }];
         }
@@ -58,10 +62,10 @@ class DynamoDbDriver {
         return [true, { response: batchProcess.response }];
     }
 
-    async update({ query, data, name, instance, keys, __batch }) {
+    async update({ query, data, name, instance, keys, meta, __batch: batch }) {
         const tableName = this.tableName || name;
 
-        if (!__batch) {
+        if (!batch) {
             const update = {
                 UpdateExpression: "SET ",
                 ExpressionAttributeNames: {},
@@ -81,6 +85,7 @@ class DynamoDbDriver {
                 .update({
                     TableName: tableName,
                     Key: query,
+                    ReturnConsumedCapacity: meta ? "TOTAL" : "NONE",
                     ...update
                 })
                 .promise();
@@ -88,7 +93,7 @@ class DynamoDbDriver {
             return [true, { response: result.$response }];
         }
 
-        const batchProcess = this.getBatchProcess(__batch);
+        const batchProcess = this.getBatchProcess(batch);
 
         // It would be nice if we could rely on the received data all the time, but that's not possible. Because
         // "PutRequest" operations only insert or overwrite existing data (meaning => classic updates are NOT allowed),
@@ -131,21 +136,22 @@ class DynamoDbDriver {
         return [true, { response: batchProcess.response }];
     }
 
-    async delete({ query, name, __batch }) {
+    async delete({ query, name, meta, __batch: batch }) {
         const tableName = this.tableName || name;
 
-        if (!__batch) {
+        if (!batch) {
             const result = await this.documentClient
                 .delete({
                     TableName: tableName,
-                    Key: query
+                    Key: query,
+                    ReturnConsumedCapacity: meta ? "TOTAL" : "NONE"
                 })
                 .promise();
 
             return [true, { response: result.$response }];
         }
 
-        const batchProcess = this.getBatchProcess(__batch);
+        const batchProcess = this.getBatchProcess(batch);
         batchProcess.addBatchDelete({
             tableName,
             query
@@ -162,10 +168,10 @@ class DynamoDbDriver {
         return [true, { response: batchProcess.response }];
     }
 
-    async read({ name, query, sort, limit, keys, __batch }) {
+    async read({ name, query, sort, limit, keys, meta, __batch: batch }) {
         const tableName = this.tableName || name;
 
-        if (!__batch) {
+        if (!batch) {
             const queryGenerator = new QueryGenerator();
             const queryParams = queryGenerator.generate({
                 query,
@@ -175,12 +181,14 @@ class DynamoDbDriver {
                 tableName
             });
 
-            const response = await this.documentClient.query(queryParams).promise();
+            const response = await this.documentClient
+                .query({ ...queryParams, ReturnConsumedCapacity: meta ? "TOTAL" : "NONE" })
+                .promise();
             return [response.Items, { response: response.$response }];
         }
 
         // DynamoDb doesn't support batch queries, so we can immediately assume the GetRequest operation.
-        const batchProcess = this.getBatchProcess(__batch);
+        const batchProcess = this.getBatchProcess(batch);
         const getResult = batchProcess.addBatchGet({
             tableName,
             query
@@ -196,10 +204,10 @@ class DynamoDbDriver {
 
         const result = getResult();
         if (result) {
-            return [[result], {}];
+            return [[result], { response: batchProcess.response }];
         }
 
-        return [[], {}];
+        return [[], { response: batchProcess.response }];
     }
 
     getBatchProcess(__batch) {

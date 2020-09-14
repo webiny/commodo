@@ -308,36 +308,65 @@ describe("batch save test", function() {
             .promise();
 
         expect(items).toEqual({
-            "Count": 6,
-            "Items": [
+            Count: 6,
+            Items: [
                 {
-                    "enabled": true,
-                    "pk": "save-create-update-batched",
-                    "sk": "a"
+                    enabled: true,
+                    pk: "save-create-update-batched",
+                    sk: "a"
                 },
                 {
-                    "enabled": true,
-                    "pk": "save-create-update-batched",
-                    "sk": "b"
+                    enabled: true,
+                    pk: "save-create-update-batched",
+                    sk: "b"
                 },
                 {
-                    "pk": "save-create-update-batched",
-                    "sk": "statically-saved-1"
+                    pk: "save-create-update-batched",
+                    sk: "statically-saved-1"
                 },
                 {
-                    "pk": "save-create-update-batched",
-                    "sk": "statically-saved-2"
+                    pk: "save-create-update-batched",
+                    sk: "statically-saved-2"
                 },
                 {
-                    "pk": "save-create-update-batched",
-                    "sk": "statically-saved-3"
+                    pk: "save-create-update-batched",
+                    sk: "statically-saved-3"
                 },
                 {
-                    "pk": "save-create-update-batched",
-                    "sk": "statically-saved-4"
+                    pk: "save-create-update-batched",
+                    sk: "statically-saved-4"
                 }
             ],
-            "ScannedCount": 6
+            ScannedCount: 6
         });
+    });
+
+    it("should return non-batch and batch save meta data", async () => {
+        const { SimpleModel } = models;
+
+        const pk = "save-create-update-batched";
+        const a = new SimpleModel().populate({ pk: pk, sk: "a" });
+        const b = new SimpleModel().populate({ pk: pk, sk: "b" });
+
+        const [, meta] = await a.save({ meta: true });
+
+        expect(meta.operation.response.data.ConsumedCapacity).toEqual({
+            TableName: "pk-sk",
+            CapacityUnits: 1
+        });
+
+        let batch = new Batch(
+            [a, "save", { meta: true }],
+            [b, "save"],
+            [SimpleModel, "create", { meta: true, data: { pk: pk, sk: "statically-saved-2" } }]
+        );
+
+        const results = await batch.execute();
+
+        expect(results[2][1].operation.response.ConsumedCapacity).toEqual([{
+            TableName: "pk-sk",
+            CapacityUnits: 2
+        }]);
+
     });
 });
