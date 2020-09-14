@@ -68,7 +68,10 @@ class BatchProcess {
     startExecution() {
         this.resolveBuild();
 
-        const documentClientArgs = {};
+        const documentClientArgs = {
+            ReturnConsumedCapacity: "INDEXES"
+        };
+
         let reject = e => {
             e.message = `An error occurred while executing "${this.batchType}" batch operation: ${e.message}`;
             return this.rejectExecution(e);
