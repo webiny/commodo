@@ -7,7 +7,7 @@ const executeHookCallbacks = async (callbacks, args, instance) => {
     }
 };
 
-const withHooks = (hooks: ?{ [string]: Function }) => {
+const withHooks = (hooks: Function | ?{ [string]: Function }) => {
     return baseFn => {
         let fn = withProps(props => {
             if (props.__withHooks) {
@@ -57,11 +57,20 @@ const withHooks = (hooks: ?{ [string]: Function }) => {
             };
         })(baseFn);
 
-        fn = withProps(props => {
+        fn = withProps(instance => {
             if (hooks) {
-                Object.keys(hooks).forEach((name: string) => {
-                    hooks && hooks[name] && props.__registerHookCallback(name, hooks[name]);
-                });
+                if (typeof hooks === "function") {
+                    const hooksCallbackFunctions = hooks(instance);
+                    Object.keys(hooksCallbackFunctions).forEach((name: string) => {
+                        hooksCallbackFunctions &&
+                            hooksCallbackFunctions[name] &&
+                            instance.__registerHookCallback(name, hooksCallbackFunctions[name]);
+                    });
+                } else {
+                    Object.keys(hooks).forEach((name: string) => {
+                        hooks && hooks[name] && instance.__registerHookCallback(name, hooks[name]);
+                    });
+                }
             }
             return {};
         })(fn);
