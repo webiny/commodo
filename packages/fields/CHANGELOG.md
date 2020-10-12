@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 1.1.2-beta.16 (2020-09-14)
+
+
+### Bug Fixes
+
+* update dependencies ([b987ee6](https://github.com/webiny/commodo/commit/b987ee6be47fe07bcb3be8eb50d4900343bc71a3))
+
+
+
+
+
 ## 1.1.2-beta.15 (2020-09-13)
 
 **Note:** Version bump only for package @commodo/fields
