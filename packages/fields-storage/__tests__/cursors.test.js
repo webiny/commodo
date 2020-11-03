@@ -98,7 +98,7 @@ describe("Cursor based pagination", () => {
         });
     });
 
-    test(`should return correct data using a sort field`, async () => {
+    test(`should return correct data using a desc sort field`, async () => {
         const page1Args = { limit: 8, sort: { price: -1 } };
         const page1 = await Model.find(page1Args);
         const page1Meta = page1.getMeta();
@@ -139,5 +139,27 @@ describe("Cursor based pagination", () => {
             hasNextPage: true,
             hasPreviousPage: false
         });
+    });
+
+    test(`should return correct data using a asc sort field`, async () => {
+        const page1Args = { limit: 8, sort: { name: 1 } };
+        const page1 = await Model.find(page1Args);
+        const page1Meta = page1.getMeta();
+
+        expect(page1).toEqual(expect.arrayContaining(data.slice(0, 8).map(d => expect.objectContaining(d))));
+        expect(page1.length).toBe(8);
+
+        const page2Args = { ...page1Args, after: page1Meta.cursors.next };
+        const page2 = await Model.find(page2Args);
+        const page2Meta = page2.getMeta();
+
+        expect(page2).toEqual(expect.arrayContaining(data.slice(8).map(d => expect.objectContaining(d))));
+        expect(page2.length).toBe(4);
+
+        const page3Args = { ...page1Args, before: page2Meta.cursors.previous };
+        const page3 = await Model.find(page3Args);
+
+        expect(page3).toEqual(expect.arrayContaining(data.slice(0, 8).map(d => expect.objectContaining(d))));
+        expect(page3.length).toBe(8);
     });
 });

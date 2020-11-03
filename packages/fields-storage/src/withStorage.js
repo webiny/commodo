@@ -314,10 +314,11 @@ const withStorage = (configuration: Configuration) => {
                     // Keep a backup of query for optional total count
                     const originalQuery = cloneDeep(query);
 
+                    /**
+                     * By default, there are no sorters nor cursor set so we use `id` to sort records in descending order.
+                     */
                     let forward = Boolean(after || !before);
                     const cursor = decodeCursor(after || before);
-
-                    const op = forward ? "$lt" : "$gt";
 
                     if (cursor) {
                         if (!query.$and) {
@@ -326,6 +327,23 @@ const withStorage = (configuration: Configuration) => {
 
                         const { id, ...fields } = cursor;
                         const sortFields = [Object.keys(fields).shift()].filter(Boolean);
+                        const sortDirection = sort[sortFields[0]];
+
+                        /**
+                         * By default, cursor contains only `id`, so we define the direction based on that assumption.
+                         */
+                        let op = forward ? "$lt" : "$gt";
+
+                        /**
+                         * If there are other sort fields besides the `id`, we need to take the direction of sorting into account.
+                         */
+                        if (sortFields.length) {
+                            if (forward) {
+                                op = sortDirection === 1 ? "$gt" : "$lt";
+                            } else {
+                                op = sortDirection === 1 ? "$lt" : "$gt";
+                            }
+                        }
 
                         if (sortFields.length) {
                             query["$and"].push({
@@ -490,7 +508,7 @@ const withStorage = (configuration: Configuration) => {
                  * Counts total number of models matched by given query parameters.
                  * @param options
                  */
-                async count(options: {[key: string]: any}): Promise<number> {
+                async count(options: { [key: string]: any }): Promise<number> {
                     if (!options) {
                         options = {};
                     }
