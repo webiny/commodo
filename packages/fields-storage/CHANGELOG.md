@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.3-next.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage@2.1.2...@commodo/fields-storage@2.1.3-next.0) (2020-11-03)
+
+
+### Bug Fixes
+
+* determine mongo operator based on cursor and sorting direction ([d7b8ec9](https://github.com/webiny/commodo/commit/d7b8ec90ff5dacfd3e6852e873a6688f60c0bb3c))
+
+
+
+
+
 ## [2.1.2](https://github.com/webiny/commodo/compare/@commodo/fields-storage@2.1.2-next.0...@commodo/fields-storage@2.1.2) (2020-10-06)
 
 **Note:** Version bump only for package @commodo/fields-storage
