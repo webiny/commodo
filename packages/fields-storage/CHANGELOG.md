@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.3](https://github.com/webiny/commodo/compare/@commodo/fields-storage@2.1.3-next.0...@commodo/fields-storage@2.1.3) (2020-11-03)
+
+**Note:** Version bump only for package @commodo/fields-storage
+
+
+
+
+
 ## [2.1.3-next.0](https://github.com/webiny/commodo/compare/@commodo/fields-storage@2.1.2...@commodo/fields-storage@2.1.3-next.0) (2020-11-03)
 
 
