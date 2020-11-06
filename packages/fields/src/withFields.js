@@ -36,6 +36,20 @@ const withFields = (fields: Object) => {
                     return this;
                 },
 
+                async toJSON() {
+                    const fields = this.getFields();
+                    const output = {};
+                    for (let name in fields) {
+                        const field = fields[name];
+                        if (typeof field.getJSONValue === "function") {
+                            output[name] = await field.getJSONValue();
+                        } else {
+                            output[name] = field.getValue();
+                        }
+                    }
+                    return output;
+                },
+
                 async validate() {
                     if (this.__withFields.processing.validation) {
                         return;

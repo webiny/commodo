@@ -104,6 +104,21 @@ const fields: FieldFactory = ({ list, instanceOf, ...rest }: Object) => {
             instanceOf,
             instanceOfModels,
             instanceOfModelField,
+            async getJSONValue() {
+                if (!instance.current) {
+                    return null;
+                }
+
+                if (instance.list) {
+                    const output = [];
+                    for (let i = 0; i < instance.current.length; i++) {
+                        output.push(await instance.current[i].toJSON());
+                    }
+                    return output;
+                }
+
+                return instance.current.toJSON();
+            },
             isDirty() {
                 if (isDirty.call(this)) {
                     return true;
