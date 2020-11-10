@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.0.2-beta.18 (2020-11-06)
+
+**Note:** Version bump only for package @commodo/fields-storage-dynamodb
+
+
+
+
+
 ## 2.0.2-beta.17 (2020-10-12)
 
 **Note:** Version bump only for package @commodo/fields-storage-dynamodb
