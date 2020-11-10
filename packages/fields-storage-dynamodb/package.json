@@ -1,6 +1,6 @@
 {
   "name": "@commodo/fields-storage-dynamodb",
-  "version": "2.0.2-beta.18",
+  "version": "2.0.2-beta.19",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -14,10 +14,10 @@
     "aws-sdk": "^2.729.0"
   },
   "devDependencies": {
-    "@commodo/fields": "^1.1.2-beta.18",
-    "@commodo/fields-storage": "^2.0.2-beta.18",
-    "@commodo/hooks": "^1.1.2-beta.18",
-    "@commodo/name": "^1.2.2-beta.18",
+    "@commodo/fields": "^1.1.2-beta.19",
+    "@commodo/fields-storage": "^2.0.2-beta.19",
+    "@commodo/hooks": "^1.1.2-beta.19",
+    "@commodo/name": "^1.2.2-beta.19",
     "@shelf/jest-dynamodb": "^1.7.0",
     "camelcase": "^5.2.0",
     "ramda": "^0.25.0",
