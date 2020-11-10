@@ -36,11 +36,27 @@ const withFields = (fields: Object) => {
                     return this;
                 },
 
-                async toJSON() {
+                async toJSON({ onlyDirty, onlyClean } = {}) {
                     const fields = this.getFields();
                     const output = {};
                     for (let name in fields) {
                         const field = fields[name];
+
+                        // Let's check if the field is dirty or clean, and if "onlyDirty" or "onlyClean" flag has been
+                        // set to true. If so, we want to return only dirty / only clean field values, respectively.
+                        if (onlyDirty === true || onlyClean === true) {
+                            const isDirty = field.isDirty();
+                            if (onlyDirty) {
+                                if (!isDirty) {
+                                    continue;
+                                }
+                            } else {
+                                if (isDirty) {
+                                    continue;
+                                }
+                            }
+                        }
+
                         if (typeof field.getJSONValue === "function") {
                             output[name] = await field.getJSONValue();
                         } else {
