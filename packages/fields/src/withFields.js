@@ -22,14 +22,17 @@ const withFields = (fields: Object) => {
                 },
                 populate(data) {
                     if (data && typeof data === "object") {
-                        const values = this.getFields();
-                        for (let valueKey in values) {
-                            const value = values[valueKey];
-                            if (!value || value.skipOnPopulate || !(valueKey in data)) {
+                        const fields = this.getFields();
+                        for (let fieldName in fields) {
+                            const field = fields[fieldName];
+
+                            if (!field || field.skipOnPopulate) {
                                 continue;
                             }
 
-                            values[valueKey].setValue(data[valueKey]);
+                            if (fieldName in data && data[fieldName] !== undefined) {
+                                fields[fieldName].setValue(data[fieldName]);
+                            }
                         }
                     }
 

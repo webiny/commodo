@@ -119,7 +119,28 @@ describe("toJSON test", () => {
             lastName: "b",
             number: 1
         });
+    });
 
+    test(`if "undefined" was passed as populate value, toJSON should not return it as dirty`, async () => {
+        const User = compose(
+            withFields({
+                firstName: string(),
+                lastName: string(),
+                email: string(),
+                age: number(),
+                enabled: boolean(),
+                deleted: boolean()
+            })
+        )();
 
+        const user = new User();
+        user.populate({
+            firstName: undefined,
+            lastName: undefined,
+            age: 123
+        });
+
+        const data = await user.toJSON({ onlyDirty: true });
+        expect(data).toEqual({ age: 123 });
     });
 });
