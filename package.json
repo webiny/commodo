@@ -31,7 +31,7 @@
     "lint-staged": "^8.1.5",
     "lodash.get": "^4.4.2",
     "mdbid": "^1.0.0",
-    "merge": "^1.2.1",
+    "merge": "^2.1.1",
     "prettier": "^1.14.2",
     "ramda": "^0.25.0",
     "rimraf": "^3.0.2",
